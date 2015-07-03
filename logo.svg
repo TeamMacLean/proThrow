@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="75.952142"
-     inkscape:cy="1021.5726"
+     inkscape:cx="70.299989"
+     inkscape:cy="1012.6843"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -36,7 +36,7 @@
      inkscape:window-width="960"
      inkscape:window-height="1117"
      inkscape:window-x="960"
-     inkscape:window-y="23"
+     inkscape:window-y="323"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,44 +59,49 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#95a5a6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#95a5a6;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 15.875,11.25 0,5.291666 5.291666,0 0,-5.291666 z"
        id="path6295"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc"
-       inkscape:export-xdpi="1198.7828"
-       inkscape:export-ydpi="1198.7828" />
+       inkscape:export-xdpi="123.75336"
+       inkscape:export-ydpi="123.75336"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/proThrow/public/logo.png" />
     <path
-       style="fill:#e74c3c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#e74c3c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 11.90625,12.572916 -1.322917,0 0,2.645834 1.322917,0 z"
        id="path6297"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc"
-       inkscape:export-xdpi="1198.7828"
-       inkscape:export-ydpi="1198.7828" />
+       inkscape:export-xdpi="123.75336"
+       inkscape:export-ydpi="123.75336"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/proThrow/public/logo.png" />
     <path
-       style="fill:#3498db;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#3498db;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 17.197916,20.510416 0,1.322917 2.645834,0 0,-1.322917 z"
        id="path6299"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc"
-       inkscape:export-xdpi="1198.7828"
-       inkscape:export-ydpi="1198.7828" />
+       inkscape:export-xdpi="123.75336"
+       inkscape:export-ydpi="123.75336"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/proThrow/public/logo.png" />
     <path
-       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 11.90625,12.572917 0,2.645833 5.291667,0 0,5.291667 2.645833,-1e-6 0,-7.9375 z"
        id="path6293"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccc"
-       inkscape:export-xdpi="1198.7828"
-       inkscape:export-ydpi="1198.7828" />
+       inkscape:export-xdpi="123.75336"
+       inkscape:export-ydpi="123.75336"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/proThrow/public/logo.png" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.52999998, 0.52999998;stroke-dashoffset:0;stroke-opacity:1"
        d="m 11.90625,13.895833 5.291666,0 c 1.322917,0 1.322917,0 1.322917,1.322917 l 0,5.291666"
        id="path6303"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc"
-       inkscape:export-xdpi="1198.7828"
-       inkscape:export-ydpi="1198.7828" />
+       inkscape:export-xdpi="123.75336"
+       inkscape:export-ydpi="123.75336"
+       inkscape:export-filename="/Users/pagem/Documents/workspace/proThrow/public/logo.png" />
   </g>
 </svg>
