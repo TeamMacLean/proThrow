@@ -1,0 +1,113 @@
+body {
+    margin-bottom: 24px;
+}
+
+.bar h1{
+    font-weight: 200;
+    /*font-weight: 900;*/
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+}
+
+.form-row {
+    margin-bottom: .8rem;
+}
+
+.bar {
+    /*margin-bottom: 20px;*/
+}
+
+
+
+.group {
+    padding-top: 1.5rem;
+    /*border-bottom: inset 4px rgba(0, 0, 0, 0.1);*/
+    border-top: inset 8px rgba(0, 0, 0, 0.1);
+}
+
+.group-label {
+    margin-top: .5rem;
+    text-align: center;
+}
+
+.group-one {
+    background: #F5F7FA;
+    /*background: #ED5565;*/
+}
+
+.group-two {
+    /*background: #FC6E51;*/
+}
+
+.group-three {
+    background: #F5F7FA;
+    /*background: #FFCE54;*/
+}
+
+.group-four {
+    /*background: #A0D468;*/
+}
+
+.group-five {
+    background: #F5F7FA;
+    /*background: #48CFAD;*/
+}
+
+.group-six {
+    /*background: #4FC1E9;*/
+}
+
+.group-seven {
+    background: #F5F7FA;
+    /*background: #5D9CEC;*/
+}
+
+.group-submit {
+    /*background: #EC87C0;*/
+    padding-bottom: 1.5rem;
+}
+.group-submit input[type=submit]{
+    width:100%;
+}
+
+.required-reading {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-top: inset 8px rgba(0, 0, 0, 0.1);
+}
+.required-reading label{
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+#required-readme{
+    zoom:1.5;
+}
+
+#new-form {
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+    opacity: 1;
+
+    margin-bottom:0;
+}
+
+#new-form.disabled {
+    pointer-events: none;
+    position: relative;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: #ddd;
+    content: '';
+    /*-webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;*/
+    /*transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;*/
+
+    opacity: 0.25;
+
+}
+

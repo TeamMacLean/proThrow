@@ -1,0 +1,19 @@
+{
+  "name": "proThrow",
+  "version": "0.0.0",
+  "homepage": "https://github.com/wookoouk/proThrow",
+  "authors": [
+    "Martin Page <wookoouk@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "terrier": "*"
+  }
+}

@@ -1,0 +1,343 @@
+<% include head.ejs %>
+
+
+<div class="required-reading">
+    <div class="container">
+
+        <h2 class="center">Sample Preparation</h2>
+
+        <h3>In gel - Gel slices:</h3>
+
+        <p>Please cut gel bands into cubes (approx. 2-3mm) so that they sit at the base of the tube. Do not mash the gel
+            into very tiny pieces as these can block the autosampler.
+            Do not expose the gels to dust/hair/skin contamination. Use gloves, clean containers, clean scalpel,
+            dust-free solutions throughout the procedure.</p>
+
+        <h3>In solution - Precipitates:</h3>
+
+        <p>Please spin down your precipitates in a final 80% of acetone wash.
+            If other procedure is used, please come to discuss before the sample submission.</p>
+
+        <p>In general use as pure chemicals in the sample preparation procedure as possible. Old chemicals of dubious
+            origin typically contain detergents, polymers (e.g. PEG) and other “chemical background” that can severely
+            compromise LC-MS performance.
+
+            Please state (below) which detergents you have used at ANY stage of your sample preparation – including the
+            initial extraction buffer. This is critical as some detergents contaminate HPLC column, the mass spec and
+            reduce its performance for everyone. Among the known problematic compounds belong commonly used SDS,
+            Triton-X-100, Tween and PEG.</p>
+
+        <span class="bold">Before submitting samples containing the above mentioned come to discuss clean up procedure.</span>
+
+        <h3>DIY digest</h3>
+
+        <p>Please note that we may ask you to help with protein digests. This contribution is usually asked in case of
+            long term projects, with submission of 20+ samples, or when temporary overload of samples to process occurs.
+            Protocol</p>
+
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="required-readme"> I have completed the above
+            </label>
+        </div>
+
+    </div>
+</div>
+
+<form action="/new" method="post" class="disabled" id="new-form">
+
+    <div class="group group-one">
+        <div class="container">
+
+            <fieldset>
+                <img src="/img/Eyedropper-Tool.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Species</label>
+                    <select required>
+                        <option>
+                            Arabidopsis
+                        </option>
+                        <option>
+                            Nicotiana benthamiana
+                        </option>
+                        <option>
+                            tamato
+                        </option>
+                        <option>
+                            medicago
+                        </option>
+                        <option>
+                            rice
+                        </option>
+                        <option>
+                            poplar
+                        </option>
+                        <option>
+                            phytopthora
+                        </option>
+                        <option>
+                            magnaporte
+                        </option>
+                        <option>
+                            tobacco
+                        </option>
+
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Preferred database for searches</label>
+                    <select required>
+                        <option>Arabidopsis</option>
+                        <option>Nicotiana benthamiana</option>
+                        <option>tamato</option>
+                        <option>medicago</option>
+                        <option>rice</option>
+                        <option>poplar</option>
+                        <option>phytopthora</option>
+                        <option>magnaporte</option>
+                        <option>tobacco</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Tissue</label>
+                    <select required>
+                        <option>seedlings</option>
+                        <option>leaves</option>
+                        <option>rosette</option>
+                        <option>roots</option>
+                        <option>roots</option>
+                        <option>cell culture</option>
+                        <option>callus</option>
+                        <option>flower</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Tissue age</label>
+
+                    <div class="row">
+                        <div class="col6">
+                            <input type="number" required>
+                        </div>
+                        <div class="col6">
+                            <select required>
+                                <option>days</option>
+                                <option>weeks</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="form-row">
+                    <label>Growth conditions</label>
+                    <select required>
+                        <option>plate</option>
+                        <option>liquid</option>
+                        <option>6well</option>
+                        <option>soil grown</option>
+                        <option>hydrophonics</option>
+                    </select>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+
+    <div class="group group-two">
+        <div class="container">
+            <fieldset>
+                <img src="/img/Wash-Cold.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Sample preparation</label>
+                    <select required>
+                        <option>crude extract</option>
+                        <option>microsomal</option>
+                        <option>plasma membrane</option>
+                        <option>IP</option>
+                    </select>
+                </div>
+
+                <p>*free text fields will go here*</p>
+            </fieldset>
+
+        </div>
+    </div>
+
+    <div class="group group-three">
+        <div class="container">
+
+            <fieldset>
+                <img src="/img/Properties.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Type of analysis</label>
+                    <select required>
+                        <option>discovery</option>
+                        <option>SRM</option>
+                        <option>PRM</option>
+                        <option>DIA</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Quantitave analysis required</label>
+                    <select required>
+                        <option>none</option>
+                        <option>semi</option>
+                        <option>relative</option>
+                        <option>absolute</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Type of labeling</label>
+                    <select required>
+                        <option>label-free</option>
+                        <option>post-extraction</option>
+                        <option>metabolic</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Label used</label>
+                    <select required>
+                        <option>none (added due to label-free option above)</option>
+                        <option>TMT0</option>
+                        <option>TMT6</option>
+                        <option>TMT10</option>
+                        <option>iTRAQ</option>
+                        <option>15N</option>
+                    </select>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+    <div class="group group-four">
+        <div class="container">
+
+            <fieldset>
+                <img src="/img/Hue.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Digestion</label>
+                    <select required>
+                        <option>Trypsin</option>
+                        <option>AspN</option>
+                        <option>Trypsin/AspN</option>
+                        <option>LysC</option>
+                        <option>LysC/Tryp(Trypsin?)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Type of PTM</label>
+                    <select required>
+                        <option>all</option>
+                        <option>non-modified</option>
+                        <option>phosphorylation</option>
+                        <option>acetylation</option>
+                        <option>Ubiquitination</option>
+                        <option>glycosylation</option>
+                        <option>polyadenine ribosylation</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Type digestion</label>
+                    <select required>
+                        <option>in gel</option>
+                        <option>in solution</option>
+                        <option>on beads</option>
+                    </select>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+
+    <div class="group group-five">
+        <div class="container">
+
+            <fieldset>
+                <img src="/img/Right-Align-Txt.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Sequence information</label>
+                    <input type="text" required>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+
+    <div class="group group-six">
+        <div class="container">
+
+            <fieldset>
+                <img src="/img/Guides.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Preferred Order</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-row">
+                    <label>Sample number</label>
+                    <input type="number" min="0" max="150" required>
+                </div>
+                <div class="form-row">
+                    <label>Sample description</label>
+                    <input type="text" required>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+    <div class="group group-seven">
+        <div class="container">
+
+            <fieldset>
+
+                <img src="/img/Attachment.png" class="center">
+
+                <h3 class="group-label">Group Name</h3>
+
+                <div class="form-row">
+                    <label>Supporting images</label>
+                    <input type="file" required>
+                </div>
+                <div class="form-row">
+                    <label>Supporting image description</label>
+                    <input type="text" required>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+
+    <div class="group group-submit">
+        <div class="container">
+
+            <input type="submit" class="success">
+        </div>
+    </div>
+
+
+</form>
+
+<% include foot.ejs %>
