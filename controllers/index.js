@@ -1,3 +1,6 @@
+var Request = require('../models/request');
+var UUID = require('../util/uuid');
+
 var index = {};
 
 index.index = function (req, res, next) {
@@ -6,6 +9,43 @@ index.index = function (req, res, next) {
 
 index.new = function (req, res, next) {
   return res.render('new');
+};
+
+index.newPost = function (req, res, next) {
+
+  UUID.generate(6, function (uuid) {
+
+    var request = new Request({
+      uuid: uuid,
+      species: req.body.species,
+      searchDatabase: req.body.searchDatabase,
+      tissue: req.body.tissue,
+      tissueAgeNum: req.body.tissueAgeNum,
+      tissueAgeType: req.body.tissueAgeType,
+      growthConditions: req.body.growthConditions,
+      samplePrep: req.body.samplePrep,
+      analysisType: req.body.analysisType,
+      quantitativeAnalysisRequired: req.body.quantitativeAnalysisRequired,
+      typeOfLabeling: req.body.typeOfLabeling,
+      labelUsed: req.body.labelUsed,
+      digestion: req.body.digestion,
+      typeOfPTM: req.body.typeOfPTM,
+      typeOfDigestion: req.body.typeOfDigestion,
+      sequenceInfo: req.body.sequenceInfo,
+      preferredOrder: req.body.preferredOrder,
+      sampleNumber: req.body.sampleNumber,
+      sampleDescription: req.body.sampleDescription,
+      supportingImages: req.body.supportingImages,
+      supportingImageDescription: req.body.supportingImageDescription
+    });
+
+    request.save().then(function (doc) {
+      res.render('newPost', {uuid: doc.uuid});
+    }).error(function (err) {
+      console.log(err);
+      res.send(err)
+    });
+  });
 };
 
 module.exports = index;

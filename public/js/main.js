@@ -2,27 +2,24 @@ var requiredCheckbox = document.getElementById('required-readme');
 var form = document.getElementById('new-form');
 var className = 'disabled';
 
-if(form && requiredCheckbox){
+if (form && requiredCheckbox) {
   addTheListener();
   checkCheckBox();
 }
 
-function addTheListener(){
-  requiredCheckbox.addEventListener('change', function () {
-    var el = form;
-    if (this.checked) {
-      removeClass(el);
-      form.scrollIntoView();
-    } else {
-      addClass(el);
-    }
-  });
+function addTheListener() {
+  requiredCheckbox.addEventListener('change', checkCheckBox);
 }
 
-function checkCheckBox(){
-
+function checkCheckBox() {
+  var el = form;
+  if (requiredCheckbox.checked) {
+    removeClass(el);
+    form.scrollIntoView();
+  } else {
+    addClass(el);
+  }
 }
-
 
 
 function addClass(el) {

@@ -8,8 +8,6 @@ router.route('/')
 
 router.route('/new')
   .get(index.new)
-  .post(function (req, res) {
-    res.send('not ready yet');
-  });
+  .post(index.newPost);
 
 module.exports = router;

@@ -2,7 +2,7 @@ body {
     margin-bottom: 24px;
 }
 
-.bar h1{
+.bar h1 {
     font-weight: 200;
     /*font-weight: 900;*/
 }
@@ -16,16 +16,9 @@ body {
     margin-bottom: .8rem;
 }
 
-.bar {
-    /*margin-bottom: 20px;*/
-}
-
-
-
 .group {
-    padding-top: 1.5rem;
-    /*border-bottom: inset 4px rgba(0, 0, 0, 0.1);*/
-    border-top: inset 8px rgba(0, 0, 0, 0.1);
+    padding-top: 2rem;
+    border-top: inset 1px rgba(0, 0, 0, 0.05);
 }
 
 .group-label {
@@ -33,57 +26,12 @@ body {
     text-align: center;
 }
 
-.group-one {
+.zebra {
     background: #F5F7FA;
-    /*background: #ED5565;*/
-}
-
-.group-two {
-    /*background: #FC6E51;*/
-}
-
-.group-three {
-    background: #F5F7FA;
-    /*background: #FFCE54;*/
-}
-
-.group-four {
-    /*background: #A0D468;*/
-}
-
-.group-five {
-    background: #F5F7FA;
-    /*background: #48CFAD;*/
-}
-
-.group-six {
-    /*background: #4FC1E9;*/
-}
-
-.group-seven {
-    background: #F5F7FA;
-    /*background: #5D9CEC;*/
 }
 
 .group-submit {
-    /*background: #EC87C0;*/
     padding-bottom: 1.5rem;
-}
-.group-submit input[type=submit]{
-    width:100%;
-}
-
-.required-reading {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-.required-reading label{
-    margin-top: 20px;
-    text-align: center;
-    font-size: 1.2rem;
-}
-#required-readme{
-    zoom:1.5;
 }
 
 #new-form {
@@ -91,7 +39,7 @@ body {
     transition: opacity 0.5s;
     opacity: 1;
 
-    margin-bottom:0;
+    margin-bottom: 0;
 }
 
 #new-form.disabled {
@@ -110,3 +58,52 @@ body {
 
 }
 
+.mb0 {
+    margin-bottom: 0;
+}
+
+.mb1 {
+    margin-bottom: 1rem;
+}
+
+.mb2 {
+    margin-bottom: 2rem;
+}
+
+.mt0 {
+    margin-top: 0;
+}
+
+.mt1 {
+    margin-top: 1rem;
+}
+
+.mt2 {
+    margin-top: 2rem;
+}
+
+.m0 {
+    margin: 0;
+}
+
+/*.print-label {*/
+    /*/!*background: orange;*!/*/
+    /*border: 4px dashed black;*/
+    /*display: inline-block;*/
+    /*font-size: 2em;*/
+    /*font-weight: 700;*/
+    /*padding: 8px;*/
+/*}*/
+
+/*.print-label .print-label-block {*/
+    /*float: left;*/
+/*}*/
+
+/*.print-label .print-label-block:nth-of-type(2), .print-label .print-label-block:nth-of-type(3){*/
+    /*margin-left: 2rem;*/
+/*}*/
+
+.huge {
+    font-weight: 900;
+    font-size: 3rem;
+}

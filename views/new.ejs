@@ -1,7 +1,7 @@
 <% include head.ejs %>
 
 
-<div class="required-reading">
+<div class="required-reading mt2 mb2">
     <div class="container">
 
         <h2 class="center">Sample Preparation</h2>
@@ -36,7 +36,7 @@
             Protocol</p>
 
 
-        <div class="checkbox">
+        <div class="checkbox mt2 center">
             <label>
                 <input type="checkbox" id="required-readme"> I have completed the above
             </label>
@@ -47,7 +47,7 @@
 
 <form action="/new" method="post" class="disabled" id="new-form">
 
-    <div class="group group-one">
+    <div class="group zebra">
         <div class="container">
 
             <fieldset>
@@ -57,7 +57,7 @@
 
                 <div class="form-row">
                     <label>Species</label>
-                    <select required>
+                    <select id="species" name="species" required>
                         <option>
                             Arabidopsis
                         </option>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="form-row">
                     <label>Preferred database for searches</label>
-                    <select required>
+                    <select id="searchDatabase" name="searchDatabase" required>
                         <option>Arabidopsis</option>
                         <option>Nicotiana benthamiana</option>
                         <option>tamato</option>
@@ -104,7 +104,7 @@
                 </div>
                 <div class="form-row">
                     <label>Tissue</label>
-                    <select required>
+                    <select id="tissue" name="tissue" required>
                         <option>seedlings</option>
                         <option>leaves</option>
                         <option>rosette</option>
@@ -120,10 +120,10 @@
 
                     <div class="row">
                         <div class="col6">
-                            <input type="number" required>
+                            <input type="number" id="tissueAgeNum" name="tissueAgeNum" required>
                         </div>
                         <div class="col6">
-                            <select required>
+                            <select id="tissueAgeType" name="tissueAgeType" required>
                                 <option>days</option>
                                 <option>weeks</option>
                             </select>
@@ -134,7 +134,7 @@
                 </div>
                 <div class="form-row">
                     <label>Growth conditions</label>
-                    <select required>
+                    <select id="growthConditions" name="growthConditions" required>
                         <option>plate</option>
                         <option>liquid</option>
                         <option>6well</option>
@@ -157,7 +157,7 @@
 
                 <div class="form-row">
                     <label>Sample preparation</label>
-                    <select required>
+                    <select id="samplePrep" name="samplePrep" required>
                         <option>crude extract</option>
                         <option>microsomal</option>
                         <option>plasma membrane</option>
@@ -171,7 +171,7 @@
         </div>
     </div>
 
-    <div class="group group-three">
+    <div class="group zebra">
         <div class="container">
 
             <fieldset>
@@ -181,7 +181,7 @@
 
                 <div class="form-row">
                     <label>Type of analysis</label>
-                    <select required>
+                    <select id="analysisType" name="analysisType" required>
                         <option>discovery</option>
                         <option>SRM</option>
                         <option>PRM</option>
@@ -189,8 +189,8 @@
                     </select>
                 </div>
                 <div class="form-row">
-                    <label>Quantitave analysis required</label>
-                    <select required>
+                    <label>Quantitative analysis required</label>
+                    <select id="quantitativeAnalysisRequired" name="quantitativeAnalysisRequired" required>
                         <option>none</option>
                         <option>semi</option>
                         <option>relative</option>
@@ -199,7 +199,7 @@
                 </div>
                 <div class="form-row">
                     <label>Type of labeling</label>
-                    <select required>
+                    <select id="typeOfLabeling" name="typeOfLabeling" required>
                         <option>label-free</option>
                         <option>post-extraction</option>
                         <option>metabolic</option>
@@ -207,7 +207,7 @@
                 </div>
                 <div class="form-row">
                     <label>Label used</label>
-                    <select required>
+                    <select id="labelUsed" name="labelUsed" required>
                         <option>none (added due to label-free option above)</option>
                         <option>TMT0</option>
                         <option>TMT6</option>
@@ -231,7 +231,7 @@
 
                 <div class="form-row">
                     <label>Digestion</label>
-                    <select required>
+                    <select id="digestion" name="digestion" required>
                         <option>Trypsin</option>
                         <option>AspN</option>
                         <option>Trypsin/AspN</option>
@@ -241,7 +241,7 @@
                 </div>
                 <div class="form-row">
                     <label>Type of PTM</label>
-                    <select required>
+                    <select id="typeOfPTM" name="typeOfPTM" required>
                         <option>all</option>
                         <option>non-modified</option>
                         <option>phosphorylation</option>
@@ -253,7 +253,7 @@
                 </div>
                 <div class="form-row">
                     <label>Type digestion</label>
-                    <select required>
+                    <select id="typeOfDigestion" name="typeOfDigestion" required>
                         <option>in gel</option>
                         <option>in solution</option>
                         <option>on beads</option>
@@ -265,7 +265,7 @@
     </div>
 
 
-    <div class="group group-five">
+    <div class="group zebra">
         <div class="container">
 
             <fieldset>
@@ -275,7 +275,7 @@
 
                 <div class="form-row">
                     <label>Sequence information</label>
-                    <input type="text" required>
+                    <input type="text" id="sequenceInfo" name="sequenceInfo" required>
                 </div>
             </fieldset>
 
@@ -293,22 +293,22 @@
 
                 <div class="form-row">
                     <label>Preferred Order</label>
-                    <input type="text" required>
+                    <input type="text" id="preferredOrder" name="preferredOrder" required>
                 </div>
                 <div class="form-row">
                     <label>Sample number</label>
-                    <input type="number" min="0" max="150" required>
+                    <input type="number" min="0" max="150" id="sampleNumber" name="sampleNumber" required>
                 </div>
                 <div class="form-row">
                     <label>Sample description</label>
-                    <input type="text" required>
+                    <input type="text" id="sampleDescription" name="sampleDescription" required>
                 </div>
             </fieldset>
 
         </div>
     </div>
 
-    <div class="group group-seven">
+    <div class="group zebra">
         <div class="container">
 
             <fieldset>
@@ -319,11 +319,11 @@
 
                 <div class="form-row">
                     <label>Supporting images</label>
-                    <input type="file" required>
+                    <input type="file" id="supportingImages" name="supportingImages" required>
                 </div>
                 <div class="form-row">
                     <label>Supporting image description</label>
-                    <input type="text" required>
+                    <input type="text" id="supportingImageDescription" name="supportingImageDescription" required>
                 </div>
             </fieldset>
 
