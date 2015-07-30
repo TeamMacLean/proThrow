@@ -1,0 +1,29 @@
+<% include ./adminHead.ejs %>
+
+<div class="container">
+
+    <div class="container">
+
+        <% if(incompleteRequests && incompleteRequests.length){ %>
+        <h3>Incomplete Requests</h3>
+        <ul>
+            <% incompleteRequests.map(function(ucr){ %>
+            <li><a href="/admin/request/<%- ucr.uuid %>"><%- ucr.uuid %></a></li>
+            <% }); %>
+        </ul>
+        <% } %>
+
+        <% if(completedRequests && completedRequests.length){ %>
+        <h3>Completed Requests</h3>
+        <ul>
+            <% completedRequests.map(function(cr){ %>
+            <li><a href="/admin/request/<%- cr.uuid %>"><%- cr.uuid %></a></li>
+            <% }); %>
+        </ul>
+        <% } %>
+
+    </div>
+
+
+</div>
+<% include ../foot.ejs %>

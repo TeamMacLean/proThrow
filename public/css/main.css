@@ -35,8 +35,8 @@ body {
 }
 
 #new-form {
-    -webkit-transition: opacity 0.5s;
-    transition: opacity 0.5s;
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
     opacity: 1;
 
     margin-bottom: 0;

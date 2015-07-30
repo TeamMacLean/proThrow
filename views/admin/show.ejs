@@ -1,0 +1,27 @@
+<% include ./adminHead.ejs %>
+
+<div class="container">
+
+    <div class="container">
+        <h2><%- request.uuid %></h2>
+
+        <label for="complete-toggle">Complete</label>
+        <input id="complete-toggle" data-uuid="<%- request.uuid %>" class="toggle toggle-round" type="checkbox"
+               <% if(request.complete){ %>checked
+                <% } %>
+                >
+        <label for="complete-toggle"></label>
+
+        <% for(var key in request){ %>
+        <% if(request.hasOwnProperty(key)) { %>
+        <label><%- key %></label>
+
+        <p><%- request[key] %></p>
+        <% } %>
+        <% } %>
+
+    </div>
+
+
+</div>
+<% include ../foot.ejs %>

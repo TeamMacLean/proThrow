@@ -4,6 +4,7 @@ var type = thinky.type;
 var Request = thinky.createModel("Request", {
   id: type.string(),
   uuid: type.string(),
+  complete: type.boolean().default(false),
   species: type.string().required(),
   searchDatabase: type.string().required(),
   tissue: type.string().required(),

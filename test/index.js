@@ -1,7 +1,6 @@
 var request = require('supertest');
 
 var app = require('../app');
-var index = require('../controllers/index');
 
 describe('index controller', function () {
   describe('index', function () {

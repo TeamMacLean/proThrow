@@ -14,6 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "terrier": "*"
+    "terrier": "*",
+    "jquery": "~2.1.4"
   }
 }
