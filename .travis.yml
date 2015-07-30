@@ -10,4 +10,4 @@ node_js:
 services:
   - rethinkdb
 before_script:
-  - sudo add-apt-repository ppa:rethinkdb/ppa && sudo apt-get update && sudo apt-get install rethinkdb
+  - sudo add-apt-repository ppa:rethinkdb/ppa -y && sudo apt-get update && sudo apt-get install rethinkdb
