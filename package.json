@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server",
-    "test": "mocha -R nyan"
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "~1.12.4",
