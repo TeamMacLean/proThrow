@@ -47,6 +47,35 @@ admin.toggle = function (req, res, next) {
       }
 
     });
-}
+};
+
+admin.addNote = function (req, res, next) {
+
+  var text = req.body.text;
+
+  var requestUUID = req.params.uuid;
+  Request.filter({uuid: requestUUID})
+    .run()
+    .then(function (requests) {
+      if (requests.length) {
+        var req = requests[0];
+
+
+        //if(!req.notes){
+        //  req.notes = [];
+        //}
+
+        req.notes.push(text);
+
+        req.save();
+        res.send('done');
+      } else {
+        res.send('bad');
+      }
+
+    });
+
+
+};
 
 module.exports = admin;

@@ -5,20 +5,49 @@
     <div class="container">
         <h2><%- request.uuid %></h2>
 
-        <label for="complete-toggle">Complete</label>
-        <input id="complete-toggle" data-uuid="<%- request.uuid %>" class="toggle toggle-round" type="checkbox"
-               <% if(request.complete){ %>checked
-                <% } %>
-                >
-        <label for="complete-toggle"></label>
+        <fieldset>
+            <label for="complete-toggle">Complete</label>
+            <input id="complete-toggle" data-uuid="<%- request.uuid %>" class="toggle toggle-round" type="checkbox"
+                   <% if(request.complete){ %>checked
+                    <% } %>
+                    >
+            <label for="complete-toggle"></label>
+        </fieldset>
 
         <% for(var key in request){ %>
-        <% if(request.hasOwnProperty(key)) { %>
-        <label><%- key %></label>
 
-        <p><%- request[key] %></p>
+        <% if(request.hasOwnProperty(key)) { %>
+        <fieldset>
+            <label><%- key %></label>
+
+            <p><%- request[key] %></p>
+        </fieldset>
         <% } %>
+
         <% } %>
+
+        <fieldset>
+            <label>Add node</label>
+
+            <div class="input-group">
+                <input type="text" id="note-text">
+
+                <div class="input-group-btn">
+                    <button class="primary" id="note-button" data-uuid="<%- request.uuid %>">Add</button>
+                </div>
+            </div>
+            <div id="notes">
+                <% if (request.notes){ %>
+                <ul>
+                    <% request.notes.map(function(note){ %>
+
+                    <li><%- note %></li>
+
+                    <% }); %>
+                </ul>
+                <% } %>
+            </div>
+        </fieldset>
 
     </div>
 

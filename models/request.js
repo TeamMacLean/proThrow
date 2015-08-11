@@ -24,6 +24,8 @@ var Request = thinky.createModel("Request", {
   sampleNumber: type.string().required(),
   sampleDescription: type.string().required(),
   supportingImages: type.string().required(),
-  supportingImageDescription: type.string().required()
+  supportingImageDescription: type.string().required(),
+  notes: type.array().default([]).schema(type.string())
+  //notes: [type.string()]
 });
 module.exports = Request;

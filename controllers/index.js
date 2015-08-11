@@ -1,7 +1,14 @@
 var Request = require('../models/request');
 var UUID = require('../util/uuid');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
 var index = {};
+
+var transporter = nodemailer.createTransport(smtpTransport({
+  host: 'mail.nbi.ac.uk',
+  port: 25
+}));
 
 index.index = function (req, res, next) {
   return res.render('index');
@@ -40,6 +47,9 @@ index.newPost = function (req, res, next) {
     });
 
     request.save().then(function (doc) {
+
+      sendEmail('new job, ' + uuid);
+
       res.render('newPost', {uuid: doc.uuid});
     }).error(function (err) {
       console.log(err);
@@ -47,5 +57,20 @@ index.newPost = function (req, res, next) {
     });
   });
 };
+
+function sendEmail(text) {
+  transporter.sendMail({
+    from: 'prothrow@tsl.ac.uk',
+    to: 'martin.page@tsl.ac.uk',
+    subject: 'New request (prothrow)',
+    text: text + '\n\n'
+  }, function (error, info) {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log('Message sent:', info.response);
+    }
+  });
+}
 
 module.exports = index;

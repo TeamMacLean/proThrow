@@ -3,7 +3,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 
 var indexRoute = require('./routes/index');
-var adminRoute = require('./routes/index');
+var adminRoute = require('./routes/admin');
 
 var app = express();
 
@@ -15,6 +15,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRoute);
-app.use('/admin', adminRoute);
+app.use('/', adminRoute);
 
 module.exports = app;

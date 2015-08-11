@@ -22,6 +22,12 @@
         </ul>
         <% } %>
 
+        <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length) { %>
+
+        <h2>No requests submitted yet.</h2>
+
+        <% } %>
+
     </div>
 
 

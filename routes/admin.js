@@ -12,4 +12,6 @@ router.route('/admin/request/:uuid')
 router.route('/admin/request/:uuid/toggle')
   .get(admin.toggle);
 
+router.route('/admin/request/:uuid/addnote')
+  .post(admin.addNote);
 module.exports = router;

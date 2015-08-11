@@ -9,6 +9,7 @@ if (form && requiredCheckbox) {
 
 //TODO check if on admin show page
 updateCompleteStatus();
+addNote();
 
 function addTheListener() {
   requiredCheckbox.on('change', checkCheckBox);
@@ -44,15 +45,33 @@ function checkCheckBox() {
 
 function updateCompleteStatus() {
   var toggle = $('#complete-toggle');
-
+  var url = '/admin/request/' + toggle.data('uuid') + '/toggle';
   toggle.on('change', function (e) {
-    console.log('toggle', e);
-
-
-    var url = '/admin/request/' + toggle.data('uuid') + '/toggle';
+    //console.log('toggle', e);
 
     $.ajax({
       url: url
+    });
+
+  })
+}
+
+function addNote() {
+  var noteText = $('#note-text');
+  var noteButton = $('#note-button');
+  var notes = $('#notes');
+
+  var url = '/admin/request/' + noteButton.data('uuid') + '/addnote';
+
+  noteButton.on('click', function (e) {
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: {text: noteText.val()},
+      success: function () {
+        notes.find('ul').append('<li>' + noteText.val() + '</li>')
+      }
     });
 
   })

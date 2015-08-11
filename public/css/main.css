@@ -87,23 +87,24 @@ body {
 }
 
 /*.print-label {*/
-    /*/!*background: orange;*!/*/
-    /*border: 4px dashed black;*/
-    /*display: inline-block;*/
-    /*font-size: 2em;*/
-    /*font-weight: 700;*/
-    /*padding: 8px;*/
+/*/!*background: orange;*!/*/
+/*border: 4px dashed black;*/
+/*display: inline-block;*/
+/*font-size: 2em;*/
+/*font-weight: 700;*/
+/*padding: 8px;*/
 /*}*/
 
 /*.print-label .print-label-block {*/
-    /*float: left;*/
+/*float: left;*/
 /*}*/
 
 /*.print-label .print-label-block:nth-of-type(2), .print-label .print-label-block:nth-of-type(3){*/
-    /*margin-left: 2rem;*/
+/*margin-left: 2rem;*/
 /*}*/
 
 .huge {
     font-weight: 900;
     font-size: 3rem;
 }
+
