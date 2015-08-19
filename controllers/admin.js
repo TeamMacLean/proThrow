@@ -4,17 +4,23 @@ var admin = {};
 
 admin.index = function (req, res, next) {
 
-  Request.filter({complete: false})
+  Request
     .run()
-    .then(function (incompleteRequests) {
-      Request.filter({complete: true})
-        .run()
-        .then(function (completedRequests) {
-          return res.render('admin/index', {
-            completedRequests: completedRequests,
-            incompleteRequests: incompleteRequests
-          });
-        });
+    .then(function (requests) {
+      var completedRequests = [];
+      var incompleteRequests = [];
+      requests.map(function (m) {
+        if (m.complete) {
+          completedRequests.push(m);
+        } else {
+          incompleteRequests.push(m);
+        }
+      });
+
+      return res.render('admin/index', {
+        completedRequests: completedRequests,
+        incompleteRequests: incompleteRequests
+      });
     });
 };
 
