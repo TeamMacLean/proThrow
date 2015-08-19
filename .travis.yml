@@ -13,4 +13,5 @@ before_install:
   - sudo apt-get -y --force-yes install rethinkdb
 
 before_script:
+    - cp config-example.json config.json
     - rethinkdb --daemon
