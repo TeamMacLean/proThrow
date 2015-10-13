@@ -28,4 +28,7 @@ var Request = thinky.createModel("Request", {
   notes: type.array().default([]).schema(type.string())
   //notes: [type.string()]
 });
+
+
+
 module.exports = Request;
