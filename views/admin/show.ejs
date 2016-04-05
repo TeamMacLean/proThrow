@@ -17,11 +17,8 @@
         <% for(var key in request){ %>
 
         <% if(request.hasOwnProperty(key)) { %>
-        <fieldset>
             <label><%- key %></label>
-
             <p><%- request[key] %></p>
-        </fieldset>
         <% } %>
 
         <% } %>

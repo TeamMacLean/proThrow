@@ -1,24 +1,57 @@
 body {
-    margin-bottom: 24px;
+    /*margin-bottom: 24px;*/
 }
 
-.bar h1 {
-    font-weight: 200;
-    /*font-weight: 900;*/
+.dragg, .dragg label {
+    /*cursor: move;*/
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 }
 
-#footer {
-    position: fixed;
-    bottom: 0;
-}
-
-.form-row {
-    margin-bottom: .8rem;
-}
+/*.form-row {*/
+/*margin-bottom: .8rem;*/
+/*}*/
 
 .group {
-    padding-top: 2rem;
-    border-top: inset 1px rgba(0, 0, 0, 0.05);
+    padding: 2rem 0;
+    border: inset 1px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    margin: 20px 0;
+    /*border-top: inset 1px rgba(0, 0, 0, 0.1);*/
+
+    /*-webkit-box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.15);*/
+    /*-moz-box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.15);*/
+    /*box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.15);*/
+}
+
+.group img {
+    display: block;
+    margin: auto;
+}
+
+.group label{
+    margin-bottom: 0;
+}
+
+.group .badge {
+    position: relative;
+    top: -15px;
+    padding: 4px;
+    background: #ED5565;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.5rem;
+
+    height: 8px;
+    width: 8px;
+    display: block;
+}
+
+.group .badge.complete {
+    background: #A0D468;
 }
 
 .group-label {
@@ -39,7 +72,7 @@ body {
     transition: opacity 1s;
     opacity: 1;
 
-    margin-bottom: 0;
+    padding-bottom: 20px;
 }
 
 #new-form.disabled {
@@ -58,33 +91,33 @@ body {
 
 }
 
-.mb0 {
-    margin-bottom: 0;
-}
+/*.mb0 {*/
+/*margin-bottom: 0;*/
+/*}*/
 
-.mb1 {
-    margin-bottom: 1rem;
-}
+/*.mb1 {*/
+/*margin-bottom: 1rem;*/
+/*}*/
 
-.mb2 {
-    margin-bottom: 2rem;
-}
+/*.mb2 {*/
+/*margin-bottom: 2rem;*/
+/*}*/
 
-.mt0 {
-    margin-top: 0;
-}
+/*.mt0 {*/
+/*margin-top: 0;*/
+/*}*/
 
-.mt1 {
-    margin-top: 1rem;
-}
+/*.mt1 {*/
+/*margin-top: 1rem;*/
+/*}*/
 
-.mt2 {
-    margin-top: 2rem;
-}
+/*.mt2 {*/
+/*margin-top: 2rem;*/
+/*}*/
 
-.m0 {
-    margin: 0;
-}
+/*.m0 {*/
+/*margin: 0;*/
+/*}*/
 
 /*.print-label {*/
 /*/!*background: orange;*!/*/
@@ -103,8 +136,17 @@ body {
 /*margin-left: 2rem;*/
 /*}*/
 
-.huge {
-    font-weight: 900;
-    font-size: 3rem;
-}
+/*.huge {*/
+/*font-weight: 900;*/
+/*font-size: 3rem;*/
+/*}*/
 
+/*.tip, .tipso_style {*/
+/*color: #3BAFDA;*/
+/*font-size: 0.8rem;*/
+/*border-bottom: none;*/
+/*}*/
+
+.bold {
+    font-weight: bold;
+}

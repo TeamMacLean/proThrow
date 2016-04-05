@@ -1,11 +1,46 @@
-<footer id="footer">
-    <div class="container">
-        <span>Made with <span class="heart"><3</span> by <a href="http://danmaclean.info">Team MacLean</a></span>
-    </div>
-</footer>
+<!--<footer id="footer">-->
+<!--<div class="container">-->
+<!--<span>Made with <span class="heart"><3</span> by <a href="http://danmaclean.info">Team MacLean</a></span>-->
+<!--</div>-->
+<!--</footer>-->
 </main>
 
 <script src="/components/jquery/dist/jquery.min.js"></script>
-<script src="/components/terrier/dist/terrier.js"></script>
+<script src="/components/tether/dist/js/tether.min.js"></script>
+<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/components/dragula.js/dist/dragula.min.js"></script>
+<!--<script src="/components/tipso/src/tipso.min.js"></script>-->
 <script src="/js/main.js"></script>
+
+<script>
+    var drake = dragula({
+        isContainer: function (el) {
+            return el.classList.contains('dragg');
+        }
+    });
+</script>
+
+
+<script>
+
+//    $('.tip').tipso({
+////        position: 'top',
+//        background: '#4FC1E9',
+////        color: '#eee',
+//        useTitle: false,
+//        delay:0
+////        size: 'small'
+////        contentElementId: 'template_sample',
+////        templateEngineFunc: function (content) {
+////            var compiled = _.template(content);
+////            var names = ['moa', 'sara', 'james', 'hugo', 'mehr'];
+////            return compiled({name: _.sample(names)});
+////        },
+////        onBeforeShow: function (ele, tipso) {
+////            ele.tipso('update', 'content', '');
+////        }
+//    });
+
+
+</script>
 </body>
