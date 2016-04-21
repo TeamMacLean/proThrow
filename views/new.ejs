@@ -36,17 +36,15 @@
             Protocol</p>
 
 
-        <div class="checkbox mt2 center">
-            <label>
-                <input type="checkbox" id="required-readme"> I have completed the above
-            </label>
-        </div>
-
     </div>
 </div>
 
-<form action="/new" method="post" class="disabled" id="new-form">
+<form action="/new" method="post" id="new-form">
     <div class="container">
+
+        <label>
+            <input type="checkbox" id="required-readme" required> I have completed the above
+        </label>
 
         <div class="row">
             <div class="col-md-6">
@@ -60,7 +58,7 @@
 
                             <div class="form-group">
                                 <label>Species <span data-icon="&#x74;" class="tip"
-                                                     data-tipso="This needs to be filled out"></span></label>
+                                                     data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="species" name="species" required>
                                     <option disabled selected value></option>
                                     <option>
@@ -95,7 +93,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Preferred database for searches <span data-icon="&#x74;" class="tip"
-                                                                             data-tipso="This needs to be filled out"></span></label>
+                                                                             data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="searchDatabase" name="searchDatabase" required>
                                     <option disabled selected value></option>
                                     <option>Arabidopsis</option>
@@ -111,7 +109,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Tissue <span data-icon="&#x74;" class="tip"
-                                                    data-tipso="This needs to be filled out"></span></label>
+                                                    data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="tissue" name="tissue" required>
                                     <option disabled selected value></option>
                                     <option>seedlings</option>
@@ -126,7 +124,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Tissue age <span data-icon="&#x74;" class="tip"
-                                                        data-tipso="This needs to be filled out"></span></label>
+                                                        data-toggle="tooltip" title="This needs to be filled out"></span></label>
 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -147,7 +145,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Growth conditions <span data-icon="&#x74;" class="tip"
-                                                               data-tipso="This needs to be filled out"></span></label>
+                                                               data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="growthConditions" name="growthConditions" required>
                                     <option disabled selected value></option>
                                     <option>plate</option>
@@ -172,7 +170,7 @@
 
                             <div class="form-group">
                                 <label>Type of analysis <span data-icon="&#x74;" class="tip"
-                                                              data-tipso="This needs to be filled out"></span></label>
+                                                              data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="analysisType" name="analysisType" required>
                                     <option disabled selected value></option>
                                     <option>discovery</option>
@@ -183,7 +181,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Type of PTM <span data-icon="&#x74;" class="tip"
-                                                         data-tipso="This needs to be filled out"></span></label>
+                                                         data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="typeOfPTM" name="typeOfPTM" required>
                                     <option disabled selected value></option>
                                     <option>all</option>
@@ -197,7 +195,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Quantitative analysis required <span data-icon="&#x74;" class="tip"
-                                                                            data-tipso="This needs to be filled out"></span></label>
+                                                                            data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="quantitativeAnalysisRequired"
                                         name="quantitativeAnalysisRequired" required>
                                     <option disabled selected value></option>
@@ -209,7 +207,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Type of labeling <span data-icon="&#x74;" class="tip"
-                                                              data-tipso="This needs to be filled out"></span></label>
+                                                              data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="typeOfLabeling" name="typeOfLabeling" required>
                                     <option disabled selected value></option>
                                     <option>label-free</option>
@@ -219,7 +217,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Label used <span data-icon="&#x74;" class="tip"
-                                                        data-tipso="This needs to be filled out"></span></label>
+                                                        data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="labelUsed" name="labelUsed" required>
                                     <option>none (added due to label-free option above)</option>
                                     <option disabled selected value></option>
@@ -249,13 +247,13 @@
 
                             <div class="form-group">
                                 <label>Supporting images <span data-icon="&#x74;" class="tip"
-                                                               data-tipso="This needs to be filled out"></span></label>
+                                                               data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <input class="form-control" type="file" id="supportingImages" name="supportingImages"
                                        required>
                             </div>
                             <div class="form-group">
                                 <label>Supporting image description <span data-icon="&#x74;" class="tip"
-                                                                          data-tipso="This needs to be filled out"></span></label>
+                                                                          data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <input class="form-control" type="text" id="supportingImageDescription"
                                        name="supportingImageDescription"
                                        required>
@@ -275,7 +273,7 @@
 
                             <div class="form-group">
                                 <label>Sample preparation <span data-icon="&#x74;" class="tip"
-                                                                data-tipso="This needs to be filled out"></span></label>
+                                                                data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <select class="form-control" id="samplePrep" name="samplePrep" required>
                                     <option disabled selected value></option>
                                     <option>crude extract</option>
@@ -302,7 +300,7 @@
 
                             <div class="form-group">
                                 <label>Sequence information <span data-icon="&#x74;" class="tip"
-                                                                  data-tipso="This needs to be filled out"></span></label>
+                                                                  data-toggle="tooltip" title="This needs to be filled out"></span></label>
                                 <input class="form-control" type="text" id="sequenceInfo" name="sequenceInfo" required>
                             </div>
                         </fieldset>
@@ -322,18 +320,17 @@
 
                 <div id="samples"></div>
 
+                <label><span data-icon="&#x2a;"></span> Drag to reorder items</label>
+
                 <div class="btn btn-primary-outline btn-block" id="addSample">Add Sample</div>
-
-                <label><span data-icon="&#x70;"></span> You can drag to reorder</label>
-
 
             </div>
         </div>
 
 
-        <div class="container">
-            <input type="submit" class="btn btn-success btn-block">
-        </div>
+        <!--<div class="container">-->
+        <input type="submit" class="btn btn-success btn-block">
+        <!--</div>-->
 
 
     </div>

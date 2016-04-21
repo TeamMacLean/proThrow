@@ -1,18 +1,20 @@
 var requiredCheckbox = $('#required-readme');
 var form = $('#new-form');
-var className = 'disabled';
+//var className = 'disabled';
 
 if (form && requiredCheckbox) {
-  addTheListener();
-  checkCheckBox();
   checkCompletion();
-
   sampleManager();
 
+  initToolTips();
 }
 
 updateCompleteStatus();
 addNote();
+
+function initToolTips() {
+  $('[data-toggle="tooltip"]').tooltip();
+}
 
 function checkCompletion() {
 
@@ -65,21 +67,6 @@ function checkCompletion() {
 }
 
 
-function addTheListener() {
-  requiredCheckbox.on('change', checkCheckBox);
-}
-
-function checkCheckBox() {
-  if (requiredCheckbox.is(':checked')) {
-    form.removeClass('disabled');
-    $('html, body').animate({
-      scrollTop: form.offset().top
-    }, 1000);
-  } else {
-    form.addClass('disabled');
-  }
-}
-
 function updateCompleteStatus() {
   var toggle = $('#complete-toggle');
   var url = '/admin/request/' + toggle.data('uuid') + '/toggle';
@@ -111,24 +98,45 @@ function sampleManager() {
 
   function addSample() {
     var aSample = `<div class="dragg">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Sample number <span data-icon="&#x74;" class="tip"
-                                                           data-tipso="This needs to be filled out"></span></label>
-                                <input class="form-control" type="number" min="0" max="150" id="sampleNumber" name="sampleNumber" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Sample description <span data-icon="&#x74;" class="tip"
-                                                                data-tipso="This needs to be filled out"></span></label>
-                                <input class="form-control" type="text" id="sampleDescription" name="sampleDescription" required>
-                            </div>
-                        </div>
+    <div class="row">
+
+        <div class="col-md-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Sample number <span data-icon="&#x74;" class="tip"
+                                                   data-tipso="This needs to be filled out"></span></label>
+                        <input class="form-control" type="number" min="0" max="150" id="sampleNumber"
+                               name="sampleNumber" required>
                     </div>
-                </div>`;
-    $('#samples').append(aSample);
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Sample description <span data-icon="&#x74;" class="tip"
+                                                        data-tipso="This needs to be filled out"></span></label>
+                        <input class="form-control" type="text" id="sampleDescription" name="sampleDescription"
+                               required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="removeSample">
+                <span data-icon="&#xe019;"></span>
+            </div>
+
+        </div>
+    </div>
+
+</div>`;
+
+    var $aSample = $(aSample);
+
+    $aSample.find('.removeSample').on('click', function () {
+      $aSample.remove();
+    });
+
+    $('#samples').append($aSample);
   }
 
   addSample();
