@@ -15,7 +15,10 @@
     "thinky": "^2.2.6"
   },
   "devDependencies": {
+    "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
     "mocha": "^2.4.5",
     "supertest": "^1.2.0"
   }
