@@ -9,3 +9,8 @@ dependencies:
 test:
   pre:
     - cp config-example.json config.json
+machine:
+  node:
+    version: 4.0.0
+    version: 5.0.0
+    version: 6.0.0
