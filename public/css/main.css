@@ -1,13 +1,32 @@
+html, body {
+    color:#414A51;
+}
+
+
+h1,h2,h3,h4,h5{
+    font-weight: 300;
+}
+
 .navbar {
     margin-bottom: 20px;
-    background-color: #83CEFF;
+    color: #FFFFFF;
+    background-color: #0098CE;
+}
+
+.navbar .navbar-brand{
+    color: #FFFFFF;
+    /*font-weight: 800;*/
+}
+.navbar .navbar-brand:hover{
+    color: #FFFFFF;
+    opacity: 0.9;
 }
 
 input, select {
     height: 38px;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
     height: inherit;
 }
 

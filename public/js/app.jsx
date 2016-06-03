@@ -1,3 +1,19 @@
+var Species = [
+    'Arabidopsis thaliana',
+    'Lotus japonicus',
+    'Medicago truncatula',
+    'Nicotiana benthamiana',
+    'Nicotiana tabacum',
+    'Oryza sativa',
+    'Populus',
+    'Solanum lycopersicum',
+    'Zea mays',
+    'Phytophthora infestans',
+    'Magnaporthe oryzae',
+    'Pseudomonas syringae'
+];
+
+
 var App = React.createClass({
     displayName: "app",
     componentDidMount: function componentDidMount() {
@@ -68,6 +84,8 @@ var App = React.createClass({
     // },
     render: function render() {
         var self = this;
+
+
         return (
             <form action="/new" method="post" id="new-form">
                 <div className="container">
@@ -93,34 +111,9 @@ var App = React.createClass({
                                             <select className="form-control" id="species" name="species" defaultValue=''
                                                     required>
                                                 <option disabled value=''/>
-                                                <option>
-                                                    Arabidopsis
-                                                </option>
-                                                <option>
-                                                    Nicotiana benthamiana
-                                                </option>
-                                                <option>
-                                                    tamato
-                                                </option>
-                                                <option>
-                                                    medicago
-                                                </option>
-                                                <option>
-                                                    rice
-                                                </option>
-                                                <option>
-                                                    poplar
-                                                </option>
-                                                <option>
-                                                    phytopthora
-                                                </option>
-                                                <option>
-                                                    magnaporte
-                                                </option>
-                                                <option>
-                                                    tobacco
-                                                </option>
-
+                                                {Species.map(function (object, i) {
+                                                    return <option key={i}>{object}</option>;
+                                                })}
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -131,15 +124,9 @@ var App = React.createClass({
                                             <select className="form-control" id="searchDatabase" name="searchDatabase"
                                                     required defaultValue=''>
                                                 <option disabled value=''/>
-                                                <option>Arabidopsis</option>
-                                                <option>Nicotiana benthamiana</option>
-                                                <option>tamato</option>
-                                                <option>medicago</option>
-                                                <option>rice</option>
-                                                <option>poplar</option>
-                                                <option>phytopthora</option>
-                                                <option>magnaporte</option>
-                                                <option>tobacco</option>
+                                                {Species.map(function (object, i) {
+                                                    return <option key={i}>{object}</option>;
+                                                })}
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -152,7 +139,6 @@ var App = React.createClass({
                                                 <option>seedlings</option>
                                                 <option>leaves</option>
                                                 <option>rosette</option>
-                                                <option>roots</option>
                                                 <option>roots</option>
                                                 <option>cell culture</option>
                                                 <option>callus</option>
@@ -210,7 +196,7 @@ var App = React.createClass({
                                     <fieldset>
                                         <img src="/img/Properties.png" className="center"/>
 
-                                        <h3 className="group-label">Type of Analysis</h3>
+                                        <h3 className="group-label">Primary Analysis</h3>
 
                                         <div className="form-group">
                                             <label>Type of analysis <span data-icon="&#x74;" className="tip"
@@ -219,6 +205,20 @@ var App = React.createClass({
                                             <select className="form-control" id="analysisType" name="analysisType"
                                                     required defaultValue=''>
                                                 <option disabled value=''/>
+                                                <option>discovery</option>
+                                                <option>SRM</option>
+                                                <option>PRM</option>
+                                                <option>DIA</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Secondary analysis <span data-icon="&#x74;" className="tip"
+                                                                          data-toggle="tooltip"
+                                                                          title="This needs to be filled out"/></label>
+                                            <select className="form-control" id="secondaryAnalysisType" name="secondaryAnalysisType"
+                                                    required defaultValue=''>
+                                                <option disabled value=''/>
+                                                <option>none</option>
                                                 <option>discovery</option>
                                                 <option>SRM</option>
                                                 <option>PRM</option>
@@ -238,7 +238,7 @@ var App = React.createClass({
                                                 <option>acetylation</option>
                                                 <option>Ubiquitination</option>
                                                 <option>glycosylation</option>
-                                                <option>polyadenine ribosylation</option>
+                                                <option>poly ADP ribosylation</option>
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -296,9 +296,26 @@ var App = React.createClass({
 
                                         <img src="/img/Attachment.png" className="center"/>
 
-                                        <h3 className="group-label">Project Description</h3>
+                                        <h3 className="group-label">Project Summary</h3>
+
 
                                         <div className="form-group">
+                                            <label>Project description <span data-icon="&#x74;" className="tip"
+                                                                   data-toggle="tooltip"
+                                                                   title="This needs to be filled out"/></label>
+                                            <input className="form-control" type="text" id="freeText"
+                                                   name="freeText"/>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Buffer composition <span data-icon="&#x74;" className="tip"
+                                                                            data-toggle="tooltip"
+                                                                            title="This needs to be filled out"/></label>
+                                            <input className="form-control" type="text" id="freeText"
+                                                   name="freeText"/>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <h4>SUPPORT MULTIPLE IMAGES</h4>
                                             <label>Supporting images <span data-icon="&#x74;" className="tip"
                                                                            data-toggle="tooltip"
                                                                            title="This needs to be filled out"/></label>
@@ -340,6 +357,37 @@ var App = React.createClass({
                                             </select>
                                         </div>
 
+
+                                        <div className="form-group">
+                                            <label>digestion <span data-icon="&#x74;" className="tip"
+                                                                   data-toggle="tooltip"
+                                                                   title="This needs to be filled out"/></label>
+                                            <select className="form-control" id="digestion" name="digestion" required
+                                                    defaultValue=''>
+                                                <option disabled value=''/>
+                                                <option>in gel</option>
+                                                <option>on bead</option>
+                                                <option>in solution</option>
+                                            </select>
+                                        </div>
+
+
+                                        <div className="form-group">
+                                            <label>enzyme <span data-icon="&#x74;" className="tip"
+                                                                data-toggle="tooltip"
+                                                                title="This needs to be filled out"/></label>
+                                            <select className="form-control" id="enzyme" name="enzyme" required
+                                                    defaultValue=''>
+                                                <option disabled value=''/>
+                                                <option>Trypsin</option>
+                                                <option>AspN</option>
+                                                <option>Trypsin AspN</option>
+                                                <option>LysC</option>
+                                                <option>Trypsin LysC</option>
+                                            </select>
+                                        </div>
+
+
                                         <p>React Node Here</p>
                                     </fieldset>
 
@@ -354,15 +402,38 @@ var App = React.createClass({
 
                                         <h3 className="group-label">New Construct for Database</h3>
 
+
                                         <div className="form-group">
-                                            <label>Sequence information
-                                                <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
+                                            <label>Accession of the parent gene <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
                                                       title="This needs to be filled out"/>
                                             </label>
-                                            <input className="form-control" type="text" id="sequenceInfo"
+                                            <input className="form-control" type="text" id="accession"
+                                                   name="accession"
+                                                   required/>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Amino acid sequence <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
+                                                      title="This needs to be filled out"/>
+                                            </label>
+                                            <textarea className="form-control" type="text" id="sequenceInfo"
                                                    name="sequenceInfo"
                                                    required/>
                                         </div>
+
+
+
+                                        <div className="form-group">
+                                            <label>Database entry <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
+                                                                                      title=">date_of_submition|protein_short_name|for_whom some description if required
+e.g.
+>160201|RRS1-R-HF|for_Zane"/>
+                                            </label>
+                                            <input className="form-control" type="text" id="dbEntry"
+                                                   name="dbEntry"
+                                                   required/>
+                                        </div>
+
                                     </fieldset>
 
                                 </div>

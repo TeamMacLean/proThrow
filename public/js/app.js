@@ -1,3 +1,5 @@
+var Species = ['Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula', 'Nicotiana benthamiana', 'Nicotiana tabacum', 'Oryza sativa', 'Populus', 'Solanum lycopersicum', 'Zea mays', 'Phytophthora infestans', 'Magnaporthe oryzae', 'Pseudomonas syringae'];
+
 var App = React.createClass({
     displayName: "app",
     componentDidMount: function componentDidMount() {
@@ -68,6 +70,7 @@ var App = React.createClass({
     // },
     render: function render() {
         var self = this;
+
         return React.createElement(
             'form',
             { action: '/new', method: 'post', id: 'new-form' },
@@ -118,51 +121,13 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'species', name: 'species', defaultValue: '',
                                                 required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'Arabidopsis'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'Nicotiana benthamiana'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'tamato'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'medicago'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'rice'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'poplar'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'phytopthora'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'magnaporte'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'tobacco'
-                                            )
+                                            Species.map(function (object, i) {
+                                                return React.createElement(
+                                                    'option',
+                                                    { key: i },
+                                                    object
+                                                );
+                                            })
                                         )
                                     ),
                                     React.createElement(
@@ -182,51 +147,13 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'searchDatabase', name: 'searchDatabase',
                                                 required: true, defaultValue: '' },
                                             React.createElement('option', { disabled: true, value: '' }),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'Arabidopsis'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'Nicotiana benthamiana'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'tamato'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'medicago'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'rice'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'poplar'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'phytopthora'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'magnaporte'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'tobacco'
-                                            )
+                                            Species.map(function (object, i) {
+                                                return React.createElement(
+                                                    'option',
+                                                    { key: i },
+                                                    object
+                                                );
+                                            })
                                         )
                                     ),
                                     React.createElement(
@@ -259,11 +186,6 @@ var App = React.createClass({
                                                 'option',
                                                 null,
                                                 'rosette'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'roots'
                                             ),
                                             React.createElement(
                                                 'option',
@@ -397,7 +319,7 @@ var App = React.createClass({
                                     React.createElement(
                                         'h3',
                                         { className: 'group-label' },
-                                        'Type of Analysis'
+                                        'Primary Analysis'
                                     ),
                                     React.createElement(
                                         'div',
@@ -415,6 +337,49 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'analysisType', name: 'analysisType',
                                                 required: true, defaultValue: '' },
                                             React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'discovery'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'SRM'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'PRM'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'DIA'
+                                            )
+                                        )
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Secondary analysis ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement(
+                                            'select',
+                                            { className: 'form-control', id: 'secondaryAnalysisType', name: 'secondaryAnalysisType',
+                                                required: true, defaultValue: '' },
+                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'none'
+                                            ),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -486,7 +451,7 @@ var App = React.createClass({
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'polyadenine ribosylation'
+                                                'poly ADP ribosylation'
                                             )
                                         )
                                     ),
@@ -631,7 +596,35 @@ var App = React.createClass({
                                     React.createElement(
                                         'h3',
                                         { className: 'group-label' },
-                                        'Project Description'
+                                        'Project Summary'
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Project description ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'freeText',
+                                            name: 'freeText' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Buffer composition ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'freeText',
+                                            name: 'freeText' })
                                     ),
                                     React.createElement(
                                         'div',
@@ -721,6 +714,82 @@ var App = React.createClass({
                                         )
                                     ),
                                     React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'digestion ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement(
+                                            'select',
+                                            { className: 'form-control', id: 'digestion', name: 'digestion', required: true,
+                                                defaultValue: '' },
+                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'in gel'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'on bead'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'in solution'
+                                            )
+                                        )
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'enzyme ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement(
+                                            'select',
+                                            { className: 'form-control', id: 'enzyme', name: 'enzyme', required: true,
+                                                defaultValue: '' },
+                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'Trypsin'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'AspN'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'Trypsin AspN'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'LysC'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'Trypsin LysC'
+                                            )
+                                        )
+                                    ),
+                                    React.createElement(
                                         'p',
                                         null,
                                         'React Node Here'
@@ -750,12 +819,40 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Sequence information',
+                                            'Accession of the parent gene ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip', 'data-toggle': 'tooltip',
                                                 title: 'This needs to be filled out' })
                                         ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'sequenceInfo',
+                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
+                                            name: 'accession',
+                                            required: true })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Amino acid sequence ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip', 'data-toggle': 'tooltip',
+                                                title: 'This needs to be filled out' })
+                                        ),
+                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
                                             name: 'sequenceInfo',
+                                            required: true })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Database entry ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip', 'data-toggle': 'tooltip',
+                                                title: '>date_of_submition|protein_short_name|for_whom some description if required\ne.g.\n>160201|RRS1-R-HF|for_Zane' })
+                                        ),
+                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'dbEntry',
+                                            name: 'dbEntry',
                                             required: true })
                                     )
                                 )
