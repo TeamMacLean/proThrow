@@ -18,7 +18,7 @@
     "dragula.js": "dragula#^3.6.8",
     "elegant-icons": "*",
     "tipso": "^1.0.8",
-    "bootstrap": "v4.0.0-alpha.2",
+    "bootstrap": "^3.3.6",
     "tether": "^1.2.0",
     "react": "^15.0.2"
   }

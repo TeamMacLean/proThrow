@@ -1,9 +1,13 @@
 html, body {
-    color:#414A51;
+    color: #414A51;
 }
 
-h1,h2,h3,h4,h5{
+h1, h2, h3, h4, h5 {
     font-weight: 300;
+}
+
+.center {
+    text-align: center;
 }
 
 .navbar {
@@ -12,17 +16,27 @@ h1,h2,h3,h4,h5{
     background-color: #0098CE;
 }
 
-.navbar .navbar-brand{
+.navbar .navbar-brand {
     color: #FFFFFF;
     /*font-weight: 800;*/
 }
-.navbar .navbar-brand:hover{
+
+.navbar a{
+    color:#FFFFFF;
+    text-decoration: none;
+}
+
+.navbar .navbar-brand:hover {
     color: #FFFFFF;
     opacity: 0.9;
 }
 
 input, select {
     height: 38px;
+}
+
+.input-group {
+    margin-bottom: 8px;
 }
 
 input[type="checkbox"] {
@@ -134,7 +148,7 @@ input[type="checkbox"] {
 
 .removeSample {
     text-align: center;
-    font-size: 40px;
+    font-size: 30px;
     color: #F0725E;
     cursor: pointer;
 

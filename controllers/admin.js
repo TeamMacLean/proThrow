@@ -1,5 +1,4 @@
-var Request = require('../models/request');
-
+const Request = require('../models/request');
 var admin = {};
 
 admin.index = function (req, res, next) {

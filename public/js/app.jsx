@@ -213,9 +213,10 @@ var App = React.createClass({
                                         </div>
                                         <div className="form-group">
                                             <label>Secondary analysis <span data-icon="&#x74;" className="tip"
-                                                                          data-toggle="tooltip"
-                                                                          title="This needs to be filled out"/></label>
-                                            <select className="form-control" id="secondaryAnalysisType" name="secondaryAnalysisType"
+                                                                            data-toggle="tooltip"
+                                                                            title="This needs to be filled out"/></label>
+                                            <select className="form-control" id="secondaryAnalysisType"
+                                                    name="secondaryAnalysisType"
                                                     required defaultValue=''>
                                                 <option disabled value=''/>
                                                 <option>none</option>
@@ -301,8 +302,8 @@ var App = React.createClass({
 
                                         <div className="form-group">
                                             <label>Project description <span data-icon="&#x74;" className="tip"
-                                                                   data-toggle="tooltip"
-                                                                   title="This needs to be filled out"/></label>
+                                                                             data-toggle="tooltip"
+                                                                             title="This needs to be filled out"/></label>
                                             <input className="form-control" type="text" id="freeText"
                                                    name="freeText"/>
                                         </div>
@@ -359,7 +360,7 @@ var App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>digestion <span data-icon="&#x74;" className="tip"
+                                            <label>Digestion <span data-icon="&#x74;" className="tip"
                                                                    data-toggle="tooltip"
                                                                    title="This needs to be filled out"/></label>
                                             <select className="form-control" id="digestion" name="digestion" required
@@ -373,7 +374,7 @@ var App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>enzyme <span data-icon="&#x74;" className="tip"
+                                            <label>Enzyme <span data-icon="&#x74;" className="tip"
                                                                 data-toggle="tooltip"
                                                                 title="This needs to be filled out"/></label>
                                             <select className="form-control" id="enzyme" name="enzyme" required
@@ -386,9 +387,7 @@ var App = React.createClass({
                                                 <option>Trypsin LysC</option>
                                             </select>
                                         </div>
-
-
-                                        <p>React Node Here</p>
+                                        
                                     </fieldset>
 
                                 </div>
@@ -404,8 +403,9 @@ var App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>Accession of the parent gene <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
-                                                      title="This needs to be filled out"/>
+                                            <label>Accession of the parent gene <span data-icon="&#x74;" className="tip"
+                                                                                      data-toggle="tooltip"
+                                                                                      title="This needs to be filled out"/>
                                             </label>
                                             <input className="form-control" type="text" id="accession"
                                                    name="accession"
@@ -413,19 +413,20 @@ var App = React.createClass({
                                         </div>
 
                                         <div className="form-group">
-                                            <label>Amino acid sequence <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
-                                                      title="This needs to be filled out"/>
+                                            <label>Amino acid sequence <span data-icon="&#x74;" className="tip"
+                                                                             data-toggle="tooltip"
+                                                                             title="This needs to be filled out"/>
                                             </label>
                                             <textarea className="form-control" type="text" id="sequenceInfo"
-                                                   name="sequenceInfo"
-                                                   required/>
+                                                      name="sequenceInfo"
+                                                      required/>
                                         </div>
 
 
-
                                         <div className="form-group">
-                                            <label>Database entry <span data-icon="&#x74;" className="tip" data-toggle="tooltip"
-                                                                                      title=">date_of_submition|protein_short_name|for_whom some description if required
+                                            <label>Database entry <span data-icon="&#x74;" className="tip"
+                                                                        data-toggle="tooltip"
+                                                                        title=">date_of_submition|protein_short_name|for_whom some description if required
 e.g.
 >160201|RRS1-R-HF|for_Zane"/>
                                             </label>

@@ -1,1 +1,12 @@
 /*images should be width:50%*/
+
+@media print {
+
+    /*EVERYTHING*/
+    html, body {
+        background-color: red;
+        font-size: 100px;
+    }
+
+
+}

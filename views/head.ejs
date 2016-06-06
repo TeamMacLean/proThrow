@@ -25,18 +25,50 @@
 
 <body>
 
-<!--<img src="/logo.png" class="left">-->
-<!--<nav class="navbar navbar-dark bg-inverse navbar-fixed-top">-->
-
-
-<nav class="navbar navbar-full navbar-light bg-faded">
+<nav class="navbar navbar-full">
     <div class="container">
-        <!--<img src="/logo.png" class="navbar-brand">-->
-        <!--<img style="display: inline-block; height: 30px; margin-top: -5px;float:left;" src="/logo.png">-->
         <a class="navbar-brand" href="/">
-            <!--TSL Proteomics-->
-        <!--</a>-->
-        <img src="/logo.png">TSL Proteomics</a>
+            <img src="/logo.png">TSL Proteomics
+        </a>
+        <div class="pull-xs-right navbar-brand white">
+            <% if(locals.signedInUser){ %>
+            <a href="/whoami">
+                <div class="name">
+                    <span><%- locals.signedInUser.name %></span>
+                </div>
+            </a>
+            <% } else { %>
+            <div class="name">
+                <a href="/signin">Sign in</a>
+            </div>
+            <% } %>
+        </div>
     </div>
+
+
+    <!--<div class="user">-->
+    <!--<% if(locals.signedInUser){ %>-->
+
+    <!--<a href="/whoami">-->
+    <!--<div class="image">-->
+    <!--<img src="<%- locals.signedInUser.iconURL %>">-->
+    <!--</div>-->
+    <!--<div class="name">-->
+    <!--<span><%- locals.signedInUser.name %></span>-->
+    <!--</div>-->
+    <!--</a>-->
+    <!--<div class="user-menu hidden">-->
+    <!--<ul>-->
+    <!--<li>-->
+    <!--<a href="/signout">Sign out</a>-->
+    <!--</li>-->
+    <!--</ul>-->
+    <!--</div>-->
+    <!--<% } else { %>-->
+    <!--<div class="name">-->
+    <!--<a href="/signin">Sign in</a>-->
+    <!--</div>-->
+    <!--<% } %>-->
+    <!--</div>-->
 
 </nav>

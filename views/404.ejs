@@ -1,0 +1,18 @@
+<% include head %>
+<div class="container">
+
+    <h1 class="center big">404</h1>
+
+    <% if(typeof error != 'undefined'){ %>
+    <p class="center"><%- error %></p>
+    <a href="mailto:bioinformatics@tsl.ac.uk?subject=I found a bug with the Proteomics site&body=<%- encodeURI(error) %>"
+       class="button center">Report
+        this
+        bug</a>
+    <% } else { %>
+    <p class="center">Page not found</p>
+    <% } %>
+
+</div>
+
+<% include foot %>
