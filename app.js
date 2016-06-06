@@ -19,16 +19,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
-var sessionSetup = session(
-    {
-        secret: config.secret,
-        resave: false,
-        saveUninitialized: false,
-        store
-    }
+app.use(
+    session(
+        {
+            secret: config.secret,
+            resave: false,
+            saveUninitialized: false,
+            store: store
+        }
+    )
 );
-
-app.use(sessionSetup);
 
 app.use(passport.initialize());
 app.use(passport.session());
