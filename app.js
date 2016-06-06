@@ -20,12 +20,16 @@ app.use(cookieParser());
 const r = require('./lib/thinky').r;
 const store = new rethinkSession(r);
 
-app.use(session({
-    secret: config.secret,
-    resave: false,
-    saveUninitialized: false,
-    store
-}));
+app.use(
+    session(
+        {
+            secret: config.secret,
+            resave: false,
+            saveUninitialized: false,
+            store
+        }
+    )
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
