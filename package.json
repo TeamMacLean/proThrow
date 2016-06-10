@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node server",
-    "test": "mocha"
+    "test": "mocha",
+    "gulp": "gulp"
   },
   "dependencies": {
     "body-parser": "^1.15.0",

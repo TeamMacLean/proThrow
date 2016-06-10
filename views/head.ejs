@@ -25,22 +25,29 @@
 
 <body>
 
-<nav class="navbar navbar-full">
+<nav class="navbar navbar-full navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <img src="/logo.png">TSL Proteomics
-        </a>
-        <div class="pull-xs-right navbar-brand white">
+        <a class="navbar-brand" href="/"><img src="/logo.png">TSL Proteomics</a>
+
+
+        <div class="pull-xs-right">
             <% if(locals.signedInUser){ %>
-            <a href="/whoami">
-                <div class="name">
-                    <span><%- locals.signedInUser.name %></span>
+
+            <div class="nav navbar-nav">
+
+                <div class="dropdown open">
+                    <button class="btn btn-success-outline dropdown-toggle" type="button" id="userMenu"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <%- locals.signedInUser.name %>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="userMenu">
+                        <a class="dropdown-item" href="/signout">Sign out</a>
+                    </div>
                 </div>
-            </a>
-            <% } else { %>
-            <div class="name">
-                <a href="/signin">Sign in</a>
             </div>
+
+            <% } else { %>
+            <a href="/signin" class="btn btn-primary">Sign in</a>
             <% } %>
         </div>
     </div>

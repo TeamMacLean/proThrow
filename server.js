@@ -4,6 +4,8 @@ var app = require('./app');
 var http = require('http');
 var config = require('./config.json');
 
+var gulp = require('gulp');
+
 var port = process.env.PORT || config.port;
 app.set('port', port);
 

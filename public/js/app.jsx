@@ -35,53 +35,6 @@ var App = React.createClass({
         });
         this.setState({samples: newSamples});
     },
-    // onChange: function onChange() {
-    //     var groupSelect = ':input[required]:visible, select[required]:visible';
-    //     $('.group').each(function () {
-    //         var $group = $(this);
-    //         //console.log('group');
-    //         $group.find(groupSelect).each(function () {
-    //             //console.log('input');
-    //             var $input = $(this);
-    //             $input.on('input', function () {
-    //                 //console.log('change', $input.val());
-    //
-    //                 var $badge = $group.find('.badge');
-    //
-    //                 if (groupValid($group)) {
-    //                     console.log("valid");
-    //                     if (!$badge.hasClass('complete')) {
-    //                         $badge.addClass('complete');
-    //                     }
-    //                 } else {
-    //                     console.log("not valid");
-    //                     if ($badge.hasClass('complete')) {
-    //                         $badge.removeClass('complete');
-    //                     }
-    //                 }
-    //             })
-    //         })
-    //     });
-    //     function groupValid(g) {
-    //         var allvalid = true;
-    //         g.find(groupSelect).each(function () {
-    //
-    //             if ($(this).is('input:text') || $(this).is(':input[type="number"]')) {
-    //                 if (!$(this).val()) {
-    //                     allvalid = false;
-    //                 }
-    //             } else if ($(this).is('select')) {
-    //                 var text = $(this).find(':value=''').text();
-    //                 if (text.length < 1) {
-    //                     allvalid = false;
-    //                 }
-    //             }
-    //
-    //
-    //         });
-    //         return allvalid;
-    //     }
-    // },
     render: function render() {
         var self = this;
 
@@ -304,15 +257,15 @@ var App = React.createClass({
                                             <label>Project description <span data-icon="&#x74;" className="tip"
                                                                              data-toggle="tooltip"
                                                                              title="This needs to be filled out"/></label>
-                                            <input className="form-control" type="text" id="freeText"
-                                                   name="freeText"/>
+                                            <input className="form-control" type="text" id="projectDescription"
+                                                   name="projectDescription"/>
                                         </div>
                                         <div className="form-group">
                                             <label>Buffer composition <span data-icon="&#x74;" className="tip"
                                                                             data-toggle="tooltip"
                                                                             title="This needs to be filled out"/></label>
-                                            <input className="form-control" type="text" id="freeText"
-                                                   name="freeText"/>
+                                            <input className="form-control" type="text" id="bufferComposition"
+                                                   name="bufferComposition"/>
                                         </div>
 
                                         <div className="form-group">
@@ -395,7 +348,6 @@ var App = React.createClass({
 
                             <div className="group">
                                 <div className="container">
-                                    <span className="badge"/>
                                     <fieldset>
                                         <img src="/img/Right-Align-Txt.png" className="center"/>
 
@@ -484,7 +436,7 @@ var Sample = React.createClass({
             <div className="dragg">
                 <div className="draggInner">
                     <div className="row">
-                        <div className="col-md-10">
+                        <div className="col-md-10 fix-10">
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
@@ -492,7 +444,7 @@ var Sample = React.createClass({
                                                                    data-tipso="This needs to be filled out"/></label>
                                         <input className="form-control" type="number" min="0" max="150"
                                                id="sampleNumber"
-                                               name="sampleNumber" required/>
+                                               name="sampleNumber[]" required/>
                                     </div>
                                 </div>
                                 <div className="col-md-6">
@@ -500,13 +452,13 @@ var Sample = React.createClass({
                                         <label>Sample description <span data-icon="&#x74;" className="tip"
                                                                         data-tipso="This needs to be filled out"/></label>
                                         <input className="form-control" type="text" id="sampleDescription"
-                                               name="sampleDescription"
+                                               name="sampleDescription[]"
                                                required/>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-2 fix-2">
                             <div className="removeSample" onClick={this.props.removeSample.bind(null,this)}>
                                 <span data-icon="&#xe019;"/>
                             </div>

@@ -26,26 +26,27 @@ index.newPost = function (req, res, next) {
 
         var request = new Request({
             uuid: uuid,
+
             species: req.body.species,
             searchDatabase: req.body.searchDatabase,
             tissue: req.body.tissue,
             tissueAgeNum: req.body.tissueAgeNum,
             tissueAgeType: req.body.tissueAgeType,
             growthConditions: req.body.growthConditions,
-            samplePrep: req.body.samplePrep,
+            projectDescription: req.body.projectDescription,
+            bufferComposition: req.body.bufferComposition,
             analysisType: req.body.analysisType,
+            secondaryAnalysisType: req.body.secondaryAnalysisType,
+            typeOfPTM: req.body.typeOfPTM,
             quantitativeAnalysisRequired: req.body.quantitativeAnalysisRequired,
             typeOfLabeling: req.body.typeOfLabeling,
             labelUsed: req.body.labelUsed,
+            samplePrep: req.body.samplePrep,
             digestion: req.body.digestion,
-            typeOfPTM: req.body.typeOfPTM,
-            typeOfDigestion: req.body.typeOfDigestion,
+            enzyme: req.body.enzyme,
+            accession: req.body.accession,
             sequenceInfo: req.body.sequenceInfo,
-            preferredOrder: req.body.preferredOrder,
-            sampleNumber: req.body.sampleNumber,
-            sampleDescription: req.body.sampleDescription,
-            supportingImages: req.body.supportingImages,
-            supportingImageDescription: req.body.supportingImageDescription
+            dbEntry: req.body.dbEntry
         });
 
         request.save().then(function (doc) {
