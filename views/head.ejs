@@ -35,8 +35,8 @@
 
             <div class="nav navbar-nav">
 
-                <div class="dropdown open">
-                    <button class="btn btn-success-outline dropdown-toggle" type="button" id="userMenu"
+                <div class="dropdown">
+                    <button class="btn btn-info-outline dropdown-toggle" type="button" id="userMenu"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <%- locals.signedInUser.name %>
                     </button>
@@ -51,31 +51,5 @@
             <% } %>
         </div>
     </div>
-
-
-    <!--<div class="user">-->
-    <!--<% if(locals.signedInUser){ %>-->
-
-    <!--<a href="/whoami">-->
-    <!--<div class="image">-->
-    <!--<img src="<%- locals.signedInUser.iconURL %>">-->
-    <!--</div>-->
-    <!--<div class="name">-->
-    <!--<span><%- locals.signedInUser.name %></span>-->
-    <!--</div>-->
-    <!--</a>-->
-    <!--<div class="user-menu hidden">-->
-    <!--<ul>-->
-    <!--<li>-->
-    <!--<a href="/signout">Sign out</a>-->
-    <!--</li>-->
-    <!--</ul>-->
-    <!--</div>-->
-    <!--<% } else { %>-->
-    <!--<div class="name">-->
-    <!--<a href="/signin">Sign in</a>-->
-    <!--</div>-->
-    <!--<% } %>-->
-    <!--</div>-->
 
 </nav>

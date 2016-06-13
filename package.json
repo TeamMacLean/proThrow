@@ -10,10 +10,10 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "cookie-parser": "^1.4.3",
-    "ejs": "^2.4.1",
+    "ejs": "^2.4.2",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
-    "nodemailer": "^2.3.0",
+    "nodemailer": "^2.4.2",
     "nodemailer-smtp-transport": "^2.4.1",
     "passport": "^0.3.2",
     "passport-ldapauth": "^0.5.0",
@@ -26,7 +26,7 @@
     "chai": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "mocha": "^2.4.5",
+    "mocha": "^2.5.3",
     "supertest": "^1.2.0"
   }
 }

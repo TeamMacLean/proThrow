@@ -584,9 +584,9 @@ var App = React.createClass({
                                         'div',
                                         { className: 'form-group' },
                                         React.createElement(
-                                            'h4',
-                                            null,
-                                            'SUPPORT MULTIPLE IMAGES'
+                                            'span',
+                                            { className: 'font-italic' },
+                                            'TODO: SUPPORT MULTIPLE IMAGES'
                                         ),
                                         React.createElement(
                                             'label',

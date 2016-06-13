@@ -1,6 +1,9 @@
+body {
+    margin-bottom: 32px;
+}
 
 .navbar {
-    margin-bottom: 20px;
+    margin-bottom: 32px;
 }
 
 .navbar-brand img {

@@ -269,7 +269,7 @@ var App = React.createClass({
                                         </div>
 
                                         <div className="form-group">
-                                            <h4>SUPPORT MULTIPLE IMAGES</h4>
+                                            <span className="font-italic">TODO: SUPPORT MULTIPLE IMAGES</span>
                                             <label>Supporting images <span data-icon="&#x74;" className="tip"
                                                                            data-toggle="tooltip"
                                                                            title="This needs to be filled out"/></label>
@@ -340,7 +340,7 @@ var App = React.createClass({
                                                 <option>Trypsin LysC</option>
                                             </select>
                                         </div>
-                                        
+
                                     </fieldset>
 
                                 </div>
