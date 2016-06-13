@@ -11,6 +11,8 @@ const r = require('./lib/thinky').r;
 const store = new rethinkSession(r);
 const app = express();
 
+const socketUploader = require('./lib/socketUpload');
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -51,4 +53,9 @@ util.setupPassport();
 
 app.use('/', require('./routes'));
 
-module.exports = app;
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+socketUploader(io);
+
+module.exports = server;

@@ -58,6 +58,9 @@ index.newPost = function (req, res, next) {
     });
 };
 
+
+
+
 function sendEmail(text) {
     transporter.sendMail({
         from: 'prothrow@tsl.ac.uk',

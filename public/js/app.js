@@ -3,13 +3,14 @@ var Species = ['Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula',
 var App = React.createClass({
     displayName: "app",
     componentDidMount: function componentDidMount() {
-        console.log('mounted');
+        // console.log('mounted');
         $('#page-loader').fadeOut('slow', function () {
             this.remove();
         });
+        this.initSocketUpload();
     },
     getInitialState: function getInitialState() {
-        return { samples: [] };
+        return { samples: [], supportingImages: [] };
     },
     addSample: function addSample() {
         var key = guid();
@@ -20,6 +21,42 @@ var App = React.createClass({
             return s.key != sample.props.data.key;
         });
         this.setState({ samples: newSamples });
+    },
+    removeSupportImage: function removeSupportImage(index) {
+        var replacement = this.state.supportingImages;
+        delete replacement[index];
+        this.setState({ samples: replacement });
+    },
+    initSocketUpload: function initSocketUpload() {
+
+        var self = this;
+
+        $(function () {
+
+            var socket = io(window.location.host);
+            socket.on('connect', function () {
+                var delivery = new Delivery(socket);
+
+                delivery.on('delivery.connect', function (delivery) {
+                    $("input[type=file]").on('change', function (evt) {
+                        var file = $(this)[0].files[0];
+                        delivery.send(file);
+                        evt.preventDefault();
+                    });
+                });
+
+                delivery.on('send.success', function (fileUID) {
+                    console.log("file was successfully sent.");
+                });
+
+                socket.on('upload.complete', function (obj) {
+                    self.setState({ supportingImages: self.state.supportingImages.concat([obj]) });
+                    // console.log('received object', obj);
+
+                    $("input[type=file]").val("");
+                });
+            });
+        });
     },
     render: function render() {
         var self = this;
@@ -584,11 +621,6 @@ var App = React.createClass({
                                         'div',
                                         { className: 'form-group' },
                                         React.createElement(
-                                            'span',
-                                            { className: 'font-italic' },
-                                            'TODO: SUPPORT MULTIPLE IMAGES'
-                                        ),
-                                        React.createElement(
                                             'label',
                                             null,
                                             'Supporting images ',
@@ -596,9 +628,36 @@ var App = React.createClass({
                                                 'data-toggle': 'tooltip',
                                                 title: 'This needs to be filled out' })
                                         ),
-                                        React.createElement('input', { className: 'form-control', type: 'file', id: 'supportingImages',
-                                            name: 'supportingImages',
+                                        React.createElement('input', { className: 'form-control', type: 'file', id: 'imageUpload',
+                                            name: 'imageUpload',
                                             required: true })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { id: 'supportingImages', name: 'supportingImages' },
+                                        self.state.supportingImages.map(function (object, i) {
+                                            var remove = self.removeSupportImage.bind(null, i);
+                                            return React.createElement(
+                                                'div',
+                                                { className: 'row', key: i },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'col-sm-12' },
+                                                    React.createElement(
+                                                        'div',
+                                                        { className: 'tile' },
+                                                        React.createElement('span', { className: 'removeImage' }),
+                                                        React.createElement(
+                                                            'span',
+                                                            { className: 'imageName' },
+                                                            object.name
+                                                        ),
+                                                        React.createElement('span', { className: 'right clickable', 'data-icon': '',
+                                                            onClick: remove })
+                                                    )
+                                                )
+                                            );
+                                        })
                                     ),
                                     React.createElement(
                                         'div',
@@ -936,6 +995,55 @@ function guid() {
     }
 
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+//run on load
+$(function () {
+    initDrag();
+    initToolTips();
+    // initSocketUpload();
+});
+
+// function initSocketUpload() {
+//
+//     var socket = io(window.location.host);
+//     socket.on('connect', function () {
+//         var delivery = new Delivery(socket);
+//
+//         delivery.on('delivery.connect', function (delivery) {
+//             $("input[type=file]").on('change', function (evt) {
+//                 var file = $(this)[0].files[0];
+//
+//                 console.log(file);
+//
+//                 delivery.send(file);
+//                 evt.preventDefault();
+//             });
+//         });
+//
+//         delivery.on('send.success', function (fileUID) {
+//             console.log("file was successfully sent.");
+//         });
+//
+//         socket.on('upload.complete', function (obj) {
+//             // supportingImages.push(obj);
+//             console.log('received object', obj);
+//         })
+//
+//     });
+// }
+
+function initDrag() {
+
+    var drake = dragula({
+        isContainer: function (el) {
+            return el.classList.contains('dragg');
+        }
+    });
+}
+
+function initToolTips() {
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 ReactDOM.render(React.createElement(App), document.getElementById('app'));

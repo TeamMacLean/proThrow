@@ -13,17 +13,17 @@ var Species = [
     'Pseudomonas syringae'
 ];
 
-
 var App = React.createClass({
     displayName: "app",
     componentDidMount: function componentDidMount() {
-        console.log('mounted');
+        // console.log('mounted');
         $('#page-loader').fadeOut('slow', function () {
             this.remove();
         });
+        this.initSocketUpload();
     },
     getInitialState: function getInitialState() {
-        return {samples: []};
+        return {samples: [], supportingImages: []};
     },
     addSample: function addSample() {
         var key = guid();
@@ -34,6 +34,45 @@ var App = React.createClass({
             return s.key != sample.props.data.key;
         });
         this.setState({samples: newSamples});
+    },
+    removeSupportImage: function removeSupportImage(index) {
+        var replacement = this.state.supportingImages;
+        delete replacement[index];
+        this.setState({samples: replacement});
+    },
+    initSocketUpload: function initSocketUpload() {
+
+        var self = this;
+
+        $(function () {
+
+            var socket = io(window.location.host);
+            socket.on('connect', function () {
+                var delivery = new Delivery(socket);
+
+
+                delivery.on('delivery.connect', function (delivery) {
+                    $("input[type=file]").on('change', function (evt) {
+                        var file = $(this)[0].files[0];
+                        delivery.send(file);
+                        evt.preventDefault();
+                    });
+                });
+
+                delivery.on('send.success', function (fileUID) {
+                    console.log("file was successfully sent.");
+                });
+
+                socket.on('upload.complete', function (obj) {
+                    self.setState({supportingImages: self.state.supportingImages.concat([obj])});
+                    // console.log('received object', obj);
+
+
+                    $("input[type=file]").val("");
+                })
+
+            });
+        })
     },
     render: function render() {
         var self = this;
@@ -269,14 +308,33 @@ var App = React.createClass({
                                         </div>
 
                                         <div className="form-group">
-                                            <span className="font-italic">TODO: SUPPORT MULTIPLE IMAGES</span>
                                             <label>Supporting images <span data-icon="&#x74;" className="tip"
                                                                            data-toggle="tooltip"
                                                                            title="This needs to be filled out"/></label>
-                                            <input className="form-control" type="file" id="supportingImages"
-                                                   name="supportingImages"
+                                            <input className="form-control" type="file" id="imageUpload"
+                                                   name="imageUpload"
                                                    required/>
                                         </div>
+
+                                        <div id="supportingImages" name="supportingImages">
+
+                                            {self.state.supportingImages.map(function (object, i) {
+                                                var remove = self.removeSupportImage.bind(null, i);
+                                                return <div className="row" key={i}>
+                                                    <div className="col-sm-12">
+                                                        <div className="tile">
+                                                            <span className="removeImage"/>
+                                                            <span className="imageName">{object.name}</span>
+                                                            <span className="right clickable" data-icon="&#xe019;"
+                                                                  onClick={remove}/>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            })}
+
+                                        </div>
+
                                         <div className="form-group">
                                             <label>Supporting image description <span data-icon="&#x74;" className="tip"
                                                                                       data-toggle="tooltip"
@@ -480,6 +538,57 @@ function guid() {
 
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
+}
+
+
+//run on load
+$(function () {
+    initDrag();
+    initToolTips();
+    // initSocketUpload();
+});
+
+// function initSocketUpload() {
+//
+//     var socket = io(window.location.host);
+//     socket.on('connect', function () {
+//         var delivery = new Delivery(socket);
+//
+//         delivery.on('delivery.connect', function (delivery) {
+//             $("input[type=file]").on('change', function (evt) {
+//                 var file = $(this)[0].files[0];
+//
+//                 console.log(file);
+//
+//                 delivery.send(file);
+//                 evt.preventDefault();
+//             });
+//         });
+//
+//         delivery.on('send.success', function (fileUID) {
+//             console.log("file was successfully sent.");
+//         });
+//
+//         socket.on('upload.complete', function (obj) {
+//             // supportingImages.push(obj);
+//             console.log('received object', obj);
+//         })
+//
+//     });
+// }
+
+function initDrag() {
+
+    var drake = dragula({
+        isContainer: function (el) {
+            return el.classList.contains('dragg');
+        }
+    });
+
+}
+
+function initToolTips() {
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 

@@ -12,4 +12,12 @@ gulp.task("babel", function () {
 gulp.task('default', ["babel"]);
 
 
+gulp.task('watch', function () {
+    var watcher = gulp.watch('public/js/app.jsx', ['babel']);
+    watcher.on('change', function (event) {
+        console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+    });
+});
+
+
 module.exports = gulp;

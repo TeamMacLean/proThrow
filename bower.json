@@ -20,6 +20,7 @@
     "tipso": "^1.0.8",
     "bootstrap": "4.0.0-alpha.2",
     "tether": "^1.2.0",
-    "react": "^15.0.2"
+    "react": "^15.0.2",
+    "Delivery.js": "liamks/Delivery.js"
   }
 }
