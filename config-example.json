@@ -9,6 +9,7 @@
     "searchBase": "OU=users,dc=server,dc=org",
     "searchFilter": "(sAMAccountName={{username}})"
   },
+  "supportingImageRoot": "./uploads/",
   "admins": [
   ]
 }
