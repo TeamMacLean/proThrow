@@ -19,6 +19,7 @@
     "passport": "^0.3.2",
     "passport-ldapauth": "^0.5.0",
     "session-rethinkdb": "^2.0.0",
+    "sharp": "^0.15.0",
     "socket.io": "^1.4.6",
     "thinky": "^2.2.6",
     "winston": "^2.2.0"

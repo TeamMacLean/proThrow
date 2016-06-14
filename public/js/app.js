@@ -646,6 +646,9 @@ var App = React.createClass({
                                                     React.createElement(
                                                         'div',
                                                         { className: 'tile' },
+                                                        React.createElement('img', { src: object.preview,
+                                                            className: 'img-fluid center-block' }),
+                                                        React.createElement('br', null),
                                                         React.createElement('span', { className: 'removeImage' }),
                                                         React.createElement(
                                                             'span',
@@ -653,26 +656,30 @@ var App = React.createClass({
                                                             object.name
                                                         ),
                                                         React.createElement('span', { className: 'right clickable', 'data-icon': '',
-                                                            onClick: remove })
+                                                            onClick: remove }),
+                                                        React.createElement('hr', null),
+                                                        React.createElement(
+                                                            'div',
+                                                            { className: 'form-group' },
+                                                            React.createElement(
+                                                                'label',
+                                                                null,
+                                                                'Supporting image description ',
+                                                                React.createElement('span', {
+                                                                    'data-icon': 't',
+                                                                    className: 'tip',
+                                                                    'data-toggle': 'tooltip',
+                                                                    title: 'This needs to be filled out' })
+                                                            ),
+                                                            React.createElement('input', { className: 'form-control', type: 'text',
+                                                                id: 'supportingImageDescription',
+                                                                name: 'supportingImageDescription',
+                                                                required: true })
+                                                        )
                                                     )
                                                 )
                                             );
                                         })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Supporting image description ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
-                                        ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'supportingImageDescription',
-                                            name: 'supportingImageDescription',
-                                            required: true })
                                     )
                                 )
                             )

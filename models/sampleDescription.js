@@ -11,5 +11,5 @@ let SampleDescription = thinky.createModel("SampleDescription", {
 
 module.exports = SampleDescription;
 
-const Request = require('./sampleDescription');
+const Request = require('./request');
 SampleDescription.belongsTo(Request, "request", "requestID", "id");

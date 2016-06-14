@@ -26,7 +26,6 @@ index.newPost = function (req, res, next) {
 
         var request = new Request({
             uuid: uuid,
-
             species: req.body.species,
             searchDatabase: req.body.searchDatabase,
             tissue: req.body.tissue,
@@ -49,6 +48,9 @@ index.newPost = function (req, res, next) {
             dbEntry: req.body.dbEntry
         });
 
+
+        //TODO create sample Files and sample descriptions
+
         request.save().then(function (doc) {
             sendEmail('new job, ' + uuid);
             res.render('newPost', {uuid: doc.uuid});
@@ -57,8 +59,6 @@ index.newPost = function (req, res, next) {
         });
     });
 };
-
-
 
 
 function sendEmail(text) {

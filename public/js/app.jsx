@@ -317,32 +317,40 @@ var App = React.createClass({
                                         </div>
 
                                         <div id="supportingImages" name="supportingImages">
-
                                             {self.state.supportingImages.map(function (object, i) {
                                                 var remove = self.removeSupportImage.bind(null, i);
                                                 return <div className="row" key={i}>
                                                     <div className="col-sm-12">
                                                         <div className="tile">
+                                                            <img src={object.preview}
+                                                                 className="img-fluid center-block"/>
+                                                            <br/>
                                                             <span className="removeImage"/>
                                                             <span className="imageName">{object.name}</span>
                                                             <span className="right clickable" data-icon="&#xe019;"
                                                                   onClick={remove}/>
+                                                            <hr/>
+
+                                                            <div className="form-group">
+                                                                <label>Supporting image description <span
+                                                                    data-icon="&#x74;"
+                                                                    className="tip"
+                                                                    data-toggle="tooltip"
+                                                                    title="This needs to be filled out"/></label>
+                                                                <input className="form-control" type="text"
+                                                                       id="supportingImageDescription"
+                                                                       name="supportingImageDescription"
+                                                                       required/>
+                                                            </div>
 
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             })}
-
                                         </div>
 
-                                        <div className="form-group">
-                                            <label>Supporting image description <span data-icon="&#x74;" className="tip"
-                                                                                      data-toggle="tooltip"
-                                                                                      title="This needs to be filled out"/></label>
-                                            <input className="form-control" type="text" id="supportingImageDescription"
-                                                   name="supportingImageDescription"
-                                                   required/>
-                                        </div>
+
                                     </fieldset>
 
                                 </div>
