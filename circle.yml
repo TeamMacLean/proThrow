@@ -1,4 +1,3 @@
-dependencies:
 test:
   pre:
     - cp config-example.json config.json
