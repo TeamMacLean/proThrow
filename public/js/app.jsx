@@ -15,6 +15,38 @@ const Species = [
 
 var supportedFileTypes = global.supportedFileTypes;
 
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}
+
+
+$(function () {
+    initDrag();
+    initToolTips();
+});
+
+function initDrag() {
+
+    const drake = dragula({
+        isContainer: function (el) {
+            return el.classList.contains('dragg');
+        }
+    });
+
+}
+
+function initToolTips() {
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+
 const App = React.createClass({
     displayName: 'app',
     componentDidMount: function componentDidMount() {
@@ -541,37 +573,6 @@ const Sample = React.createClass({
     }
 
 });
-
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
-}
-
-
-$(function () {
-    initDrag();
-    initToolTips();
-});
-
-function initDrag() {
-
-    const drake = dragula({
-        isContainer: function (el) {
-            return el.classList.contains('dragg');
-        }
-    });
-
-}
-
-function initToolTips() {
-    $('[data-toggle="tooltip"]').tooltip();
-}
 
 
 ReactDOM.render(React.createElement(App), document.getElementById('app'));
