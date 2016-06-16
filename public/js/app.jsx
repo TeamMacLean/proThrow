@@ -54,7 +54,7 @@ const App = React.createClass({
 
 
                 delivery.on('delivery.connect', function (delivery) {
-                    $("input[type=file]").on('change', function (evt) {
+                    $('input[type=file]').on('change', function (evt) {
                         const file = $(this)[0].files[0];
                         delivery.send(file);
                         evt.preventDefault();
@@ -70,7 +70,7 @@ const App = React.createClass({
                     // console.log('received object', obj);
 
 
-                    $("input[type=file]").val('');
+                    $('input[type=file]').val('');
                 })
 
             });
@@ -501,7 +501,7 @@ e.g.
 });
 
 const Sample = React.createClass({
-    displayName: "Sample",
+    displayName: 'Sample',
     render: function () {
         return (
             <div className="dragg">
