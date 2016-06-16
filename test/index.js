@@ -1,15 +1,15 @@
-var request = require('supertest');
+const request = require('supertest');
 
-var app = require('../app');
+const app = require('../app');
 
-describe('index controller', function () {
-  describe('index', function () {
-    it('should return 200', function (done) {
+describe('index controller', () => {
+  describe('index', () => {
+    it('should return 200', done => {
       request(app)
         .get('/')
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200)
-        .end(function (err) {
+        .end(err => {
           if (err) {
             done(err)
           } else {
@@ -18,13 +18,13 @@ describe('index controller', function () {
         });
     })
   });
-  describe('new', function () {
-    it('should return 200', function (done) {
+  describe('new', () => {
+    it('should return 200', done => {
       request(app)
         .get('/new')
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           if (err) {
             done(err)
           } else {
@@ -33,8 +33,8 @@ describe('index controller', function () {
         });
     })
   });
-  describe('new post', function () {
-    it('should return 200', function (done) {
+  describe('new post', () => {
+    it('should return 200', done => {
       request(app)
         .post('/new')
         .type('form')
@@ -60,7 +60,7 @@ describe('index controller', function () {
         .send({supportingImageDescription: 'test'})
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200)
-        .end(function (err, res) {
+        .end((err, res) => {
           if (err) {
             done(err)
           } else {

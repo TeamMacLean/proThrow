@@ -1,14 +1,14 @@
 const Request = require('../models/request');
-var admin = {};
+const admin = {};
 
-admin.index = function (req, res, next) {
+admin.index = (req, res, next) => {
 
   Request
     .run()
-    .then(function (requests) {
-      var completedRequests = [];
-      var incompleteRequests = [];
-      requests.map(function (m) {
+    .then(requests => {
+      const completedRequests = [];
+      const incompleteRequests = [];
+      requests.map(m => {
         if (m.complete) {
           completedRequests.push(m);
         } else {
@@ -17,33 +17,33 @@ admin.index = function (req, res, next) {
       });
 
       return res.render('admin/index', {
-        completedRequests: completedRequests,
-        incompleteRequests: incompleteRequests
+        completedRequests,
+        incompleteRequests
       });
     });
 };
 
-admin.show = function (req, res, next) {
+admin.show = (req, res, next) => {
 
-  var requestUUID = req.params.uuid;
+  const requestUUID = req.params.uuid;
   Request.filter({uuid: requestUUID})
     .run()
-    .then(function (requests) {
+    .then(requests => {
       if (requests.length) {
         res.render('admin/show', {request: requests[0]});
       } else {
-        res.render('error', {error: 'could not find ' + requestUUID});
+        res.render('error', {error: `could not find ${requestUUID}`});
       }
     });
 };
 
-admin.toggle = function (req, res, next) {
-  var requestUUID = req.params.uuid;
+admin.toggle = (req, res, next) => {
+  const requestUUID = req.params.uuid;
   Request.filter({uuid: requestUUID})
     .run()
-    .then(function (requests) {
+    .then(requests => {
       if (requests.length) {
-        var req = requests[0];
+        const req = requests[0];
         req.complete = !req.complete;
         req.save();
         res.send('done');
@@ -54,16 +54,16 @@ admin.toggle = function (req, res, next) {
     });
 };
 
-admin.addNote = function (req, res, next) {
+admin.addNote = (req, res, next) => {
 
-  var text = req.body.text;
+  const text = req.body.text;
 
-  var requestUUID = req.params.uuid;
+  const requestUUID = req.params.uuid;
   Request.filter({uuid: requestUUID})
     .run()
-    .then(function (requests) {
+    .then(requests => {
       if (requests.length) {
-        var req = requests[0];
+        const req = requests[0];
 
 
         //if(!req.notes){

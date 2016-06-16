@@ -1,21 +1,21 @@
-describe('app', function () {
-  var app = require('../app');
-  var http = require('http');
-  var server;
-  describe('start', function () {
-    it('should start ok', function (done) {
+describe('app', () => {
+  const app = require('../app');
+  const http = require('http');
+  let server;
+  describe('start', () => {
+    it('should start ok', done => {
       server = http.createServer(app);
-      server.on('listening', function () {
+      server.on('listening', () => {
         done();
       });
-      server.on('error', function (err) {
+      server.on('error', err => {
         done(err);
       });
       server.listen(8888);
     })
   });
-  describe('stop', function () {
-    it('should stop ok', function (done) {
+  describe('stop', () => {
+    it('should stop ok', done => {
       server.close();
       done();
     })

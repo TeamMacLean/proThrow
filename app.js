@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const util = require('./lib/util.js');
 const r = require('./lib/thinky').r;
-const store = new rethinkSession(r);
+// const store = new rethinkSession(r);
 const app = express();
 
 const socketUploader = require('./lib/socketUpload');
@@ -21,16 +21,20 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
-app.use(
-    session(
-        {
-            secret: config.secret,
-            resave: false,
-            saveUninitialized: false,
-            store: store
-        }
-    )
-);
+
+var options = {
+    servers: [
+        {host: 'localhost', port: 28015, db: 'Hog'}
+    ]
+};
+var store = new rethinkSession(options);
+
+app.use(session({
+    secret: config.secret,
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());

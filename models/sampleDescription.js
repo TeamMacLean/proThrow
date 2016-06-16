@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-let SampleDescription = thinky.createModel("SampleDescription", {
+const SampleDescription = thinky.createModel("SampleDescription", {
     id: type.string(),
     requestID: type.string(),
     position: type.number().required(),

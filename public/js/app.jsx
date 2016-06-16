@@ -1,4 +1,4 @@
-var Species = [
+const Species = [
     'Arabidopsis thaliana',
     'Lotus japonicus',
     'Medicago truncatula',
@@ -13,7 +13,9 @@ var Species = [
     'Pseudomonas syringae'
 ];
 
-var App = React.createClass({
+var supportedFileTypes = global.supportedFileTypes;
+
+const App = React.createClass({
     displayName: "app",
     componentDidMount: function componentDidMount() {
         // console.log('mounted');
@@ -26,34 +28,34 @@ var App = React.createClass({
         return {samples: [], supportingImages: []};
     },
     addSample: function addSample() {
-        var key = guid();
+        const key = guid();
         this.setState({samples: this.state.samples.concat([{key: key}])});
     },
     removeSample: function removeSample(sample) {
-        var newSamples = this.state.samples.filter(function (s) {
+        const newSamples = this.state.samples.filter(function (s) {
             return s.key != sample.props.data.key;
         });
         this.setState({samples: newSamples});
     },
     removeSupportImage: function removeSupportImage(index) {
-        var replacement = this.state.supportingImages;
+        const replacement = this.state.supportingImages;
         delete replacement[index];
         this.setState({samples: replacement});
     },
     initSocketUpload: function initSocketUpload() {
 
-        var self = this;
+        const self = this;
 
         $(function () {
 
-            var socket = io(window.location.host);
+            const socket = io(window.location.host);
             socket.on('connect', function () {
-                var delivery = new Delivery(socket);
+                const delivery = new Delivery(socket);
 
 
                 delivery.on('delivery.connect', function (delivery) {
                     $("input[type=file]").on('change', function (evt) {
-                        var file = $(this)[0].files[0];
+                        const file = $(this)[0].files[0];
                         delivery.send(file);
                         evt.preventDefault();
                     });
@@ -75,7 +77,7 @@ var App = React.createClass({
         })
     },
     render: function render() {
-        var self = this;
+        const self = this;
 
 
         return (
@@ -312,13 +314,14 @@ var App = React.createClass({
                                                                            data-toggle="tooltip"
                                                                            title="This needs to be filled out"/></label>
                                             <input className="form-control" type="file" id="imageUpload"
+                                                   accept={supportedFileTypes}
                                                    name="imageUpload"
                                                    required/>
                                         </div>
 
                                         <div id="supportingImages" name="supportingImages">
                                             {self.state.supportingImages.map(function (object, i) {
-                                                var remove = self.removeSupportImage.bind(null, i);
+                                                const remove = self.removeSupportImage.bind(null, i);
                                                 return <div className="row" key={i}>
                                                     <div className="col-sm-12">
                                                         <div className="tile">
@@ -331,6 +334,8 @@ var App = React.createClass({
                                                                   onClick={remove}/>
                                                             <hr/>
 
+                                                            <input type="hidden" value={object.id} name="image[]"/>
+
                                                             <div className="form-group">
                                                                 <label>Supporting image description <span
                                                                     data-icon="&#x74;"
@@ -339,7 +344,7 @@ var App = React.createClass({
                                                                     title="This needs to be filled out"/></label>
                                                                 <input className="form-control" type="text"
                                                                        id="supportingImageDescription"
-                                                                       name="supportingImageDescription"
+                                                                       name="supportingImageDescription[]"
                                                                        required/>
                                                             </div>
 
@@ -495,7 +500,7 @@ e.g.
     }
 });
 
-var Sample = React.createClass({
+const Sample = React.createClass({
     displayName: "Sample",
     render: function () {
         return (
@@ -549,45 +554,14 @@ function guid() {
 }
 
 
-//run on load
 $(function () {
     initDrag();
     initToolTips();
-    // initSocketUpload();
 });
-
-// function initSocketUpload() {
-//
-//     var socket = io(window.location.host);
-//     socket.on('connect', function () {
-//         var delivery = new Delivery(socket);
-//
-//         delivery.on('delivery.connect', function (delivery) {
-//             $("input[type=file]").on('change', function (evt) {
-//                 var file = $(this)[0].files[0];
-//
-//                 console.log(file);
-//
-//                 delivery.send(file);
-//                 evt.preventDefault();
-//             });
-//         });
-//
-//         delivery.on('send.success', function (fileUID) {
-//             console.log("file was successfully sent.");
-//         });
-//
-//         socket.on('upload.complete', function (obj) {
-//             // supportingImages.push(obj);
-//             console.log('received object', obj);
-//         })
-//
-//     });
-// }
 
 function initDrag() {
 
-    var drake = dragula({
+    const drake = dragula({
         isContainer: function (el) {
             return el.classList.contains('dragg');
         }

@@ -1,15 +1,15 @@
-var request = require('supertest');
+const request = require('supertest');
 
-var app = require('../app');
+const app = require('../app');
 
-describe('admin controller', function () {
-  describe('index', function () {
-    it('should return 200', function (done) {
+describe('admin controller', () => {
+  describe('index', () => {
+    it('should return 200', done => {
       request(app)
         .get('/admin')
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200)
-        .end(function (err) {
+        .end(err => {
           if (err) {
             done(err)
           } else {

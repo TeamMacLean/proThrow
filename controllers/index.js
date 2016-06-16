@@ -1,31 +1,27 @@
-var Request = require('../models/request');
-var UUID = require('../lib/uuid');
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
+const Request = require('../models/request');
+const UUID = require('../lib/uuid');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 const renderError = require('../lib/renderError');
 const LOG = require('../lib/log');
 
-var index = {};
+const index = {};
 
-var transporter = nodemailer.createTransport(smtpTransport({
+const transporter = nodemailer.createTransport(smtpTransport({
     host: 'mail.nbi.ac.uk',
     port: 25
 }));
 
-index.index = function (req, res, next) {
-    return res.render('index');
-};
+index.index = (req, res, next) => res.render('index');
 
-index.new = function (req, res, next) {
-    return res.render('new');
-};
+index.new = (req, res, next) => res.render('new');
 
-index.newPost = function (req, res, next) {
+index.newPost = (req, res, next) => {
 
-    UUID.generate(6, function (uuid) {
+    UUID.generate(6, uuid => {
 
-        var request = new Request({
-            uuid: uuid,
+        const request = new Request({
+            uuid,
             species: req.body.species,
             searchDatabase: req.body.searchDatabase,
             tissue: req.body.tissue,
@@ -51,12 +47,10 @@ index.newPost = function (req, res, next) {
 
         //TODO create sample Files and sample descriptions
 
-        request.save().then(function (doc) {
-            sendEmail('new job, ' + uuid);
+        request.save().then(doc => {
+            sendEmail(`new job, ${uuid}`);
             res.render('newPost', {uuid: doc.uuid});
-        }).error(function (err) {
-            return renderError(err, res);
-        });
+        }).error(err => renderError(err, res));
     });
 };
 
@@ -66,8 +60,8 @@ function sendEmail(text) {
         from: 'prothrow@tsl.ac.uk',
         to: 'martin.page@tsl.ac.uk',
         subject: 'New request (prothrow)',
-        text: text + '\n\n'
-    }, function (error, info) {
+        text: `${text}\n\n`
+    }, (error, info) => {
         if (error) {
             return renderError(err, res);
         } else {
