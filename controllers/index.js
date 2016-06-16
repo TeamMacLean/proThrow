@@ -32,7 +32,7 @@ index.index = (req, res, next) => res.render('index');
 
 index.new = (req, res, next) => res.render('new');
 
-index.newPost = (req, res, next) => {
+index.newPost = (req, res) => {
 
     UUID.generate(6, uuid => {
 

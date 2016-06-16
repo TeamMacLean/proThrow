@@ -8,7 +8,7 @@
   },
   "rules": {
     "quotes": [
-      "error",
+      1,
       "single"
     ]
   }
