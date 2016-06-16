@@ -4,6 +4,32 @@ var Species = ['Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula',
 
 var supportedFileTypes = '.png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF' /*defines: supportedFileTypes = ".png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF"*/;
 
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    }
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+$(function () {
+    initDrag();
+    initToolTips();
+});
+
+function initDrag() {
+
+    var drake = dragula({
+        isContainer: function isContainer(el) {
+            return el.classList.contains('dragg');
+        }
+    });
+}
+
+function initToolTips() {
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
 var App = React.createClass({
     displayName: 'app',
     componentDidMount: function componentDidMount() {
@@ -1001,31 +1027,5 @@ var Sample = React.createClass({
     }
 
 });
-
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
-$(function () {
-    initDrag();
-    initToolTips();
-});
-
-function initDrag() {
-
-    var drake = dragula({
-        isContainer: function isContainer(el) {
-            return el.classList.contains('dragg');
-        }
-    });
-}
-
-function initToolTips() {
-    $('[data-toggle="tooltip"]').tooltip();
-}
 
 ReactDOM.render(React.createElement(App), document.getElementById('app'));

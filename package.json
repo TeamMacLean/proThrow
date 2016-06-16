@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server",
     "test": "mocha",
-    "gulp": "gulp"
+    "build": "gulp"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
