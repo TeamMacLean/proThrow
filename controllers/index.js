@@ -12,6 +12,22 @@ const transporter = nodemailer.createTransport(smtpTransport({
     port: 25
 }));
 
+
+function sendEmail(text) {
+    transporter.sendMail({
+        from: 'prothrow@tsl.ac.uk',
+        to: 'martin.page@tsl.ac.uk',
+        subject: 'New request (prothrow)',
+        text: `${text}\n\n`
+    }, (error, info) => {
+        if (error) {
+            return renderError(err, res);
+        } else {
+            LOG.success('Message sent:', info.response);
+        }
+    });
+}
+
 index.index = (req, res, next) => res.render('index');
 
 index.new = (req, res, next) => res.render('new');
@@ -54,20 +70,5 @@ index.newPost = (req, res, next) => {
     });
 };
 
-
-function sendEmail(text) {
-    transporter.sendMail({
-        from: 'prothrow@tsl.ac.uk',
-        to: 'martin.page@tsl.ac.uk',
-        subject: 'New request (prothrow)',
-        text: `${text}\n\n`
-    }, (error, info) => {
-        if (error) {
-            return renderError(err, res);
-        } else {
-            LOG.success('Message sent:', info.response);
-        }
-    });
-}
 
 module.exports = index;

@@ -7,6 +7,24 @@ const admin = require('./controllers/admin');
 const index = require('./controllers/index');
 const Auth = require('./controllers/auth');
 
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        req.session.returnTo = req.path;
+        return res.redirect('/signin');
+    }
+}
+
+function isAdmin(req, res, next) {
+    if (Util.isAdmin(req.user.username)) {
+        return next();
+    } else {
+        return res.send('your not an admin!');
+    }
+}
+
 router.route('/')
     .get(index.index);
 
@@ -56,21 +74,3 @@ router.route('*')
 
 
 module.exports = router;
-
-
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        req.session.returnTo = req.path;
-        return res.redirect('/signin');
-    }
-}
-
-function isAdmin(req, res, next) {
-    if (Util.isAdmin(req.user.username)) {
-        return next();
-    } else {
-        return res.send('your not an admin!');
-    }
-}

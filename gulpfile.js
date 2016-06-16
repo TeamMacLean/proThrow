@@ -5,7 +5,7 @@ const config = require('./config.json');
 const uglify = require('gulp-uglify');
 
 const jsPath = "public/js";
-const appPath = jsPath + "/app.jsx";
+const appPath = `${jsPath}/app.jsx`;
 
 gulp.task("default", () => gulp.src(appPath)
     .pipe(babel({
