@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-const SampleDescription = thinky.createModel("SampleDescription", {
+const SampleDescription = thinky.createModel('SampleDescription', {
     id: type.string(),
     requestID: type.string(),
     position: type.number().required(),
@@ -12,4 +12,4 @@ const SampleDescription = thinky.createModel("SampleDescription", {
 module.exports = SampleDescription;
 
 const Request = require('./request');
-SampleDescription.belongsTo(Request, "request", "requestID", "id");
+SampleDescription.belongsTo(Request, 'request', 'requestID', 'id');

@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-const SampleFile = thinky.createModel("SampleFile", {
+const SampleFile = thinky.createModel('SampleFile', {
     id: type.string(),
     requestID: type.string(),
     path: type.string()
@@ -10,4 +10,4 @@ const SampleFile = thinky.createModel("SampleFile", {
 module.exports = SampleFile;
 
 const Request = require('./request');
-SampleFile.belongsTo(Request, "request", "requestID", "id");
+SampleFile.belongsTo(Request, 'request', 'requestID', 'id');

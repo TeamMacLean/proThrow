@@ -16,7 +16,7 @@ const Species = [
 var supportedFileTypes = global.supportedFileTypes;
 
 const App = React.createClass({
-    displayName: "app",
+    displayName: 'app',
     componentDidMount: function componentDidMount() {
         // console.log('mounted');
         $('#page-loader').fadeOut('slow', function () {
@@ -62,7 +62,7 @@ const App = React.createClass({
                 });
 
                 delivery.on('send.success', function (fileUID) {
-                    console.log("file was successfully sent.");
+                    console.log('file was successfully sent.');
                 });
 
                 socket.on('upload.complete', function (obj) {
@@ -70,7 +70,7 @@ const App = React.createClass({
                     // console.log('received object', obj);
 
 
-                    $("input[type=file]").val("");
+                    $("input[type=file]").val('');
                 })
 
             });

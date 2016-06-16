@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-const Request = thinky.createModel("Request", {
+const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
     complete: type.boolean().default(false),
@@ -55,4 +55,4 @@ module.exports = Request;
 
 
 const SampleDescription = require('./sampleDescription');
-Request.hasMany(SampleDescription, "samplesDescriptions", "id", "requestID");
+Request.hasMany(SampleDescription, 'samplesDescriptions', 'id', 'requestID');

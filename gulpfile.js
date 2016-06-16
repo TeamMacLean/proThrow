@@ -1,13 +1,13 @@
-const gulp = require("gulp");
-const babel = require("gulp-babel");
-const rename = require("gulp-rename");
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const rename = require('gulp-rename');
 const config = require('./config.json');
 const uglify = require('gulp-uglify');
 
-const jsPath = "public/js";
+const jsPath = 'public/js';
 const appPath = `${jsPath}/app.jsx`;
 
-gulp.task("default", () => gulp.src(appPath)
+gulp.task('default', () => gulp.src(appPath)
     .pipe(babel({
         presets: ['react', 'es2015'],
         plugins: [
