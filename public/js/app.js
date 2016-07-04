@@ -653,8 +653,7 @@ var App = React.createClass({
                                         ),
                                         React.createElement('input', { className: 'form-control', type: 'file', id: 'imageUpload',
                                             accept: supportedFileTypes,
-                                            name: 'imageUpload',
-                                            required: true })
+                                            name: 'imageUpload' })
                                     ),
                                     React.createElement(
                                         'div',
@@ -682,7 +681,7 @@ var App = React.createClass({
                                                         React.createElement('span', { className: 'right clickable', 'data-icon': '',
                                                             onClick: remove }),
                                                         React.createElement('hr', null),
-                                                        React.createElement('input', { type: 'hidden', value: object.id, name: 'image[]' }),
+                                                        React.createElement('input', { type: 'hidden', value: object.uid, name: 'image[]' }),
                                                         React.createElement(
                                                             'div',
                                                             { className: 'form-group' },

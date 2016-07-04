@@ -63,9 +63,18 @@ index.newPost = (req, res) => {
         });
 
 
-        //TODO create sample Files and sample descriptions
-
         request.save().then(doc => {
+
+            req.body['image[]'].map(function (img) {
+            });
+            req.body['sampleNumber[]'].map(function (sn) {
+            });
+            req.body['sampleDescription[]'].map(function (sd) {
+            });
+
+            // console.log(req.body);
+
+
             sendEmail(`new job, ${uuid}`);
             res.render('newPost', {uuid: doc.uuid});
         }).error(err => renderError(err, res));

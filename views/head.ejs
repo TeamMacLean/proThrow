@@ -41,8 +41,12 @@
                         <%- locals.signedInUser.name %>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="userMenu">
+                        <% if(locals.signedInUser.isAdmin){ %>
+                        <a class="dropdown-item" href="/admin">Admin</a>
+                        <% } %>
                         <a class="dropdown-item" href="/signout">Sign out</a>
                     </div>
+
                 </div>
             </div>
 

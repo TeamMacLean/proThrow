@@ -338,8 +338,7 @@ const App = React.createClass({
                                             <label>Supporting images</label>
                                             <input className="form-control" type="file" id="imageUpload"
                                                    accept={supportedFileTypes}
-                                                   name="imageUpload"
-                                                   required/>
+                                                   name="imageUpload"/>
                                         </div>
 
                                         <div id="supportingImages" name="supportingImages">
@@ -357,7 +356,7 @@ const App = React.createClass({
                                                                   onClick={remove}/>
                                                             <hr/>
 
-                                                            <input type="hidden" value={object.id} name="image[]"/>
+                                                            <input type="hidden" value={object.uid} name="image[]"/>
 
                                                             <div className="form-group">
                                                                 <label>Supporting image description</label>
