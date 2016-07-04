@@ -10,7 +10,8 @@ const Request = thinky.createModel('Request', {
 
     //Biological Materia
     species: type.string().required(),
-    searchDatabase: type.string().required(),
+    secondSpecies: type.string().required(),
+    // searchDatabase: type.string().required(),
     tissue: type.string().required(),
     tissueAgeNum: type.string().required(),
     tissueAgeType: type.string().required(),
@@ -18,6 +19,7 @@ const Request = thinky.createModel('Request', {
 
     //Project Summary
     projectDescription: type.string().required(),
+    hopedAnalysis: type.string().required(),
     bufferComposition: type.string().required(),
     //TODO images // supportingImages: type.string().required(),
     //TODO image description // supportingImageDescription: type.string().required(),

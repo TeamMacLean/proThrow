@@ -123,7 +123,7 @@ var App = React.createClass({
                                     React.createElement(
                                         'h3',
                                         { className: 'group-label' },
-                                        'Biological Materia'
+                                        'Biological Material'
                                     ),
                                     React.createElement(
                                         'div',
@@ -134,7 +134,7 @@ var App = React.createClass({
                                             'Species ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent' })
                                         ),
                                         React.createElement(
                                             'select',
@@ -156,18 +156,17 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Preferred database for searches ',
-                                            React.createElement('span', { 'data-icon': 't',
-                                                className: 'tip',
+                                            'Second Species ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent' })
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'searchDatabase', name: 'searchDatabase',
-                                                required: true, defaultValue: '' },
+                                            { className: 'form-control', id: 'secondSpecies', name: 'secondSpecies',
+                                                defaultValue: 'None', required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
-                                            Species.map(function (object, i) {
+                                            ['None'].concat(Species).map(function (object, i) {
                                                 return React.createElement(
                                                     'option',
                                                     { key: i },
@@ -182,10 +181,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Tissue ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Tissue'
                                         ),
                                         React.createElement(
                                             'select',
@@ -235,10 +231,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Tissue age ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Tissue age'
                                         ),
                                         React.createElement(
                                             'div',
@@ -248,6 +241,7 @@ var App = React.createClass({
                                                 { className: 'col-md-6' },
                                                 React.createElement('input', { className: 'form-control', type: 'number', id: 'tissueAgeNum',
                                                     name: 'tissueAgeNum',
+                                                    min: '0',
                                                     required: true })
                                             ),
                                             React.createElement(
@@ -284,10 +278,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Growth conditions ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Growth conditions'
                                         ),
                                         React.createElement(
                                             'select',
@@ -350,17 +341,16 @@ var App = React.createClass({
                                             'Type of analysis ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'If you know the type of analysis you want, select it here' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'analysisType', name: 'analysisType',
-                                                required: true, defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                required: true, defaultValue: 'discovery' },
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'discovery'
+                                                'Discovery'
                                             ),
                                             React.createElement(
                                                 'option',
@@ -388,23 +378,23 @@ var App = React.createClass({
                                             'Secondary analysis ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select only if you want multiple types of analysis done on the same sample, e.g. discovery and targeted' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'secondaryAnalysisType',
                                                 name: 'secondaryAnalysisType',
-                                                required: true, defaultValue: '' },
+                                                required: true, defaultValue: 'None' },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'none'
+                                                'None'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'discovery'
+                                                'Discovery'
                                             ),
                                             React.createElement(
                                                 'option',
@@ -432,13 +422,12 @@ var App = React.createClass({
                                             'Type of PTM ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the type of PTM you are interested in' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM', required: true,
-                                                defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                defaultValue: 'non-modified' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -486,32 +475,31 @@ var App = React.createClass({
                                             React.createElement('span', { 'data-icon': 't',
                                                 className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the type of quantitative analysis if you have discussed with the Proteomics team. Otherwise leave this in the default option ' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'quantitativeAnalysisRequired',
-                                                name: 'quantitativeAnalysisRequired', required: true, defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                name: 'quantitativeAnalysisRequired', defaultValue: 'None', required: true },
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'none'
+                                                'None'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'semi'
+                                                'Semi'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'relative'
+                                                'Relative'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'absolute'
+                                                'Absolute'
                                             )
                                         )
                                     ),
@@ -524,27 +512,31 @@ var App = React.createClass({
                                             'Type of labeling ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the type of labeling if you have discussed with the proteomics team. Otherwise leave this in the default option ' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'typeOfLabeling', name: 'typeOfLabeling',
-                                                required: true, defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                required: true, defaultValue: 'None' },
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'label-free'
+                                                'None'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'post-extraction'
+                                                'Label-free'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'metabolic'
+                                                'Post-extraction'
+                                            ),
+                                            React.createElement(
+                                                'option',
+                                                null,
+                                                'Metabolic'
                                             )
                                         )
                                     ),
@@ -557,18 +549,17 @@ var App = React.createClass({
                                             'Label used ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the type of label if you have discussed with the proteomics team. Otherwise leave this in the default option' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'labelUsed', name: 'labelUsed', required: true,
-                                                defaultValue: '' },
+                                                defaultValue: 'None' },
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'none (added due to label-free option above)'
+                                                'None'
                                             ),
-                                            React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -625,12 +616,9 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Project description ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Project description'
                                         ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'projectDescription',
+                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'projectDescription',
                                             name: 'projectDescription' })
                                     ),
                                     React.createElement(
@@ -639,10 +627,18 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Buffer composition ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'What data do you hope to get for the analysis'
+                                        ),
+                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'hopedAnalysis',
+                                            name: 'hopedAnalysis' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Buffer composition'
                                         ),
                                         React.createElement('input', { className: 'form-control', type: 'text', id: 'bufferComposition',
                                             name: 'bufferComposition' })
@@ -653,10 +649,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Supporting images ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Supporting images'
                                         ),
                                         React.createElement('input', { className: 'form-control', type: 'file', id: 'imageUpload',
                                             accept: supportedFileTypes,
@@ -696,12 +689,7 @@ var App = React.createClass({
                                                             React.createElement(
                                                                 'label',
                                                                 null,
-                                                                'Supporting image description ',
-                                                                React.createElement('span', {
-                                                                    'data-icon': 't',
-                                                                    className: 'tip',
-                                                                    'data-toggle': 'tooltip',
-                                                                    title: 'This needs to be filled out' })
+                                                                'Supporting image description'
                                                             ),
                                                             React.createElement('input', { className: 'form-control', type: 'text',
                                                                 id: 'supportingImageDescription',
@@ -741,7 +729,7 @@ var App = React.createClass({
                                             'Sample preparation ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Select the type of sample preparation used. If not available let the proteomics team know so it can be added ' })
                                         ),
                                         React.createElement(
                                             'select',
@@ -776,10 +764,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Digestion ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                            'Digestion'
                                         ),
                                         React.createElement(
                                             'select',
@@ -812,13 +797,12 @@ var App = React.createClass({
                                             'Enzyme ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Other enzyme combinations can be selected if previously discussed with proteomics team' })
                                         ),
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'enzyme', name: 'enzyme', required: true,
-                                                defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                defaultValue: 'Trypsin' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -870,10 +854,11 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'Accession of the parent gene ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                            'Species and accession of the parent gene ',
+                                            React.createElement('span', { 'data-icon': 't',
+                                                className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct' })
                                         ),
                                         React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
                                             name: 'accession',
@@ -888,7 +873,7 @@ var App = React.createClass({
                                             'Amino acid sequence ',
                                             React.createElement('span', { 'data-icon': 't', className: 'tip',
                                                 'data-toggle': 'tooltip',
-                                                title: 'This needs to be filled out' })
+                                                title: 'Provided the entire amino acid sequence of the construct including tags and junctions' })
                                         ),
                                         React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
                                             name: 'sequenceInfo',
@@ -983,9 +968,7 @@ var Sample = React.createClass({
                                     React.createElement(
                                         'label',
                                         null,
-                                        'Sample number ',
-                                        React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                            'data-tipso': 'This needs to be filled out' })
+                                        'Sample number'
                                     ),
                                     React.createElement('input', { className: 'form-control', type: 'number', min: '0', max: '150',
                                         id: 'sampleNumber',
@@ -1001,9 +984,7 @@ var Sample = React.createClass({
                                     React.createElement(
                                         'label',
                                         null,
-                                        'Sample description ',
-                                        React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                            'data-tipso': 'This needs to be filled out' })
+                                        'Sample description'
                                     ),
                                     React.createElement('input', { className: 'form-control', type: 'text', id: 'sampleDescription',
                                         name: 'sampleDescription[]',

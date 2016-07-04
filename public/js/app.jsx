@@ -128,12 +128,12 @@ const App = React.createClass({
                                     <fieldset>
                                         <img src="/img/Eyedropper-Tool.png" className="center"/>
 
-                                        <h3 className="group-label">Biological Materia</h3>
+                                        <h3 className="group-label">Biological Material</h3>
 
                                         <div className="form-group">
                                             <label>Species <span data-icon="&#x74;" className="tip"
                                                                  data-toggle="tooltip"
-                                                                 title="This needs to be filled out"/></label>
+                                                                 title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
                                             <select className="form-control" id="species" name="species" defaultValue=''
                                                     required>
                                                 <option disabled value=''/>
@@ -143,22 +143,19 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Preferred database for searches <span data-icon="&#x74;"
-                                                                                         className="tip"
-                                                                                         data-toggle="tooltip"
-                                                                                         title="This needs to be filled out"/></label>
-                                            <select className="form-control" id="searchDatabase" name="searchDatabase"
-                                                    required defaultValue=''>
+                                            <label>Second Species <span data-icon="&#x74;" className="tip"
+                                                                        data-toggle="tooltip"
+                                                                        title="Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
+                                            <select className="form-control" id="secondSpecies" name="secondSpecies"
+                                                    defaultValue='None' required>
                                                 <option disabled value=''/>
-                                                {Species.map(function (object, i) {
+                                                {['None'].concat(Species).map(function (object, i) {
                                                     return <option key={i}>{object}</option>;
                                                 })}
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Tissue <span data-icon="&#x74;" className="tip"
-                                                                data-toggle="tooltip"
-                                                                title="This needs to be filled out"/></label>
+                                            <label>Tissue</label>
                                             <select className="form-control" id="tissue" name="tissue" required
                                                     defaultValue=''>
                                                 <option disabled value=''/>
@@ -172,14 +169,13 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Tissue age <span data-icon="&#x74;" className="tip"
-                                                                    data-toggle="tooltip"
-                                                                    title="This needs to be filled out"/></label>
+                                            <label>Tissue age</label>
 
                                             <div className="row">
                                                 <div className="col-md-6">
                                                     <input className="form-control" type="number" id="tissueAgeNum"
                                                            name="tissueAgeNum"
+                                                           min="0"
                                                            required/>
                                                 </div>
                                                 <div className="col-md-6">
@@ -197,9 +193,7 @@ const App = React.createClass({
 
                                         </div>
                                         <div className="form-group">
-                                            <label>Growth conditions <span data-icon="&#x74;" className="tip"
-                                                                           data-toggle="tooltip"
-                                                                           title="This needs to be filled out"/></label>
+                                            <label>Growth conditions</label>
                                             <select className="form-control" id="growthConditions"
                                                     name="growthConditions"
                                                     required defaultValue=''>
@@ -227,11 +221,10 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Type of analysis <span data-icon="&#x74;" className="tip"
                                                                           data-toggle="tooltip"
-                                                                          title="This needs to be filled out"/></label>
+                                                                          title="If you know the type of analysis you want, select it here"/></label>
                                             <select className="form-control" id="analysisType" name="analysisType"
-                                                    required defaultValue=''>
-                                                <option disabled value=''/>
-                                                <option>discovery</option>
+                                                    required defaultValue='discovery'>
+                                                <option>Discovery</option>
                                                 <option>SRM</option>
                                                 <option>PRM</option>
                                                 <option>DIA</option>
@@ -240,13 +233,13 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Secondary analysis <span data-icon="&#x74;" className="tip"
                                                                             data-toggle="tooltip"
-                                                                            title="This needs to be filled out"/></label>
+                                                                            title="Select only if you want multiple types of analysis done on the same sample, e.g. discovery and targeted"/></label>
                                             <select className="form-control" id="secondaryAnalysisType"
                                                     name="secondaryAnalysisType"
-                                                    required defaultValue=''>
+                                                    required defaultValue='None'>
                                                 <option disabled value=''/>
-                                                <option>none</option>
-                                                <option>discovery</option>
+                                                <option>None</option>
+                                                <option>Discovery</option>
                                                 <option>SRM</option>
                                                 <option>PRM</option>
                                                 <option>DIA</option>
@@ -255,10 +248,9 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Type of PTM <span data-icon="&#x74;" className="tip"
                                                                      data-toggle="tooltip"
-                                                                     title="This needs to be filled out"/></label>
+                                                                     title="Select the type of PTM you are interested in"/></label>
                                             <select className="form-control" id="typeOfPTM" name="typeOfPTM" required
-                                                    defaultValue=''>
-                                                <option disabled value=''/>
+                                                    defaultValue='non-modified'>
                                                 <option>all</option>
                                                 <option>non-modified</option>
                                                 <option>phosphorylation</option>
@@ -272,36 +264,34 @@ const App = React.createClass({
                                             <label>Quantitative analysis required <span data-icon="&#x74;"
                                                                                         className="tip"
                                                                                         data-toggle="tooltip"
-                                                                                        title="This needs to be filled out"/></label>
+                                                                                        title="Select the type of quantitative analysis if you have discussed with the Proteomics team. Otherwise leave this in the default option "/></label>
                                             <select className="form-control" id="quantitativeAnalysisRequired"
-                                                    name="quantitativeAnalysisRequired" required defaultValue=''>
-                                                <option disabled value=''/>
-                                                <option>none</option>
-                                                <option>semi</option>
-                                                <option>relative</option>
-                                                <option>absolute</option>
+                                                    name="quantitativeAnalysisRequired" defaultValue='None' required>
+                                                <option>None</option>
+                                                <option>Semi</option>
+                                                <option>Relative</option>
+                                                <option>Absolute</option>
                                             </select>
                                         </div>
                                         <div className="form-group">
                                             <label>Type of labeling <span data-icon="&#x74;" className="tip"
                                                                           data-toggle="tooltip"
-                                                                          title="This needs to be filled out"/></label>
+                                                                          title="Select the type of labeling if you have discussed with the proteomics team. Otherwise leave this in the default option "/></label>
                                             <select className="form-control" id="typeOfLabeling" name="typeOfLabeling"
-                                                    required defaultValue=''>
-                                                <option disabled value=''/>
-                                                <option>label-free</option>
-                                                <option>post-extraction</option>
-                                                <option>metabolic</option>
+                                                    required defaultValue='None'>
+                                                <option>None</option>
+                                                <option>Label-free</option>
+                                                <option>Post-extraction</option>
+                                                <option>Metabolic</option>
                                             </select>
                                         </div>
                                         <div className="form-group">
                                             <label>Label used <span data-icon="&#x74;" className="tip"
                                                                     data-toggle="tooltip"
-                                                                    title="This needs to be filled out"/></label>
+                                                                    title="Select the type of label if you have discussed with the proteomics team. Otherwise leave this in the default option"/></label>
                                             <select className="form-control" id="labelUsed" name="labelUsed" required
-                                                    defaultValue=''>
-                                                <option>none (added due to label-free option above)</option>
-                                                <option disabled value=''/>
+                                                    defaultValue='None'>
+                                                <option>None</option>
                                                 <option>TMT0</option>
                                                 <option>TMT6</option>
                                                 <option>TMT10</option>
@@ -327,24 +317,25 @@ const App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>Project description <span data-icon="&#x74;" className="tip"
-                                                                             data-toggle="tooltip"
-                                                                             title="This needs to be filled out"/></label>
-                                            <input className="form-control" type="text" id="projectDescription"
-                                                   name="projectDescription"/>
+                                            <label>Project description</label>
+                                            <textarea className="form-control" type="text" id="projectDescription"
+                                                      name="projectDescription"/>
                                         </div>
+
                                         <div className="form-group">
-                                            <label>Buffer composition <span data-icon="&#x74;" className="tip"
-                                                                            data-toggle="tooltip"
-                                                                            title="This needs to be filled out"/></label>
+                                            <label>What data do you hope to get for the analysis</label>
+                                            <textarea className="form-control" type="text" id="hopedAnalysis"
+                                                      name="hopedAnalysis"/>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label>Buffer composition</label>
                                             <input className="form-control" type="text" id="bufferComposition"
                                                    name="bufferComposition"/>
                                         </div>
 
                                         <div className="form-group">
-                                            <label>Supporting images <span data-icon="&#x74;" className="tip"
-                                                                           data-toggle="tooltip"
-                                                                           title="This needs to be filled out"/></label>
+                                            <label>Supporting images</label>
                                             <input className="form-control" type="file" id="imageUpload"
                                                    accept={supportedFileTypes}
                                                    name="imageUpload"
@@ -369,11 +360,7 @@ const App = React.createClass({
                                                             <input type="hidden" value={object.id} name="image[]"/>
 
                                                             <div className="form-group">
-                                                                <label>Supporting image description <span
-                                                                    data-icon="&#x74;"
-                                                                    className="tip"
-                                                                    data-toggle="tooltip"
-                                                                    title="This needs to be filled out"/></label>
+                                                                <label>Supporting image description</label>
                                                                 <input className="form-control" type="text"
                                                                        id="supportingImageDescription"
                                                                        name="supportingImageDescription[]"
@@ -403,7 +390,7 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Sample preparation <span data-icon="&#x74;" className="tip"
                                                                             data-toggle="tooltip"
-                                                                            title="This needs to be filled out"/></label>
+                                                                            title="Select the type of sample preparation used. If not available let the proteomics team know so it can be added "/></label>
                                             <select className="form-control" id="samplePrep" name="samplePrep" required
                                                     defaultValue=''>
                                                 <option disabled value=''/>
@@ -416,9 +403,7 @@ const App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>Digestion <span data-icon="&#x74;" className="tip"
-                                                                   data-toggle="tooltip"
-                                                                   title="This needs to be filled out"/></label>
+                                            <label>Digestion</label>
                                             <select className="form-control" id="digestion" name="digestion" required
                                                     defaultValue=''>
                                                 <option disabled value=''/>
@@ -432,10 +417,9 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Enzyme <span data-icon="&#x74;" className="tip"
                                                                 data-toggle="tooltip"
-                                                                title="This needs to be filled out"/></label>
+                                                                title="Other enzyme combinations can be selected if previously discussed with proteomics team"/></label>
                                             <select className="form-control" id="enzyme" name="enzyme" required
-                                                    defaultValue=''>
-                                                <option disabled value=''/>
+                                                    defaultValue='Trypsin'>
                                                 <option>Trypsin</option>
                                                 <option>AspN</option>
                                                 <option>Trypsin AspN</option>
@@ -458,9 +442,10 @@ const App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>Accession of the parent gene <span data-icon="&#x74;" className="tip"
-                                                                                      data-toggle="tooltip"
-                                                                                      title="This needs to be filled out"/>
+                                            <label>Species and accession of the parent gene <span data-icon="&#x74;"
+                                                                                                  className="tip"
+                                                                                                  data-toggle="tooltip"
+                                                                                                  title="Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct"/>
                                             </label>
                                             <input className="form-control" type="text" id="accession"
                                                    name="accession"
@@ -470,7 +455,7 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Amino acid sequence <span data-icon="&#x74;" className="tip"
                                                                              data-toggle="tooltip"
-                                                                             title="This needs to be filled out"/>
+                                                                             title="Provided the entire amino acid sequence of the construct including tags and junctions"/>
                                             </label>
                                             <textarea className="form-control" type="text" id="sequenceInfo"
                                                       name="sequenceInfo"
@@ -543,8 +528,7 @@ const Sample = React.createClass({
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label>Sample number <span data-icon="&#x74;" className="tip"
-                                                                   data-tipso="This needs to be filled out"/></label>
+                                        <label>Sample number</label>
                                         <input className="form-control" type="number" min="0" max="150"
                                                id="sampleNumber"
                                                name="sampleNumber[]" required/>
@@ -552,8 +536,7 @@ const Sample = React.createClass({
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label>Sample description <span data-icon="&#x74;" className="tip"
-                                                                        data-tipso="This needs to be filled out"/></label>
+                                        <label>Sample description</label>
                                         <input className="form-control" type="text" id="sampleDescription"
                                                name="sampleDescription[]"
                                                required/>
