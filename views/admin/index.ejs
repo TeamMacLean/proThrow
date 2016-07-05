@@ -2,34 +2,48 @@
 
 <div class="container">
 
-    <div class="container">
-
-        <% if(incompleteRequests && incompleteRequests.length){ %>
-        <h3>Incomplete Requests</h3>
-        <ul>
-            <% incompleteRequests.map(function(ucr){ %>
-            <li><a href="/admin/request/<%- ucr.uuid %>"><%- ucr.uuid %></a></li>
-            <% }); %>
-        </ul>
-        <% } %>
-
-        <% if(completedRequests && completedRequests.length){ %>
-        <h3>Completed Requests</h3>
-        <ul>
-            <% completedRequests.map(function(cr){ %>
-            <li><a href="/admin/request/<%- cr.uuid %>"><%- cr.uuid %></a></li>
-            <% }); %>
-        </ul>
-        <% } %>
-
-        <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length) { %>
-
-        <h2>No requests submitted yet.</h2>
-
-        <% } %>
-
+    <% if(incompleteRequests && incompleteRequests.length){ %>
+    <h3>Incomplete Requests</h3>
+    <div class="row">
+        <% incompleteRequests.map(function(ucr){ %>
+        <div class="col-sm-3">
+            <div class="tile">
+                <a href="/admin/request/<%- ucr.uuid %>"><%- ucr.yanCode %> (<%- ucr.uuid %>)</a>
+                <br>
+                <span>Created by: <a href="/user/<%- ucr.createdBy %>"><%- ucr.createdBy %></a></span>
+                <br>
+                <span>Assigned to: <a href="/user/<%- ucr.assignedTo %>"><%- ucr.assignedTo %></a></span>
+            </div>
+        </div>
+        <% }); %>
     </div>
+    <% } %>
 
+    <% if(completedRequests && completedRequests.length){ %>
+    <h3>Completed Requests</h3>
+    <div class="row">
+        <% completedRequests.map(function(cr){ %>
+        <li><a href="/admin/request/<%- cr.uuid %>"><%- cr.yanCode %> (<%- cr.uuid %>)</a></li>
+        <div class="col-sm-3">
+            <div class="tile">
+                <a href="/admin/request/<%- cr.uuid %>"><%- cr.uuid %></a>
+                <br>
+                <span>Created by: <a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></span>
+                <br>
+                <span>Assigned to: <a href="/user/<%- cr.assignedTo %>"><%- cr.assignedTo %></a></span>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length) { %>
+
+    <h2>No requests submitted yet.</h2>
+
+    <% } %>
 
 </div>
+
+
 <% include ../foot.ejs %>

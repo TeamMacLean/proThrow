@@ -38,6 +38,8 @@ app.use((req, res, next) => {
         res.locals.signedInUser = {};
         res.locals.signedInUser.username = req.user.username;
         res.locals.signedInUser.name = req.user.name;
+        res.locals.signedInUser.fistName = req.user.firstName;
+        res.locals.signedInUser.lastName = req.user.lastName;
         res.locals.signedInUser.mail = req.user.mail;
         res.locals.signedInUser.isAdmin = util.isAdmin(req.user.username);
         return next(null, req, res);

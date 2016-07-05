@@ -250,14 +250,13 @@ const App = React.createClass({
                                                                      data-toggle="tooltip"
                                                                      title="Select the type of PTM you are interested in"/></label>
                                             <select className="form-control" id="typeOfPTM" name="typeOfPTM" required
-                                                    defaultValue='non-modified'>
-                                                <option>all</option>
-                                                <option>non-modified</option>
-                                                <option>phosphorylation</option>
-                                                <option>acetylation</option>
+                                                    defaultValue='none'>
+                                                <option>None</option>
+                                                <option>Phosphorylation</option>
+                                                <option>Acetylation</option>
                                                 <option>Ubiquitination</option>
-                                                <option>glycosylation</option>
-                                                <option>poly ADP ribosylation</option>
+                                                <option>Glycosylation</option>
+                                                <option>Poly ADP Ribosylation</option>
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -323,7 +322,7 @@ const App = React.createClass({
                                         </div>
 
                                         <div className="form-group">
-                                            <label>What data do you hope to get for the analysis</label>
+                                            <label>What data do you hope to get from this analysis</label>
                                             <textarea className="form-control" type="text" id="hopedAnalysis"
                                                       name="hopedAnalysis"/>
                                         </div>
@@ -361,8 +360,8 @@ const App = React.createClass({
                                                             <div className="form-group">
                                                                 <label>Supporting image description</label>
                                                                 <input className="form-control" type="text"
-                                                                       id="supportingImageDescription"
-                                                                       name="supportingImageDescription[]"
+                                                                       id="imageDescription"
+                                                                       name="imageDescription[]"
                                                                        required/>
                                                             </div>
 
@@ -404,8 +403,7 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Digestion</label>
                                             <select className="form-control" id="digestion" name="digestion" required
-                                                    defaultValue=''>
-                                                <option disabled value=''/>
+                                                    defaultValue='in gel'>
                                                 <option>in gel</option>
                                                 <option>on bead</option>
                                                 <option>in solution</option>

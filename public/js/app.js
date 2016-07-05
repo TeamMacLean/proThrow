@@ -427,26 +427,21 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM', required: true,
-                                                defaultValue: 'non-modified' },
+                                                defaultValue: 'none' },
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'all'
+                                                'None'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'non-modified'
+                                                'Phosphorylation'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'phosphorylation'
-                                            ),
-                                            React.createElement(
-                                                'option',
-                                                null,
-                                                'acetylation'
+                                                'Acetylation'
                                             ),
                                             React.createElement(
                                                 'option',
@@ -456,12 +451,12 @@ var App = React.createClass({
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'glycosylation'
+                                                'Glycosylation'
                                             ),
                                             React.createElement(
                                                 'option',
                                                 null,
-                                                'poly ADP ribosylation'
+                                                'Poly ADP Ribosylation'
                                             )
                                         )
                                     ),
@@ -627,7 +622,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'label',
                                             null,
-                                            'What data do you hope to get for the analysis'
+                                            'What data do you hope to get from this analysis'
                                         ),
                                         React.createElement('textarea', { className: 'form-control', type: 'text', id: 'hopedAnalysis',
                                             name: 'hopedAnalysis' })
@@ -691,8 +686,8 @@ var App = React.createClass({
                                                                 'Supporting image description'
                                                             ),
                                                             React.createElement('input', { className: 'form-control', type: 'text',
-                                                                id: 'supportingImageDescription',
-                                                                name: 'supportingImageDescription[]',
+                                                                id: 'imageDescription',
+                                                                name: 'imageDescription[]',
                                                                 required: true })
                                                         )
                                                     )
@@ -768,8 +763,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'digestion', name: 'digestion', required: true,
-                                                defaultValue: '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                                defaultValue: 'in gel' },
                                             React.createElement(
                                                 'option',
                                                 null,

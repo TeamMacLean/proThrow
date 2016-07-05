@@ -29,6 +29,7 @@ admin.show = (req, res, next) => {
 
     const requestUUID = req.params.uuid;
     Request.filter({uuid: requestUUID})
+        .getJoin({samplesImages: true, samplesDescriptions: true})
         .run()
         .then(requests => {
             if (requests.length) {

@@ -1,15 +1,17 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
-
+const config = require('../config.json');
 const SampleImage = thinky.createModel('SampleImage', {
     id: type.string(),
     uid: type.string().required(),
-    // requestID: type.string().required(),
+    requestID: type.string(),
     name: type.string().required(),
-    path: type.string().required()
+    path: type.string().required(),
+    description: type.string()
 });
 
-module.exports = SampleImage;
 
-// const Request = require('./request');
-// SampleFile.belongsTo(Request, 'request', 'requestID', 'id');
+SampleImage.define('getURL', function () {
+    return config.supportingImageRootURL + this.uid;
+});
+module.exports = SampleImage;

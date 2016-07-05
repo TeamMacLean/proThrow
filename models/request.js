@@ -1,9 +1,14 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
+const unassignedTAG = 'unknown';
+
 const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
+    createdBy: type.string().required().default(unassignedTAG),
+    yanCode: type.string().required().default(unassignedTAG),
+    assignedTo: type.string().default(unassignedTAG),
     complete: type.boolean().default(false),
     notes: type.array().default([]).schema(type.string()),
     // notes: [type.string()]
@@ -21,8 +26,6 @@ const Request = thinky.createModel('Request', {
     projectDescription: type.string().required(),
     hopedAnalysis: type.string().required(),
     bufferComposition: type.string().required(),
-    //TODO images // supportingImages: type.string().required(),
-    //TODO image description // supportingImageDescription: type.string().required(),
 
 
     // Primary Analysis
@@ -58,3 +61,5 @@ module.exports = Request;
 
 const SampleDescription = require('./sampleDescription');
 Request.hasMany(SampleDescription, 'samplesDescriptions', 'id', 'requestID');
+const SampleImage = require('./sampleImage');
+Request.hasMany(SampleImage, 'samplesImages', 'id', 'requestID');

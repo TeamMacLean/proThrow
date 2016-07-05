@@ -35,6 +35,10 @@ router.route('/new')
 
 module.exports = router;
 
+//USER
+router.route('/user/:id')
+    .all(isAuthenticated);
+//TODO
 
 //ADMIN
 

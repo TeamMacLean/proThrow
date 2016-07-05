@@ -1,12 +1,37 @@
-/*images should be width:50%*/
-
 @media print {
 
-    /*EVERYTHING*/
     html, body {
-        background-color: red;
-        font-size: 100px;
     }
 
+    h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+    }
+
+    .table td, .table th {
+        padding: 0.2rem;
+    }
+
+    .container, div[class^="col-"] {
+        max-width: none;
+        padding-right: 0.2rem;
+        padding-left: 0.2rem;
+    }
+
+    div[class^="col-"] {
+        width: 50%;
+        float: left;
+    }
+
+    .row {
+        margin: -2px;
+    }
+
+    table {
+        margin-bottom: 0;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
 
 }

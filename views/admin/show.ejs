@@ -1,53 +1,181 @@
 <% include ../head.ejs %>
+<link href="/css/print.css" rel="stylesheet">
 
 <div class="container">
-
     <div class="container">
-        <h2><%- request.uuid %></h2>
+        <h2><%- request.yanCode %></h2>
+        <h5><%- request.uuid %></h5>
+        <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
+        <br>
+        <span>Assigned to: <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo %></a></span>
 
-        <fieldset>
-            <label for="complete-toggle">Complete</label>
-            <input id="complete-toggle" data-uuid="<%- request.uuid %>" class="toggle toggle-round" type="checkbox"
-                   <% if(request.complete){ %>checked
-                    <% } %>
-                    >
-            <label for="complete-toggle"></label>
-        </fieldset>
-
-        <% for(var key in request){ %>
-
-        <% if(request.hasOwnProperty(key)) { %>
-            <label><%- key %></label>
-            <p><%- request[key] %></p>
-        <% } %>
-
-        <% } %>
-
-        <fieldset>
-            <label>Add node</label>
-
-            <div class="input-group">
-                <input type="text" id="note-text">
-
-                <div class="input-group-btn">
-                    <button class="primary" id="note-button" data-uuid="<%- request.uuid %>">Add</button>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="tile">
+                    <h3>Biological Materia</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Species</th>
+                            <td><%- request.species %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Second Species</th>
+                            <td><%- request.secondSpecies %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Tissue</th>
+                            <td><%- request.tissue %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Age</th>
+                            <td><%- request.tissueAgeNum %> <%- request.tissueAgeType %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Growth Conditions</th>
+                            <td><%- request.growthConditions %></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div id="notes">
-                <% if (request.notes){ %>
-                <ul>
-                    <% request.notes.map(function(note){ %>
 
-                    <li><%- note %></li>
+                <div class="tile">
+                    <h3>Primary Analysis</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Type of Analysis</th>
+                            <td><%- request.analysisType %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Secondary Type of Analysis</th>
+                            <td><%- request.secondaryAnalysisType %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type of PTM</th>
+                            <td><%- request.typeOfPTM %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Quantitative Analysis Required</th>
+                            <td><%- request.quantitativeAnalysisRequired %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type of Labeling</th>
+                            <td><%- request.typeOfLabeling %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Label Used</th>
+                            <td><%- request.labelUsed %></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <% }); %>
-                </ul>
-                <% } %>
             </div>
-        </fieldset>
+            <div class="col-md-6">
+                <div class="tile">
+                    <h3>Project Summary</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Project Description</th>
+                            <td><%- request.projectDescription %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Hoped Analysis</th>
+                            <td><%- request.hopedAnalysis %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Buffer Composition</th>
+                            <td><%- request.bufferComposition %></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tile">
+                    <h3>Sample Preparation</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Sample Prep</th>
+                            <td><%- request.samplePrep %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Digestion</th>
+                            <td><%- request.digestion %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Enzyme</th>
+                            <td><%- request.enzyme %></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tile">
+                    <h3>New Construct for Database</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Accession</th>
+                            <td><%- request.accession %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">SequenceInfo</th>
+                            <td><%- request.sequenceInfo %></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DB Entry</th>
+                            <td><%- request.dbEntry %></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="tile">
+            <h3>Supporting Images</h3>
+            <div class="row">
+
+                <% request.samplesImages.map(function(img){ %>
+                <div class="col-md-6">
+                    <img class="preview-img" src="<%- img.getURL() %>">
+                    <br>
+                    <label><%- img.description %></label>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+
+        <div class="tile">
+            <h3>Sample Description</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Sample Number</th>
+                    <th>Sample Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% request.samplesDescriptions.sort(function (a, b) {
+                    return a.position - b.position;
+                }).map(function(sd){ %>
+
+                <tr>
+                    <td><%- sd.sampleNumber %></td>
+                    <td><%- sd.sampleDescription %></td>
+                </tr>
+
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+
 
     </div>
-
-
 </div>
 <% include ../foot.ejs %>
