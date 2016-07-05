@@ -9,7 +9,22 @@
     "searchBase": "OU=users,dc=server,dc=org",
     "searchFilter": "(sAMAccountName={{username}})"
   },
-  "supportingImageRoot": "./uploads/",
+  "supportingImageRoot": "./public/uploads/",
+  "supportingImageRootURL": "/uploads/",
+  "supportingImagePreviewRoot": "./public/preview",
+  "supportingImagePreviewRootURL": "/preview/",
+  "supportedFileTypes": [
+    ".png",
+    ".PNG",
+    ".jpg",
+    ".JPG",
+    ".jpeg",
+    ".JPEG",
+    ".gif",
+    ".GIF"
+  ],
   "admins": [
+  ],
+  "initials": [
   ]
 }
