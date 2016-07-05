@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const util = require('./lib/util.js');
 const r = require('./lib/thinky').r;
 const store = new rethinkSession(r);
+const fs = require('fs-extra');
 const app = express();
 
 const socketUploader = require('./lib/socketUpload');
@@ -45,6 +46,19 @@ app.use((req, res, next) => {
         return next(null, req, res);
     } else {
         return next();
+    }
+});
+
+
+//ensure essential folders exist
+fs.ensureDir(config.supportingImageRoot, function (err) {
+    if (err) {
+        console.err(err);
+    }
+});
+fs.ensureDir(config.supportingImagePreviewRoot, function (err) {
+    if (err) {
+        console.err(err);
     }
 });
 
