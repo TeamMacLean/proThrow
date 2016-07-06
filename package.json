@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/server",
     "build": "gulp",
-    "test": "mocha --require babel-core/register"
+    "test": "mocha --require babel-core/register",
+    "ci": "npm build && npm test"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
