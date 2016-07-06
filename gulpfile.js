@@ -1,15 +1,16 @@
-const gulp = require('gulp');
-const babel = require('gulp-babel');
-const rename = require('gulp-rename');
-const config = require('./config.json');
-const uglify = require('gulp-uglify');
+var gulp = require('gulp');
+var babel = require('gulp-babel');
+var rename = require('gulp-rename');
+var config = require('./config.js');
+var uglify = require('gulp-uglify');
+var sourcemaps = require("gulp-sourcemaps");
+var concat = require("gulp-concat");
 
 const jsPath = 'public/js';
 const appPath = `${jsPath}/app.jsx`;
 
-gulp.task('default', () => gulp.src(appPath)
+gulp.task('frontend', () => gulp.src(appPath)
     .pipe(babel({
-        presets: ['react', 'es2015'],
         plugins: [
             ['defines', {supportedFileTypes: config.supportedFileTypes.join(',')}]
         ]
@@ -21,11 +22,22 @@ gulp.task('default', () => gulp.src(appPath)
     }))
     .pipe(gulp.dest(jsPath)));
 
-
-gulp.task('watch', () => gulp.watch(appPath, ['default'])
+gulp.task('watch', () => gulp.watch('src/**/*', ['default'])
     .on('change', event => {
         console.log(`File ${event.path} was ${event.type}, running tasks...`);
     }));
 
+gulp.task("backend", function () {
+    return gulp.src("src/**/*.js")
+    // .pipe(sourcemaps.init())
+        .pipe(babel())
+        // .pipe(concat("all.js"))
+        // .pipe(sourcemaps.write("."))
+        .pipe(gulp.dest("dist"));
+});
+
+gulp.task("default", ["backend", "frontend"]);
 
 module.exports = gulp;
+
+// export default gulp;

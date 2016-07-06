@@ -3,18 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server",
-    "test": "mocha",
-    "build": "gulp"
+    "start": "node dist/server",
+    "build": "gulp",
+    "test": "mocha --require babel-core/register"
   },
   "dependencies": {
-    "body-parser": "^1.15.0",
+    "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "delivery": "0.0.4",
     "ejs": "^2.4.2",
-    "express": "^4.13.4",
-    "express-session": "^1.13.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "fs-extra": "^0.30.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-sourcemaps": "^1.6.0",
     "moment": "^2.14.1",
     "nodemailer": "^2.4.2",
     "nodemailer-smtp-transport": "^2.4.1",
@@ -22,8 +24,9 @@
     "passport-ldapauth": "^0.5.0",
     "session-rethinkdb": "^2.0.0",
     "sharp": "^0.15.0",
-    "socket.io": "^1.4.6",
-    "thinky": "^2.2.6",
+    "socket.io": "^1.4.8",
+    "supertest": "^1.2.0",
+    "thinky": "^2.3.3",
     "winston": "^2.2.0"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 test:
   pre:
-    - cp config-example.json config.json
+    - cp config-example.js config.js
+    - npm build
 machine:
   node:
     version: 6.0.0

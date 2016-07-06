@@ -1,6 +1,5 @@
-const request = require('supertest');
-const app = require('../app');
-
+import request from 'supertest';
+import app from '../dist/app';
 
 // make sure the server has started, thats it
 describe('index controller', () => {

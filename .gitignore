@@ -1,7 +1,7 @@
 .idea
 node_modules
 public/components
-config.json
+config.js
 
 public/preview
 public/uploads
