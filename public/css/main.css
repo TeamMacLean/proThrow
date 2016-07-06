@@ -19,10 +19,6 @@ body {
     margin-bottom: 8px;
 }
 
-.tile h1, .tile h2, .tile h3, .tile h4 {
-    text-align: center;
-}
-
 .navbar {
     margin-bottom: 32px;
 }

@@ -3,8 +3,8 @@ var babel = require('gulp-babel');
 var rename = require('gulp-rename');
 var config = require('./config.js');
 var uglify = require('gulp-uglify');
-var sourcemaps = require("gulp-sourcemaps");
-var concat = require("gulp-concat");
+var sourcemaps = require('gulp-sourcemaps');
+var concat = require('gulp-concat');
 
 const jsPath = 'public/js';
 const appPath = `${jsPath}/app.jsx`;
@@ -27,16 +27,16 @@ gulp.task('watch', () => gulp.watch('src/**/*', ['default'])
         console.log(`File ${event.path} was ${event.type}, running tasks...`);
     }));
 
-gulp.task("backend", function () {
-    return gulp.src("src/**/*.js")
+gulp.task('backend', function () {
+    return gulp.src('src/**/*.js')
     // .pipe(sourcemaps.init())
         .pipe(babel())
-        // .pipe(concat("all.js"))
-        // .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest("dist"));
+        // .pipe(concat('all.js'))
+        // .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('dist'));
 });
 
-gulp.task("default", ["backend", "frontend"]);
+gulp.task('default', ['backend', 'frontend']);
 
 module.exports = gulp;
 
