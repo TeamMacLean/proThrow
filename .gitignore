@@ -3,5 +3,7 @@ node_modules
 public/components
 config.js
 
+dist
+
 public/preview
 public/uploads
