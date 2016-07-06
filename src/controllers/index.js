@@ -40,7 +40,7 @@ index.new = (req, res, next) => res.render('new');
 
 index.newPost = (req, res) => {
 
-    const username = req.signedInUser.username;
+    const username = req.user.username;
 
     UUID.generate(6, uuid => {
 
