@@ -74,6 +74,8 @@ index.newPost = (req, res) => {
 
         request.save().then(doc => {
 
+            console.log(req.body);
+
             req.body['image[]'].map((img, i) => {
                 SampleImage.filter({uid: img}).then(images => {
                     images[0].description = req.body['imageDescription[]'][i];
