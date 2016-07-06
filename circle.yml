@@ -9,7 +9,7 @@ dependencies:
 test:
   pre:
     - cp config-example.js config.js
-    - npm build
+    - npm run build
 machine:
   node:
     version: 6.0.0
