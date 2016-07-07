@@ -86,20 +86,25 @@ index.newPost = (req, res) => {
                 if (Array.isArray(bodyImages)) {
                     bodyImages.map(function (img, i) {
                         SampleImage.filter({uid: img}).then(function (images) {
-                            images[0].description = bodyImageDescriptions[i];
-                            images[0].requestID = savedRequest.id;
-                            images[0].save().then(function (saved) {
-                            });
+                            if (images) {
+                                images[0].description = bodyImageDescriptions[i];
+                                images[0].requestID = savedRequest.id;
+                                images[0].save().then(function (saved) {
+                                });
+                            }
+
                         }).error(function (err) {
                             console.error(err);
                         });
                     });
                 } else {
                     SampleImage.filter({uid: bodyImages}).then(function (images) {
-                        images[0].description = bodyImageDescriptions;
-                        images[0].requestID = savedRequest.id;
-                        images[0].save().then(function (saved) {
-                        });
+                        if (images) {
+                            images[0].description = bodyImageDescriptions;
+                            images[0].requestID = savedRequest.id;
+                            images[0].save().then(function (saved) {
+                            });
+                        }
                     });
                 }
             }
