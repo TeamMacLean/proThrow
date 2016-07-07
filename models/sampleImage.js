@@ -1,6 +1,6 @@
-import thinky from '../lib/thinky.js';
+const thinky = require('../lib/thinky.js');
 const type = thinky.type;
-import config from '../../config.js';
+const config = require('../config.js');
 const SampleImage = thinky.createModel('SampleImage', {
     id: type.string(),
     uid: type.string().required(),
@@ -11,7 +11,10 @@ const SampleImage = thinky.createModel('SampleImage', {
 });
 
 
-SampleImage.define('getURL', function() {
+SampleImage.define('getURL', function () {
     return config.supportingImageRootURL + this.uid;
 });
-export default SampleImage;
+module.exports = SampleImage;
+
+const Request = require('./request');
+SampleImage.belongsTo(Request, 'request', 'requestID', 'id');

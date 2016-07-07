@@ -1,4 +1,4 @@
-import thinky from '../lib/thinky.js';
+const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
 const SampleDescription = thinky.createModel('SampleDescription', {
@@ -9,5 +9,7 @@ const SampleDescription = thinky.createModel('SampleDescription', {
     sampleDescription: type.string().required()
 });
 
-export default SampleDescription;
+module.exports = SampleDescription;
 
+const Request = require('./request');
+SampleDescription.belongsTo(Request, 'request', 'requestID', 'id');

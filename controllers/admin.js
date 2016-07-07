@@ -1,4 +1,4 @@
-import Request from '../models/request';
+const Request = require('../models/request');
 const admin = {};
 
 admin.index = (req, res, next) => {
@@ -25,17 +25,23 @@ admin.index = (req, res, next) => {
     });
 };
 
-admin.show = (req, res, next) => {
+admin.show = (req, res) => {
 
     const requestUUID = req.params.uuid;
     Request.filter({uuid: requestUUID})
         .getJoin({samplesImages: true, samplesDescriptions: true})
         .run()
         .then(requests => {
+            console.log(requests);
             if (requests.length) {
-                res.render('admin/show', {request: requests[0]});
+
+                const request = requests[0];
+                request.samplesImages = request.samplesImages || [];
+                request.samplesDescriptions = request.samplesDescriptions || [];
+
+                return res.render('admin/show', {request: request});
             } else {
-                res.render('error', {error: `could not find ${requestUUID}`});
+                return res.render('error', {error: `could not find ${requestUUID}`});
             }
         });
 };
@@ -85,5 +91,4 @@ admin.addNote = (req, res, next) => {
 
 
 };
-
-export default admin;
+module.exports = admin;

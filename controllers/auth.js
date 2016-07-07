@@ -1,8 +1,8 @@
 const Auth = {};
-import passport from 'passport';
-import renderError from '../lib/renderError';
-// import config from '../config.js';
-import LOG from '../lib/log';
+const passport = require('passport');
+const renderError = require('../lib/renderError');
+// import config = require('../config.js';
+const LOG = require('../lib/log');
 /**
  * render site index
  * @param req {request}
@@ -55,4 +55,4 @@ Auth.signInPost = (req, res, next) => {
 };
 
 
-export default Auth;
+module.exports = Auth;

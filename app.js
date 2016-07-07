@@ -1,25 +1,25 @@
-import config from '../config';
-import express from 'express';
-import path from 'path';
-import session from 'express-session';
+const config = require('./config');
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
 const rethinkSession = require('session-rethinkdb')(session);
-import passport from 'passport';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import util from './lib/util.js';
-import thinky from './lib/thinky';
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const util = require('./lib/util.js');
+const thinky = require('./lib/thinky');
 const store = new rethinkSession(thinky.r);
-import fs from 'fs-extra';
+const fs = require('fs-extra');
 const app = express();
-import routes from './routes';
+const routes = require('./routes');
 
 
-app.set('views', path.join(__dirname, '../', 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, '../', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
 app.use(session(
@@ -67,4 +67,4 @@ util.setupPassport();
 app.use('/', routes);
 
 
-export default app;
+module.exports = app;

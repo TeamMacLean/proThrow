@@ -1,10 +1,10 @@
-import express from 'express';
+const express = require('express');
 const router = express.Router();
 
-import Util from './lib/util';
-import admin from './controllers/admin';
-import index from './controllers/index';
-import Auth from './controllers/auth';
+const Util = require('./lib/util');
+const admin = require('./controllers/admin');
+const index = require('./controllers/index');
+const Auth = require('./controllers/auth');
 
 
 function isAuthenticated(req, res, next) {
@@ -32,7 +32,6 @@ router.route('/new')
     .get(index.new)
     .post(index.newPost);
 
-export default router;
 
 //USER
 router.route('/user/:id')
@@ -76,4 +75,4 @@ router.route('*')
     });
 
 
-export default router;
+module.exports = router;

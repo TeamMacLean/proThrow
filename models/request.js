@@ -1,4 +1,4 @@
-import thinky from '../lib/thinky.js';
+const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
 const unassignedTAG = 'unknown';
@@ -56,8 +56,9 @@ const Request = thinky.createModel('Request', {
 
 });
 
-export default Request;
-// import SampleDescription from './sampleDescription';
-// Request.hasMany(SampleDescription, 'samplesDescriptions', 'id', 'requestID');
-// import SampleImage from './sampleImage';
-// Request.hasMany(SampleImage, 'samplesImages', 'id', 'requestID');
+module.exports = Request;
+
+const SampleDescription = require('./sampleDescription');
+const SampleImage = require('./sampleImage');
+Request.hasMany(SampleDescription, 'samplesDescriptions', 'id', 'requestID');
+Request.hasMany(SampleImage, 'samplesImages', 'id', 'requestID');
