@@ -123,7 +123,7 @@ index.newPost = (req, res) => {
                 } else {
                     var nsd = new SampleDescription({
                         requestID: savedRequest.id,
-                        position: i,
+                        position: 0,
                         sampleNumber: bodySampleNumbers,
                         sampleDescription: bodySampleDescriptions
                     });
