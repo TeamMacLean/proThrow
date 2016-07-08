@@ -16,8 +16,8 @@
                 <br>
                 <span>Status: <%- request.getStatus() %></span>
                 <hr>
-                <a href="#" class="btn btn-tiny btn-primary">Edit</a>
-                <a href="#" class="btn btn-tiny btn-success">Clone</a>
+                <a href="/request/<%- request.uuid %>/edit" class="btn btn-tiny btn-primary">Edit</a>
+                <a href="/request/<%- request.uuid %>/clone" class="btn btn-tiny btn-success">Clone</a>
             </div>
         </div>
 

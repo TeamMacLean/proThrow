@@ -31,7 +31,7 @@ function sendEmail(text) {
     });
 }
 
-requests.new = (req, res, next) => res.render('new');
+requests.new = (req, res, next) => res.render('requests/new');
 
 requests.newPost = (req, res) => {
 
@@ -169,7 +169,7 @@ requests.newPost = (req, res) => {
                 }
             }
             sendEmail(`new job, ${uuid}`);
-            return res.render('newPost', {uuid: savedRequest.yanCode});
+            return res.render('requests/newPost', {uuid: savedRequest.yanCode});
         });
     });
 };
@@ -188,7 +188,7 @@ requests.show = (req, res) => {
                 request.supportingImages = request.supportingImages || [];
                 request.samples = request.samples || [];
 
-                return res.render('admin/show', {request: request});
+                return res.render('requests/show', {request: request});
             } else {
                 return res.render('error', {error: `could not find ${requestUUID}`});
             }
@@ -210,7 +210,7 @@ requests.edit = function (req, res) {
             const r = requests[0];
             console.log(r.supportingImages.length);
             console.log(r.samples.length);
-            return res.render('new', {request: r});
+            return res.render('requests/new', {request: r});
         })
 };
 

@@ -16,7 +16,14 @@ Users.show = function (req, res) {
     console.log('username', username);
 
     Request.filter({createdBy: username}).then(function (requests) {
-        return res.render('user/show', {requests});
+
+        if (!requests.length) {
+            return renderError('No requests found for user ' + username, res);
+        } else {
+            return res.render('user/show', {requests});
+        }
+
+
     }).error(function (err) {
         return renderError(err, res);
     })
