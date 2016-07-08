@@ -2,7 +2,6 @@ const Auth = {};
 const passport = require('passport');
 const renderError = require('../lib/renderError');
 // import config = require('../config.js';
-const LOG = require('../lib/log');
 /**
  * render site index
  * @param req {request}
@@ -25,11 +24,11 @@ Auth.signInPost = (req, res, next) => {
 
     passport.authenticate('ldapauth', (err, user, info) => {
         if (err) {
-            LOG.error(err);
+            console.error(err);
             return next(err);
         }
         if (info) {
-            LOG.info(info);
+            console.info(info);
         }
         if (!user) {
             let message = 'No such user';

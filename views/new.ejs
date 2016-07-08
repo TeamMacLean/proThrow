@@ -1,5 +1,10 @@
 <% include head.ejs %>
 
+<script>
+    <% if(typeof request != 'undefined'){ %>
+    window.request = '<%- JSON.stringify(request) %>';
+    <% } %>
+</script>
 
 <div class="required-reading mt2 mb2">
     <div class="container">

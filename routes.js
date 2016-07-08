@@ -5,6 +5,8 @@ const Util = require('./lib/util');
 const admin = require('./controllers/admin');
 const index = require('./controllers/index');
 const Auth = require('./controllers/auth');
+const Users = require('./controllers/users');
+const Requests = require('./controllers/requests');
 
 
 function isAuthenticated(req, res, next) {
@@ -29,13 +31,37 @@ router.route('/')
 
 router.route('/new')
     .all(isAuthenticated)
-    .get(index.new)
-    .post(index.newPost);
+    .get(Requests.new)
+    .post(Requests.newPost);
+
+
+//REQUEST
+
+router.route('/request/:uuid')
+    .all(isAuthenticated)
+    .all(isAdmin)
+    .get(Requests.show);
+
+router.route('/request/:uuid/edit')
+    .all(isAuthenticated)
+    .all(isAdmin)
+    .get(Requests.edit);
+
+router.route('/request/:uuid/toggle')
+    .all(isAuthenticated)
+    .all(isAdmin)
+    .get(admin.toggle);
+
+router.route('/request/:uuid/addnote')
+    .all(isAuthenticated)
+    .all(isAdmin)
+    .post(admin.addNote);
 
 
 //USER
-router.route('/user/:id')
-    .all(isAuthenticated);
+router.route('/user/:username')
+    .all(isAuthenticated)
+    .get(Users.show);
 //TODO
 
 //ADMIN
@@ -44,21 +70,6 @@ router.route('/admin')
     .all(isAuthenticated)
     .all(isAdmin)
     .get(admin.index);
-
-router.route('/admin/request/:uuid')
-    .all(isAuthenticated)
-    .all(isAdmin)
-    .get(admin.show);
-
-router.route('/admin/request/:uuid/toggle')
-    .all(isAuthenticated)
-    .all(isAdmin)
-    .get(admin.toggle);
-
-router.route('/admin/request/:uuid/addnote')
-    .all(isAuthenticated)
-    .all(isAdmin)
-    .post(admin.addNote);
 
 //AUTH
 

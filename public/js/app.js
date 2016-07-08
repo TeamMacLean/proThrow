@@ -40,7 +40,27 @@ var App = React.createClass({
         this.initSocketUpload();
     },
     getInitialState: function getInitialState() {
-        return { samples: [], supportingImages: [] };
+        if (window.request) {
+            window.request = JSON.parse(window.request);
+            return {
+                samples: window.request.samples || [],
+                supportingImages: window.request.supportingImages || [],
+                constructs: window.request.constructs || []
+            };
+        } else {
+            window.request = {};
+            return { samples: [], supportingImages: [], constructs: [] };
+        }
+    },
+    addConstruct: function addConstruct() {
+        var key = guid();
+        this.setState({ constructs: this.state.constructs.concat([{ key: key }]) });
+    },
+    removeConstruct: function removeConstruct(construct) {
+        var newConstructs = this.state.constructs.filter(function (c) {
+            return c.key != construct.props.data.key || c.id != construct.props.data.id;
+        });
+        this.setState({ constructs: newConstructs });
     },
     addSample: function addSample() {
         var key = guid();
@@ -48,7 +68,7 @@ var App = React.createClass({
     },
     removeSample: function removeSample(sample) {
         var newSamples = this.state.samples.filter(function (s) {
-            return s.key != sample.props.data.key;
+            return s.key != sample.props.data.key || s.id != sample.props.data.id;
         });
         this.setState({ samples: newSamples });
     },
@@ -100,7 +120,7 @@ var App = React.createClass({
                 React.createElement(
                     'label',
                     null,
-                    React.createElement('input', { type: 'checkbox', id: 'required-readme', required: true }),
+                    React.createElement('input', { type: 'checkbox', id: 'required-readme', defaultChecked: window.request != null, required: true }),
                     ' I have completed the above'
                 ),
                 React.createElement(
@@ -138,7 +158,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'species', name: 'species', defaultValue: '',
+                                            { className: 'form-control', id: 'species', name: 'species',
+                                                defaultValue: window.request.species || '',
                                                 required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             Species.map(function (object, i) {
@@ -164,7 +185,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'secondSpecies', name: 'secondSpecies',
-                                                defaultValue: 'None', required: true },
+                                                defaultValue: window.request.secondSpecies || 'None', required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             ['None'].concat(Species).map(function (object, i) {
                                                 return React.createElement(
@@ -186,7 +207,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'tissue', name: 'tissue', required: true,
-                                                defaultValue: '' },
+                                                defaultValue: window.request.tissue || '' },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
@@ -242,6 +263,7 @@ var App = React.createClass({
                                                 React.createElement('input', { className: 'form-control', type: 'number', id: 'tissueAgeNum',
                                                     name: 'tissueAgeNum',
                                                     min: '0',
+                                                    defaultValue: window.request.tissueAgeNum || '',
                                                     required: true })
                                             ),
                                             React.createElement(
@@ -251,7 +273,8 @@ var App = React.createClass({
                                                     'select',
                                                     { className: 'form-control', id: 'tissueAgeType',
                                                         name: 'tissueAgeType',
-                                                        required: true, defaultValue: '' },
+                                                        defaultValue: window.request.tissueAgeType || '',
+                                                        required: true },
                                                     React.createElement('option', { disabled: true, value: '' }),
                                                     React.createElement(
                                                         'option',
@@ -284,7 +307,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'growthConditions',
                                                 name: 'growthConditions',
-                                                required: true, defaultValue: '' },
+                                                required: true, defaultValue: window.request.growthConditions || '' },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
@@ -346,7 +369,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'analysisType', name: 'analysisType',
-                                                required: true, defaultValue: 'discovery' },
+                                                required: true, defaultValue: window.request.analysisType || 'discovery' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -384,7 +407,8 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'secondaryAnalysisType',
                                                 name: 'secondaryAnalysisType',
-                                                required: true, defaultValue: 'None' },
+                                                required: true,
+                                                defaultValue: window.request.secondaryAnalysisType || 'None' },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
@@ -427,7 +451,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM', required: true,
-                                                defaultValue: 'none' },
+                                                defaultValue: window.request.typeOfPTM || 'none' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -475,7 +499,9 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'quantitativeAnalysisRequired',
-                                                name: 'quantitativeAnalysisRequired', defaultValue: 'None', required: true },
+                                                name: 'quantitativeAnalysisRequired',
+                                                defaultValue: window.request.quantitativeAnalysisRequired || 'None',
+                                                required: true },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -512,7 +538,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'typeOfLabeling', name: 'typeOfLabeling',
-                                                required: true, defaultValue: 'None' },
+                                                required: true, defaultValue: window.request.typeOfLabeling || 'None' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -549,7 +575,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'labelUsed', name: 'labelUsed', required: true,
-                                                defaultValue: 'None' },
+                                                defaultValue: window.request.labelUsed || 'None' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -614,7 +640,8 @@ var App = React.createClass({
                                             'Project description'
                                         ),
                                         React.createElement('textarea', { className: 'form-control', type: 'text', id: 'projectDescription',
-                                            name: 'projectDescription' })
+                                            name: 'projectDescription',
+                                            defaultValue: window.request.projectDescription || '' })
                                     ),
                                     React.createElement(
                                         'div',
@@ -625,7 +652,8 @@ var App = React.createClass({
                                             'What data do you hope to get from this analysis'
                                         ),
                                         React.createElement('textarea', { className: 'form-control', type: 'text', id: 'hopedAnalysis',
-                                            name: 'hopedAnalysis' })
+                                            name: 'hopedAnalysis',
+                                            defaultValue: window.request.hopedAnalysis || '' })
                                     ),
                                     React.createElement(
                                         'div',
@@ -636,7 +664,8 @@ var App = React.createClass({
                                             'Buffer composition'
                                         ),
                                         React.createElement('input', { className: 'form-control', type: 'text', id: 'bufferComposition',
-                                            name: 'bufferComposition' })
+                                            name: 'bufferComposition',
+                                            defaultValue: window.request.bufferComposition || '' })
                                     ),
                                     React.createElement(
                                         'div',
@@ -654,6 +683,7 @@ var App = React.createClass({
                                         'div',
                                         { id: 'supportingImages', name: 'supportingImages' },
                                         self.state.supportingImages.map(function (object, i) {
+                                            //TODO
                                             var remove = self.removeSupportImage.bind(null, i);
                                             return React.createElement(
                                                 'div',
@@ -664,7 +694,8 @@ var App = React.createClass({
                                                     React.createElement(
                                                         'div',
                                                         { className: 'tile' },
-                                                        React.createElement('img', { src: object.preview,
+                                                        React.createElement('img', {
+                                                            src: object.preview || object.url,
                                                             className: 'img-fluid center-block' }),
                                                         React.createElement('br', null),
                                                         React.createElement('span', { className: 'removeImage' }),
@@ -688,6 +719,7 @@ var App = React.createClass({
                                                             React.createElement('input', { className: 'form-control', type: 'text',
                                                                 id: 'imageDescription',
                                                                 name: 'imageDescription[]',
+                                                                defaultValue: object.description || '',
                                                                 required: true })
                                                         )
                                                     )
@@ -727,8 +759,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'samplePrep', name: 'samplePrep', required: true,
-                                                defaultValue: '' },
+                                            { className: 'form-control', id: 'samplePrep', name: 'samplePrep',
+                                                defaultValue: window.request.samplePrep || '', required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
@@ -763,7 +795,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'digestion', name: 'digestion', required: true,
-                                                defaultValue: 'in gel' },
+                                                defaultValue: window.request.digestion || 'in gel' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -795,7 +827,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'enzyme', name: 'enzyme', required: true,
-                                                defaultValue: 'Trypsin' },
+                                                defaultValue: window.request.enzyme || 'Trypsin' },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -839,53 +871,23 @@ var App = React.createClass({
                                     React.createElement(
                                         'h3',
                                         { className: 'group-label' },
-                                        'New Construct for Database'
+                                        'New Constructs for Database'
                                     ),
                                     React.createElement(
                                         'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Species and accession of the parent gene ',
-                                            React.createElement('span', { 'data-icon': 't',
-                                                className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct' })
-                                        ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
-                                            name: 'accession',
-                                            required: true })
+                                        { id: 'constructs' },
+                                        this.state.constructs.map(function (construct) {
+                                            return React.createElement(Construct, {
+                                                key: construct.key || construct.id,
+                                                data: construct,
+                                                removeConstruct: self.removeConstruct
+                                            });
+                                        })
                                     ),
                                     React.createElement(
                                         'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Amino acid sequence ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: 'Provided the entire amino acid sequence of the construct including tags and junctions' })
-                                        ),
-                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
-                                            name: 'sequenceInfo',
-                                            required: true })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Database entry ',
-                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
-                                                'data-toggle': 'tooltip',
-                                                title: '>date_of_submition|protein_short_name|for_whom some description if required\ne.g.\n>160201|RRS1-R-HF|for_Zane' })
-                                        ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'dbEntry',
-                                            name: 'dbEntry',
-                                            required: true })
+                                        { className: 'btn btn-primary-outline btn-block', onClick: this.addConstruct },
+                                        'Add Another Construct'
                                     )
                                 )
                             )
@@ -909,7 +911,7 @@ var App = React.createClass({
                             { id: 'samples' },
                             this.state.samples.map(function (sample) {
                                 return React.createElement(Sample, {
-                                    key: sample.key,
+                                    key: sample.key || sample.id,
                                     data: sample,
                                     removeSample: self.removeSample
                                 });
@@ -934,9 +936,75 @@ var App = React.createClass({
     }
 });
 
+var Construct = React.createClass({
+    displayName: 'Construct',
+    render: function render() {
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Species and accession of the parent gene ',
+                    React.createElement('span', { 'data-icon': 't',
+                        className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: 'Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct' })
+                ),
+                React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
+                    name: 'accession[]',
+                    defaultValue: window.request.accession || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Amino acid sequence ',
+                    React.createElement('span', { 'data-icon': 't', className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: 'Provided the entire amino acid sequence of the construct including tags and junctions' })
+                ),
+                React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
+                    name: 'sequenceInfo[]',
+                    defaultValue: window.request.sequenceInfo || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Database entry ',
+                    React.createElement('span', { 'data-icon': 't', className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: '>date_of_submition|protein_short_name|for_whom some description if required e.g. >160201|RRS1-R-HF|for_Zane' })
+                ),
+                React.createElement('input', { className: 'form-control', type: 'text', id: 'dbEntry',
+                    name: 'dbEntry[]',
+                    defaultValue: window.request.dbEntry || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'removeSample', onClick: this.props.removeConstruct.bind(null, this) },
+                React.createElement('span', { 'data-icon': '' })
+            ),
+            React.createElement('hr', null)
+        );
+    }
+});
+
 var Sample = React.createClass({
     displayName: 'Sample',
     render: function render() {
+        console.log('props', this);
         return React.createElement(
             'div',
             { className: 'dragg' },
@@ -965,7 +1033,8 @@ var Sample = React.createClass({
                                     ),
                                     React.createElement('input', { className: 'form-control', type: 'number', min: '0', max: '150',
                                         id: 'sampleNumber',
-                                        name: 'sampleNumber[]', required: true })
+                                        name: 'sampleNumber[]', defaultValue: this.props.sampleNumber || '',
+                                        required: true })
                                 )
                             ),
                             React.createElement(
@@ -981,6 +1050,7 @@ var Sample = React.createClass({
                                     ),
                                     React.createElement('input', { className: 'form-control', type: 'text', id: 'sampleDescription',
                                         name: 'sampleDescription[]',
+                                        defaultValue: this.props.sampleDescription || '',
                                         required: true })
                                 )
                             )

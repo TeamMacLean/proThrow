@@ -14,6 +14,9 @@ const SampleImage = thinky.createModel('SampleImage', {
 SampleImage.define('getURL', function () {
     return config.supportingImageRootURL + this.uid;
 });
+SampleImage.define('getPreviewURL', function () {
+    return config.supportingImagePreviewRootURL + this.uid;
+});
 module.exports = SampleImage;
 
 const Request = require('./request');

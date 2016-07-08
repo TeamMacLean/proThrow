@@ -25,27 +25,6 @@ admin.index = (req, res, next) => {
     });
 };
 
-admin.show = (req, res) => {
-
-    const requestUUID = req.params.uuid;
-    Request.filter({uuid: requestUUID})
-        .getJoin({samplesImages: true, samplesDescriptions: true})
-        .run()
-        .then(requests => {
-            console.log(requests);
-            if (requests.length) {
-
-                const request = requests[0];
-                request.samplesImages = request.samplesImages || [];
-                request.samplesDescriptions = request.samplesDescriptions || [];
-
-                return res.render('admin/show', {request: request});
-            } else {
-                return res.render('error', {error: `could not find ${requestUUID}`});
-            }
-        });
-};
-
 admin.toggle = (req, res, next) => {
     const requestUUID = req.params.uuid;
     Request.filter({uuid: requestUUID})

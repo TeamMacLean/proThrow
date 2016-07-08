@@ -1,0 +1,29 @@
+<% include ../head.ejs %>
+
+<div class="container">
+
+    <div class="row">
+
+        <% requests.map(function (request) { %>
+
+        <div class="col-sm-4">
+            <div class="tile center">
+                <h3><a href="/request/<%- request.uuid %>"><%- request.yanCode %></a></h3>
+                <br>
+                <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
+                <br>
+                <span>Assigned to: <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo %></a></span>
+                <br>
+                <span>Status: <%- request.getStatus() %></span>
+                <hr>
+                <a href="#" class="btn btn-tiny btn-primary">Edit</a>
+                <a href="#" class="btn btn-tiny btn-success">Clone</a>
+            </div>
+        </div>
+
+        <% }) %>
+    </div>
+</div>
+
+
+<% include ../foot.ejs %>

@@ -114,21 +114,24 @@
                 </div>
 
                 <div class="tile">
-                    <h3>New Construct for Database</h3>
+                    <h3>New Constructs for Database</h3>
                     <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Accession</th>
+                            <th>Sequence Info</th>
+                            <th>DB Entry</th>
+                        </tr>
+                        </thead>
                         <tbody>
+
+                        <% request.constructs.map(function(construct){ %>
                         <tr>
-                            <th scope="row">Accession</th>
-                            <td><%- request.accession %></td>
+                            <td><%- construct.accession %></td>
+                            <td><%- construct.sequenceInfo %></td>
+                            <td><%- construct.dbEntry %></td>
                         </tr>
-                        <tr>
-                            <th scope="row">SequenceInfo</th>
-                            <td><%- request.sequenceInfo %></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">DB Entry</th>
-                            <td><%- request.dbEntry %></td>
-                        </tr>
+                        <% }); %>
 
                         </tbody>
                     </table>
@@ -140,7 +143,7 @@
             <h3>Supporting Images</h3>
             <div class="row">
 
-                <% request.samplesImages.map(function(img){ %>
+                <% request.supportingImages.map(function(img){ %>
                 <div class="col-md-6">
                     <img class="preview-img" src="<%- img.getURL() %>">
                     <br>
@@ -161,7 +164,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% request.samplesDescriptions.sort(function (a, b) {
+                <% request.samples.sort(function (a, b) {
                     return a.position - b.position;
                 }).map(function(sd){ %>
 

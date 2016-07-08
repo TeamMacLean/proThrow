@@ -2,11 +2,12 @@ module.exports = {
     port: '3000',
     dbName: 'prothrow',
     secret: 'cats',
+    mailServer: 'mail.nbi.ac.uk',
     ldap: {
         url: 'ldap://dc2.server.org:389',
         bindDn: 'ldapuser',
         bindCredentials: 'password',
-        searchBase: 'OU=users,dc=server,dc=org',
+        searchBase: 'OU=user,dc=server,dc=org',
         searchFilter: '(sAMAccountName={{username}})'
     },
     supportingImageRoot: './public/uploads/',

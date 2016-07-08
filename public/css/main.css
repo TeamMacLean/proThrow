@@ -2,6 +2,13 @@ body {
     margin-bottom: 32px;
 }
 
+.btn-tiny {
+    padding: .2rem .4rem;
+    font-size: .8rem;
+    line-height: 1;
+    border-radius: .2rem;
+}
+
 .right {
     float: right;
 }

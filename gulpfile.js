@@ -20,7 +20,7 @@ gulp.task('frontend', () => gulp.src(appPath)
     }))
     .pipe(gulp.dest(jsPath)));
 
-gulp.task('watch', () => gulp.watch('src/**/*', ['default'])
+gulp.task('watch', () => gulp.watch(appPath, ['default'])
     .on('change', event => {
         console.log(`File ${event.path} was ${event.type}, running tasks...`);
     }));

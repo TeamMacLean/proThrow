@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-const unassignedTAG = 'unknown';
+const unassignedTAG = 'unassigned';
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
@@ -41,12 +41,6 @@ const Request = thinky.createModel('Request', {
     digestion: type.string().required(),
     enzyme: type.string().required(),
 
-
-    // New Construct for Database
-    accession: type.string().required(),
-    sequenceInfo: type.string().required(),
-    dbEntry: type.string().required()
-
     // Sample Description
     // typeOfDigestion: type.string().required(),
     // preferredOrder: type.string().required(),
@@ -58,7 +52,13 @@ const Request = thinky.createModel('Request', {
 
 module.exports = Request;
 
+Request.define('getStatus', function () {
+    return this.complete ? 'Complete' : 'In Progress';
+});
+
 const SampleDescription = require('./sampleDescription');
 const SampleImage = require('./sampleImage');
-Request.hasMany(SampleDescription, 'samplesDescriptions', 'id', 'requestID');
-Request.hasMany(SampleImage, 'samplesImages', 'id', 'requestID');
+const Construct = require('./construct');
+Request.hasMany(SampleDescription, 'samples', 'id', 'requestID');
+Request.hasMany(SampleImage, 'supportingImages', 'id', 'requestID');
+Request.hasMany(Construct, 'constructs', 'id', 'requestID');
