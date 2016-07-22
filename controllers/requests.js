@@ -183,7 +183,6 @@ requests.show = (req, res) => {
         .then(requests => {
             console.log(requests);
             if (requests.length) {
-
                 const request = requests[0];
                 request.supportingImages = request.supportingImages || [];
                 request.samples = request.samples || [];

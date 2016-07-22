@@ -2,6 +2,17 @@ body {
     margin-bottom: 32px;
 }
 
+.subbar {
+    display: none;
+    background-color: #429FDE;
+    padding: 8px;
+}
+
+#nav-search-results{
+    padding:20px;
+
+}
+
 .btn-tiny {
     padding: .2rem .4rem;
     font-size: .8rem;
@@ -26,7 +37,7 @@ body {
     margin-bottom: 8px;
 }
 
-.navbar {
+.nav-holder {
     margin-bottom: 32px;
 }
 
@@ -126,6 +137,10 @@ input[type="checkbox"] {
     .removeSample {
         /*line-height: 45px;*/
         line-height: 170px;
+    }
+
+    #brand-name {
+        display: none;
     }
 }
 

@@ -25,36 +25,52 @@
 
 <body>
 
-<nav class="navbar navbar-full navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="/"><img src="/logo.png">TSL Proteomics</a>
+<div class="nav-holder">
+    <nav class="navbar navbar-full navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img src="/logo.png"><span id="brand-name">TSL Proteomics</span></a>
 
-
-        <div class="pull-xs-right">
-            <% if(locals.signedInUser){ %>
-
-            <div class="nav navbar-nav">
-
-                <div class="dropdown">
-                    <button class="btn btn-success-outline dropdown-toggle" type="button" id="userMenu"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <%- locals.signedInUser.name %>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="userMenu">
-                        <% if(locals.signedInUser.isAdmin){ %>
-                        <a class="dropdown-item" href="/admin">Admin</a>
-                        <% } %>
-                        <a class="dropdown-item" href="/user/<%- locals.signedInUser.username %>">My Requests</a>
-                        <a class="dropdown-item" href="/signout">Sign Out</a>
-                    </div>
-
-                </div>
+            <div class="pull-xs-right">
+                <button class="btn btn-success-outline" id="nav-search-button"><span data-icon="&#x55;"></span></button>
             </div>
 
-            <% } else { %>
-            <a href="/signin" class="btn btn-success">Sign in</a>
-            <% } %>
-        </div>
-    </div>
+            <!--<form class="form-inline pull-xs-right">-->
+            <!--<input class="form-control" type="text" placeholder="Search">-->
+            <!--<button class="btn btn-success-outline" type="submit">Search</button>-->
+            <!--</form>-->
 
-</nav>
+            <div class="pull-xs-right">
+                <% if(locals.signedInUser){ %>
+
+                <div class="nav navbar-nav">
+
+                    <div class="dropdown">
+                        <button class="btn btn-success-outline dropdown-toggle" type="button" id="userMenu"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <%- locals.signedInUser.name %>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="userMenu">
+                            <% if(locals.signedInUser.isAdmin){ %>
+                            <a class="dropdown-item" href="/admin">Admin</a>
+                            <% } %>
+                            <a class="dropdown-item" href="/user/<%- locals.signedInUser.username %>">My Requests</a>
+                            <a class="dropdown-item" href="/signout">Sign Out</a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <% } else { %>
+                <a href="/signin" class="btn btn-success">Sign in</a>
+                <% } %>
+            </div>
+        </div>
+
+    </nav>
+    <div id="nav-search-bar" class="subbar">
+        <input type="search" id="nav-search-input" class="form-control" placeholder="Search">
+    </div>
+    <div id="nav-search-results">
+
+    </div>
+</div>
