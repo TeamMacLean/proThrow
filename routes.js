@@ -44,7 +44,7 @@ router.route('/request/:uuid')
 
 router.route('/request/:uuid/edit')
     .all(isAuthenticated)
-    .all(isAdmin)
+//    .all(isAdmin)
     .get(Requests.edit);
 
 router.route('/request/:uuid/toggle')
