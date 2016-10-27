@@ -18,6 +18,8 @@ npm test
 npm start
 ```
 
+note: you need VIPS (brew install homebrew/science/vips --with-webp --with-graphicsmagick)
+
 ## Reverse Proxy
 NGNIX
 ```
