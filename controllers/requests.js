@@ -36,11 +36,24 @@ requests.new = (req, res, next) => res.render('requests/new');
 requests.newPost = (req, res) => {
 
     const username = req.user.username;
+    if (req.body.requestID) {
+        var requestID = req.body.requestID;
 
-    UUID.generate(6, uuid => {
+
+        Request.get(requestID)
+            .then((request)=> {
+                request.removeChildren()
+                    .then(()=> {
+                        processIt(request, false);
+                    })
+                    .catch((err)=>renderError(err, res));
+
+            })
+            .catch((err)=>renderError(err, res));
+
+    } else {
 
         const request = new Request({
-            uuid,
             createdBy: username,
             yanCode: Util.generateYanCode(req.user.firstName, req.user.lastName),
             species: req.body.species,
@@ -65,120 +78,130 @@ requests.newPost = (req, res) => {
 
 
         request.save().then(savedRequest => {
+            processIt(savedRequest, true);
+        });
+    }
 
-            console.log('body', req.body);
 
-            //Image
-            var bodyImages = req.body['image[]'];
-            var bodyImageDescriptions = req.body['imageDescription[]'];
+    function processIt(savedRequest, isNew) {
 
-            //Sample
-            var bodySampleNumbers = req.body['sampleNumber[]'];
-            var bodySampleDescriptions = req.body['sampleDescription[]'];
+        // console.log('body', req.body);
 
-            //Construct
-            var bodyConstructAccession = req.body['accession[]'];
-            var bodyConstructSequenceInfo = req.body['sequenceInfo[]'];
-            var bodyConstructDBEntry = req.body['dbEntry[]'];
+        //Image
+        var bodyImages = req.body['image[]'];
+        var bodyImageDescriptions = req.body['imageDescription[]'];
 
-            if (bodyConstructAccession) {
-                if (Array.isArray(bodyConstructAccession)) {
-                    bodyConstructAccession.map(function (accession, i) {
-                        // console.log('accession', accession);
-                        var c = new Construct({
-                            requestID: savedRequest.id,
-                            accession: accession,
-                            sequenceInfo: bodyConstructSequenceInfo[i],
-                            dbEntry: bodyConstructDBEntry[i]
-                        });
-                        c.save().then(function () {
-                        }).error(function (err) {
-                            console.error(err);
-                        })
-                    });
-                } else {
+        //Sample
+        var bodySampleNumbers = req.body['sampleNumber[]'];
+        var bodySampleDescriptions = req.body['sampleDescription[]'];
+
+        //Construct
+        var bodyConstructAccession = req.body['accession[]'];
+        var bodyConstructSequenceInfo = req.body['sequenceInfo[]'];
+        var bodyConstructDBEntry = req.body['dbEntry[]'];
+
+        if (bodyConstructAccession) {
+            if (Array.isArray(bodyConstructAccession)) {
+                bodyConstructAccession.map(function (accession, i) {
+                    console.log('accesssion', accession);
+                    // console.log('accession', accession);
                     var c = new Construct({
                         requestID: savedRequest.id,
-                        accession: bodyConstructAccession,
-                        sequenceInfo: bodyConstructSequenceInfo,
-                        dbEntry: bodyConstructDBEntry
+                        accession: accession,
+                        sequenceInfo: bodyConstructSequenceInfo[i],
+                        dbEntry: bodyConstructDBEntry[i]
                     });
                     c.save().then(function () {
                     }).error(function (err) {
                         console.error(err);
                     })
-                }
+                });
+            } else {
+                var c = new Construct({
+                    requestID: savedRequest.id,
+                    accession: bodyConstructAccession,
+                    sequenceInfo: bodyConstructSequenceInfo,
+                    dbEntry: bodyConstructDBEntry
+                });
+                c.save().then(function () {
+                }).error(function (err) {
+                    console.error(err);
+                })
             }
+        }
 
 
-            if (bodyImages) {
-                if (Array.isArray(bodyImages)) {
-                    bodyImages.map(function (img, i) {
-                        SampleImage.filter({uid: img}).then(function (images) {
-                            if (images) {
-                                images[0].description = bodyImageDescriptions[i];
-                                images[0].requestID = savedRequest.id;
-                                images[0].save().then(function (saved) {
-                                });
-                            }
-
-                        }).error(function (err) {
-                            console.error(err);
-                        });
-                    });
-                } else {
-                    SampleImage.filter({uid: bodyImages}).then(function (images) {
+        if (bodyImages) {
+            if (Array.isArray(bodyImages)) {
+                bodyImages.map(function (img, i) {
+                    SampleImage.filter({uid: img}).then(function (images) {
                         if (images) {
-                            images[0].description = bodyImageDescriptions;
+                            images[0].description = bodyImageDescriptions[i];
                             images[0].requestID = savedRequest.id;
                             images[0].save().then(function (saved) {
                             });
                         }
-                    });
-                }
-            }
-
-
-            if (bodySampleNumbers) {
-                if (Array.isArray(bodySampleNumbers)) {
-                    bodySampleNumbers.map(function (num, i) {
-                        var nsd = new SampleDescription({
-                            requestID: savedRequest.id,
-                            position: i,
-                            sampleNumber: num,
-                            sampleDescription: bodySampleDescriptions[i]
-                        });
-                        nsd.save().then(function () {
-                        }).error(function (err) {
-                            console.error(err);
-                        })
-
-                    });
-                } else {
-                    var nsd = new SampleDescription({
-                        requestID: savedRequest.id,
-                        position: 0,
-                        sampleNumber: bodySampleNumbers,
-                        sampleDescription: bodySampleDescriptions
-                    });
-                    nsd.save().then(function () {
 
                     }).error(function (err) {
                         console.error(err);
-                    })
-                }
+                    });
+                });
+            } else {
+                SampleImage.filter({uid: bodyImages}).then(function (images) {
+                    if (images) {
+                        images[0].description = bodyImageDescriptions;
+                        images[0].requestID = savedRequest.id;
+                        images[0].save().then(function (saved) {
+                        });
+                    }
+                });
             }
-            sendEmail(`new job, ${uuid}`);
-            return res.render('requests/newPost', {uuid: savedRequest.yanCode});
-        });
-    });
+        }
+
+
+        if (bodySampleNumbers) {
+            if (Array.isArray(bodySampleNumbers)) {
+                bodySampleNumbers.map(function (num, i) {
+                    var nsd = new SampleDescription({
+                        requestID: savedRequest.id,
+                        position: i,
+                        sampleNumber: num,
+                        sampleDescription: bodySampleDescriptions[i]
+                    });
+                    nsd.save().then(function () {
+                    }).error(function (err) {
+                        console.error(err);
+                    })
+
+                });
+            } else {
+                var nsd = new SampleDescription({
+                    requestID: savedRequest.id,
+                    position: 0,
+                    sampleNumber: bodySampleNumbers,
+                    sampleDescription: bodySampleDescriptions
+                });
+                nsd.save().then(function () {
+
+                }).error(function (err) {
+                    console.error(err);
+                })
+            }
+        }
+        if (isNew) {
+            sendEmail(`new job, ${savedRequest.yanCode}`);
+        }
+
+
+        return res.render('requests/newPost', {uuid: savedRequest.yanCode});
+    }
 };
 
 requests.show = (req, res) => {
 
     const requestUUID = req.params.uuid;
     Request.filter({uuid: requestUUID})
-        .getJoin({supportingImages: true, samples: true, constructs:true})
+        .getJoin({supportingImages: true, samples: true, constructs: true})
         .run()
         .then(requests => {
             console.log(requests);
@@ -197,7 +220,7 @@ requests.show = (req, res) => {
 requests.edit = function (req, res) {
     const uuid = req.params.uuid;
     Request.filter({uuid: uuid})
-        .getJoin({supportingImages: true, samples: true, constructs:true})
+        .getJoin({supportingImages: true, samples: true, constructs: true})
         .then(function (requests) {
 
             requests.map(function (rr) {

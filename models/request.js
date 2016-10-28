@@ -56,6 +56,37 @@ Request.define('getStatus', function () {
     return this.complete ? 'Complete' : 'In Progress';
 });
 
+Request.define('removeChildren', function () {
+
+    var requestID = this.id;
+
+
+    return new Promise((good, bad)=> {
+
+
+        Construct.filter({requestID}).delete().run();
+        SampleDescription.filter({requestID}).delete().run();
+        SampleImage.filter({requestID}).delete().run();
+
+        return good();
+
+        // Construct.filter({requestID})
+        //     .then((cons)=> {
+        //         cons.map
+        //         con.delete();
+        //         SampleDescription.filter({requestID})
+        //             .then((sam)=> {
+        //                 sam.delete();
+        //                 SampleImage.filter({requestID})
+        //                     .then((si)=> {
+        //                         si.delete();
+        //                         return good();
+        //                     })
+        //             })
+        //     })
+    })
+})
+
 const SampleDescription = require('./sampleDescription');
 const SampleImage = require('./sampleImage');
 const Construct = require('./construct');

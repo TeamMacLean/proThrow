@@ -8,8 +8,8 @@ body {
     padding: 8px;
 }
 
-#nav-search-results{
-    padding:20px;
+#nav-search-results {
+    padding: 20px;
 
 }
 
@@ -45,6 +45,10 @@ body {
     height: 26px;
     padding-right: 8px;
     display: inline-block;
+}
+
+#nav-search-button {
+    margin-left: 8px;
 }
 
 .center {

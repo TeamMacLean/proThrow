@@ -39,3 +39,13 @@ server {
         }
 }
 ```
+
+
+## TODO
+* only editable (by user) if unassigned
+* pretty emails
+* 'request updated' email
+* assigning requests
+* mark requests as completed
+* better yancode
+* finish search, why was it there?
