@@ -140,23 +140,20 @@ const App = React.createClass({
                     <label>
                         <input type="checkbox" id="required-readme"
                                defaultChecked={window.existingRequest != null}
-                               required/> I
-                        have
-                        completed the above
+                               required/> <span>I have completed the above</span>
                     </label>
 
-
-                    {(window.existingRequest
+                    {(window.existingRequest.id
                             ? <input type="hidden" name="requestID" id="requestID" value={window.existingRequest.id}/>
                             : <div></div>
                     )}
 
-                    {(window.existingRequest
+                    {(window.existingRequest.janCode
                             ?
                             <div className="form-group">
                                 <label>Label</label>
-                                <input type="text" className="form-control" name="yanCode" id="yanCode"
-                                       value={window.existingRequest.yanCode}/>
+                                <input type="text" className="form-control" name="janCode" id="janCode"
+                                       value={window.existingRequest.janCode}/>
                             </div>
                             : <div></div>
                     )}

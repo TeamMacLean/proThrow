@@ -1,12 +1,5 @@
 const Request = require('../models/request');
-const UUID = require('../lib/uuid');
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
 const renderError = require('../lib/renderError');
-const Util = require('../lib/util');
-// const moment = require('moment';
-const SampleDescription = require('../models/sampleDescription');
-const SampleImage = require('../models/sampleImage');
 
 const Users = {};
 

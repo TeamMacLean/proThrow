@@ -11,7 +11,6 @@ const renderError = require('../lib/renderError');
 var requests = {};
 
 
-
 requests.new = (req, res, next) => res.render('requests/new');
 
 requests.newPost = (req, res) => {
@@ -19,48 +18,55 @@ requests.newPost = (req, res) => {
     const username = req.user.username;
     if (req.body.requestID) {
         var requestID = req.body.requestID;
-
+        var newJanCode = req.body.janCode;
 
         Request.get(requestID)
             .then((request)=> {
                 request.removeChildren()
                     .then(()=> {
-                        processIt(request, false);
-                    })
-                    .catch((err)=>renderError(err, res));
+                        request.janCode = newJanCode;
+                        request.save()
+                            .then((savedRequest)=> {
+                                processIt(savedRequest, false);
+                            }).catch((err)=>renderError(err, res));
+                    }).catch((err)=>renderError(err, res));
 
-            })
-            .catch((err)=>renderError(err, res));
-
+            }).catch((err)=>renderError(err, res));
     } else {
+        Util.generateJanCode(req.user.firstName, req.user.lastName, req.user.username)
+            .then(function (janCode) {
+                const request = new Request({
+                    createdBy: username,
+                    janCode: janCode,
+                    species: req.body.species,
+                    secondSpecies: req.body.secondSpecies,
+                    tissue: req.body.tissue,
+                    tissueAgeNum: req.body.tissueAgeNum,
+                    tissueAgeType: req.body.tissueAgeType,
+                    growthConditions: req.body.growthConditions,
+                    projectDescription: req.body.projectDescription,
+                    hopedAnalysis: req.body.hopedAnalysis,
+                    bufferComposition: req.body.bufferComposition,
+                    analysisType: req.body.analysisType,
+                    secondaryAnalysisType: req.body.secondaryAnalysisType,
+                    typeOfPTM: req.body.typeOfPTM,
+                    quantitativeAnalysisRequired: req.body.quantitativeAnalysisRequired,
+                    typeOfLabeling: req.body.typeOfLabeling,
+                    labelUsed: req.body.labelUsed,
+                    samplePrep: req.body.samplePrep,
+                    digestion: req.body.digestion,
+                    enzyme: req.body.enzyme
+                });
 
-        const request = new Request({
-            createdBy: username,
-            janCode: Util.generatejanCode(req.user.firstName, req.user.lastName),
-            species: req.body.species,
-            secondSpecies: req.body.secondSpecies,
-            tissue: req.body.tissue,
-            tissueAgeNum: req.body.tissueAgeNum,
-            tissueAgeType: req.body.tissueAgeType,
-            growthConditions: req.body.growthConditions,
-            projectDescription: req.body.projectDescription,
-            hopedAnalysis: req.body.hopedAnalysis,
-            bufferComposition: req.body.bufferComposition,
-            analysisType: req.body.analysisType,
-            secondaryAnalysisType: req.body.secondaryAnalysisType,
-            typeOfPTM: req.body.typeOfPTM,
-            quantitativeAnalysisRequired: req.body.quantitativeAnalysisRequired,
-            typeOfLabeling: req.body.typeOfLabeling,
-            labelUsed: req.body.labelUsed,
-            samplePrep: req.body.samplePrep,
-            digestion: req.body.digestion,
-            enzyme: req.body.enzyme
-        });
+                request.save().then(savedRequest => {
+                    processIt(savedRequest, true);
+                });
+            })
+            .catch(function (err) {
+                return renderError(err, res);
+            });
 
 
-        request.save().then(savedRequest => {
-            processIt(savedRequest, true);
-        });
     }
 
 
@@ -84,7 +90,6 @@ requests.newPost = (req, res) => {
         if (bodyConstructAccession) {
             if (Array.isArray(bodyConstructAccession)) {
                 bodyConstructAccession.map(function (accession, i) {
-                    console.log('accesssion', accession);
                     // console.log('accession', accession);
                     var c = new Construct({
                         requestID: savedRequest.id,
@@ -171,7 +176,6 @@ requests.newPost = (req, res) => {
         }
         if (isNew) {
             Email.newJob(savedRequest);
-            // Email.sendEmail(`new job, ${savedRequest.janCode}`);
         }
 
 

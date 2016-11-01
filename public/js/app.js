@@ -127,10 +127,15 @@ var App = React.createClass({
                     React.createElement('input', { type: 'checkbox', id: 'required-readme',
                         defaultChecked: window.existingRequest != null,
                         required: true }),
-                    ' I have completed the above'
+                    ' ',
+                    React.createElement(
+                        'span',
+                        null,
+                        'I have completed the above'
+                    )
                 ),
-                window.existingRequest ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
-                window.existingRequest ? React.createElement(
+                window.existingRequest.id ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
+                window.existingRequest.janCode ? React.createElement(
                     'div',
                     { className: 'form-group' },
                     React.createElement(
@@ -138,8 +143,8 @@ var App = React.createClass({
                         null,
                         'Label'
                     ),
-                    React.createElement('input', { type: 'text', className: 'form-control', name: 'yanCode', id: 'yanCode',
-                        value: window.existingRequest.yanCode })
+                    React.createElement('input', { type: 'text', className: 'form-control', name: 'janCode', id: 'janCode',
+                        value: window.existingRequest.janCode })
                 ) : React.createElement('div', null),
                 React.createElement(
                     'div',

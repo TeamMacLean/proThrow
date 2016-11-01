@@ -1,17 +1,15 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 
-const unassignedTAG = 'unassigned';
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
     createdBy: type.string().required(),
-    janCode: type.string().required().default(unassignedTAG),
-    assignedTo: type.string(),//.default(unassignedTAG),
+    janCode: type.string().required(),
+    assignedTo: type.string(),
     complete: type.boolean().default(false),
     notes: type.array().default([]).schema(type.string()),
-    // notes: [type.string()]
 
     //Biological Materia
     species: type.string().required(),
@@ -50,6 +48,7 @@ const Request = thinky.createModel('Request', {
 
 });
 
+
 module.exports = Request;
 
 Request.define('getStatus', function () {
@@ -62,30 +61,12 @@ Request.define('removeChildren', function () {
 
 
     return new Promise((good, bad)=> {
-
-
         Construct.filter({requestID}).delete().run();
         SampleDescription.filter({requestID}).delete().run();
         SampleImage.filter({requestID}).delete().run();
-
         return good();
-
-        // Construct.filter({requestID})
-        //     .then((cons)=> {
-        //         cons.map
-        //         con.delete();
-        //         SampleDescription.filter({requestID})
-        //             .then((sam)=> {
-        //                 sam.delete();
-        //                 SampleImage.filter({requestID})
-        //                     .then((si)=> {
-        //                         si.delete();
-        //                         return good();
-        //                     })
-        //             })
-        //     })
     })
-})
+});
 
 const SampleDescription = require('./sampleDescription');
 const SampleImage = require('./sampleImage');
