@@ -1,35 +1,16 @@
 const Request = require('../models/request');
-const UUID = require('../lib/uuid');
 const Util = require('../lib/util');
 const config = require('../config');
+const Email = require('../lib/email');
 const SampleDescription = require('../models/sampleDescription');
 const SampleImage = require('../models/sampleImage');
 const Construct = require('../models/construct');
-const nodeMailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
+
 const renderError = require('../lib/renderError');
 
 var requests = {};
 
-const transporter = nodeMailer.createTransport(smtpTransport({
-    host: config.mailServer,
-    port: 25
-}));
 
-function sendEmail(text) {
-    transporter.sendMail({
-        from: 'prothrow@tsl.ac.uk',
-        to: 'martin.page@tsl.ac.uk',
-        subject: 'New request (prothrow)',
-        text: `${text}\n\n`
-    }, (error, info) => {
-        if (error) {
-            return renderError(err, res);
-        } else {
-            console.log('Message sent:', info.response);
-        }
-    });
-}
 
 requests.new = (req, res, next) => res.render('requests/new');
 
@@ -55,7 +36,7 @@ requests.newPost = (req, res) => {
 
         const request = new Request({
             createdBy: username,
-            yanCode: Util.generateYanCode(req.user.firstName, req.user.lastName),
+            janCode: Util.generatejanCode(req.user.firstName, req.user.lastName),
             species: req.body.species,
             secondSpecies: req.body.secondSpecies,
             tissue: req.body.tissue,
@@ -112,7 +93,7 @@ requests.newPost = (req, res) => {
                         dbEntry: bodyConstructDBEntry[i]
                     });
                     c.save().then(function () {
-                    }).error(function (err) {
+                    }).catch(function (err) {
                         console.error(err);
                     })
                 });
@@ -124,7 +105,7 @@ requests.newPost = (req, res) => {
                     dbEntry: bodyConstructDBEntry
                 });
                 c.save().then(function () {
-                }).error(function (err) {
+                }).catch(function (err) {
                     console.error(err);
                 })
             }
@@ -142,7 +123,7 @@ requests.newPost = (req, res) => {
                             });
                         }
 
-                    }).error(function (err) {
+                    }).catch(function (err) {
                         console.error(err);
                     });
                 });
@@ -169,7 +150,7 @@ requests.newPost = (req, res) => {
                         sampleDescription: bodySampleDescriptions[i]
                     });
                     nsd.save().then(function () {
-                    }).error(function (err) {
+                    }).catch(function (err) {
                         console.error(err);
                     })
 
@@ -183,57 +164,71 @@ requests.newPost = (req, res) => {
                 });
                 nsd.save().then(function () {
 
-                }).error(function (err) {
+                }).catch(function (err) {
                     console.error(err);
                 })
             }
         }
         if (isNew) {
-            sendEmail(`new job, ${savedRequest.yanCode}`);
+            Email.newJob(savedRequest);
+            // Email.sendEmail(`new job, ${savedRequest.janCode}`);
         }
 
 
-        return res.render('requests/newPost', {uuid: savedRequest.yanCode});
+        return res.render('requests/newPost', {uuid: savedRequest.janCode});
     }
 };
 
 requests.show = (req, res) => {
 
-    const requestUUID = req.params.uuid;
-    Request.filter({uuid: requestUUID})
+    const requestID = req.params.id;
+    Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
         .run()
-        .then(requests => {
-            console.log(requests);
-            if (requests.length) {
-                const request = requests[0];
-                request.supportingImages = request.supportingImages || [];
-                request.samples = request.samples || [];
+        .then(request => {
+            // console.log(requests);
+            request.supportingImages = request.supportingImages || [];
+            request.samples = request.samples || [];
 
-                return res.render('requests/show', {request: request});
-            } else {
-                return res.render('error', {error: `could not find ${requestUUID}`});
-            }
-        });
+            return res.render('requests/show', {request: request, admins: config.admins});
+        }).catch((err)=> {
+        return renderError(err, res);
+    });
 };
 
 requests.edit = function (req, res) {
-    const uuid = req.params.uuid;
-    Request.filter({uuid: uuid})
+    const requestID = req.params.id;
+    Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
-        .then(function (requests) {
+        .then(function (request) {
 
-            requests.map(function (rr) {
-                rr.supportingImages.map(function (ri) {
-                    ri.url = ri.getPreviewURL();
-                });
+            request.supportingImages.map(function (ri) {
+                ri.url = ri.getPreviewURL();
             });
 
-            const r = requests[0];
-            console.log(r.supportingImages.length);
-            console.log(r.samples.length);
-            return res.render('requests/new', {request: r});
+            if (request.createdBy != req.user.username && !Util.isAdmin(req.user.username)) {
+                return renderError("This is not your request, you cannot edit it.", res);
+            }
+
+            if (!request.assignedTo || Util.isAdmin(req.user.username)) {
+                return res.render('requests/new', {request});
+            } else {
+                return renderError("You are not allowed to edit this as it has already been assigned for action.", res);
+            }
         })
+};
+
+requests.clone = function (req, res) {
+    const requestID = req.params.id;
+    Request.get(requestID)
+        .getJoin({supportingImages: true, samples: true, constructs: true})
+        .then(function (request) {
+
+            //TODO
+
+        }).catch((err)=> {
+        return renderError(err, res);
+    });
 };
 
 module.exports = requests;

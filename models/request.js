@@ -6,9 +6,9 @@ const unassignedTAG = 'unassigned';
 const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
-    createdBy: type.string().required().default(unassignedTAG),
-    yanCode: type.string().required().default(unassignedTAG),
-    assignedTo: type.string().default(unassignedTAG),
+    createdBy: type.string().required(),
+    janCode: type.string().required().default(unassignedTAG),
+    assignedTo: type.string(),//.default(unassignedTAG),
     complete: type.boolean().default(false),
     notes: type.array().default([]).schema(type.string()),
     // notes: [type.string()]

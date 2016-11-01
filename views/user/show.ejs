@@ -8,7 +8,7 @@
 
         <div class="col-sm-4">
             <div class="tile center">
-                <h3><a href="/request/<%- request.uuid %>"><%- request.yanCode %></a></h3>
+                <h3><a href="/request/<%- request.id %>"><%- request.yanCode %></a></h3>
                 <br>
                 <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
                 <br>
@@ -16,8 +16,8 @@
                 <br>
                 <span>Status: <%- request.getStatus() %></span>
                 <hr>
-                <a href="/request/<%- request.uuid %>/edit" class="btn btn-tiny btn-primary">Edit</a>
-                <a href="/request/<%- request.uuid %>/clone" class="btn btn-tiny btn-success">Clone</a>
+                <a href="/request/<%- request.id %>/edit" class="btn btn-tiny btn-primary">Edit</a>
+                <a href="/request/<%- request.id %>/clone" class="btn btn-tiny btn-success">Clone</a>
             </div>
         </div>
 

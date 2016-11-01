@@ -13,6 +13,7 @@
     "cookie-parser": "^1.4.3",
     "delivery": "0.0.4",
     "ejs": "^2.4.2",
+    "email-templates": "^2.5.3",
     "express": "^4.14.0",
     "express-session": "^1.14.0",
     "fs-extra": "^0.30.0",

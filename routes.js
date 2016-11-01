@@ -37,22 +37,22 @@ router.route('/new')
 
 //REQUEST
 
-router.route('/request/:uuid')
+router.route('/request/:id')
     .all(isAuthenticated)
     .all(isAdmin)
     .get(Requests.show);
 
-router.route('/request/:uuid/edit')
+router.route('/request/:id/edit')
     .all(isAuthenticated)
 //    .all(isAdmin)
     .get(Requests.edit);
 
-router.route('/request/:uuid/toggle')
+router.route('/request/:id/toggle')
     .all(isAuthenticated)
     .all(isAdmin)
     .get(admin.toggle);
 
-router.route('/request/:uuid/addnote')
+router.route('/request/:id/addnote')
     .all(isAuthenticated)
     .all(isAdmin)
     .post(admin.addNote);

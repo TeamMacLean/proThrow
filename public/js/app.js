@@ -121,14 +121,26 @@ var App = React.createClass({
             React.createElement(
                 'div',
                 { className: 'container' },
-                window.existingRequest ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
                 React.createElement(
                     'label',
                     null,
-                    React.createElement('input', { type: 'checkbox', id: 'required-readme', defaultChecked: window.existingRequest != null,
+                    React.createElement('input', { type: 'checkbox', id: 'required-readme',
+                        defaultChecked: window.existingRequest != null,
                         required: true }),
                     ' I have completed the above'
                 ),
+                window.existingRequest ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
+                window.existingRequest ? React.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    React.createElement(
+                        'label',
+                        null,
+                        'Label'
+                    ),
+                    React.createElement('input', { type: 'text', className: 'form-control', name: 'yanCode', id: 'yanCode',
+                        value: window.existingRequest.yanCode })
+                ) : React.createElement('div', null),
                 React.createElement(
                     'div',
                     { className: 'row' },
@@ -190,7 +202,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'secondSpecies', name: 'secondSpecies',
+                                            { className: 'form-control', id: 'secondSpecies',
+                                                name: 'secondSpecies',
                                                 defaultValue: window.existingRequest.secondSpecies || 'None',
                                                 required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
@@ -267,7 +280,8 @@ var App = React.createClass({
                                             React.createElement(
                                                 'div',
                                                 { className: 'col-md-6' },
-                                                React.createElement('input', { className: 'form-control', type: 'number', id: 'tissueAgeNum',
+                                                React.createElement('input', { className: 'form-control', type: 'number',
+                                                    id: 'tissueAgeNum',
                                                     name: 'tissueAgeNum',
                                                     min: '0',
                                                     defaultValue: window.existingRequest.tissueAgeNum || '',
@@ -376,7 +390,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'analysisType', name: 'analysisType',
+                                            { className: 'form-control', id: 'analysisType',
+                                                name: 'analysisType',
                                                 required: true,
                                                 defaultValue: window.existingRequest.analysisType || 'discovery' },
                                             React.createElement(
@@ -459,7 +474,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM', required: true,
+                                            { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM',
+                                                required: true,
                                                 defaultValue: window.existingRequest.typeOfPTM || 'none' },
                                             React.createElement(
                                                 'option',
@@ -546,7 +562,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'typeOfLabeling', name: 'typeOfLabeling',
+                                            { className: 'form-control', id: 'typeOfLabeling',
+                                                name: 'typeOfLabeling',
                                                 required: true,
                                                 defaultValue: window.existingRequest.typeOfLabeling || 'None' },
                                             React.createElement(
@@ -584,7 +601,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'labelUsed', name: 'labelUsed', required: true,
+                                            { className: 'form-control', id: 'labelUsed', name: 'labelUsed',
+                                                required: true,
                                                 defaultValue: window.existingRequest.labelUsed || 'None' },
                                             React.createElement(
                                                 'option',
@@ -620,126 +638,6 @@ var App = React.createClass({
                                     )
                                 )
                             )
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'col-md-6' },
-                        React.createElement(
-                            'div',
-                            { className: 'group' },
-                            React.createElement(
-                                'div',
-                                { className: 'container' },
-                                React.createElement('span', { className: 'badge' }),
-                                React.createElement(
-                                    'fieldset',
-                                    null,
-                                    React.createElement('img', { src: '/img/Attachment.png', className: 'center' }),
-                                    React.createElement(
-                                        'h3',
-                                        { className: 'group-label' },
-                                        'Project Summary'
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Project description'
-                                        ),
-                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'projectDescription',
-                                            name: 'projectDescription',
-                                            defaultValue: window.existingRequest.projectDescription || '' })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'What data do you hope to get from this analysis'
-                                        ),
-                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'hopedAnalysis',
-                                            name: 'hopedAnalysis',
-                                            defaultValue: window.existingRequest.hopedAnalysis || '' })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Buffer composition'
-                                        ),
-                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'bufferComposition',
-                                            name: 'bufferComposition',
-                                            defaultValue: window.existingRequest.bufferComposition || '' })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { className: 'form-group' },
-                                        React.createElement(
-                                            'label',
-                                            null,
-                                            'Supporting images'
-                                        ),
-                                        React.createElement('input', { className: 'form-control', type: 'file', id: 'imageUpload',
-                                            accept: supportedFileTypes,
-                                            name: 'imageUpload' })
-                                    ),
-                                    React.createElement(
-                                        'div',
-                                        { id: 'supportingImages', name: 'supportingImages' },
-                                        self.state.supportingImages.map(function (object, i) {
-                                            //TODO
-
-                                            var remove = self.removeSupportImage.bind(null, i);
-                                            return React.createElement(
-                                                'div',
-                                                { className: 'row', key: i },
-                                                React.createElement(
-                                                    'div',
-                                                    { className: 'col-sm-12' },
-                                                    React.createElement(
-                                                        'div',
-                                                        { className: 'tile' },
-                                                        React.createElement('img', {
-                                                            src: object.preview || object.url,
-                                                            className: 'img-fluid center-block' }),
-                                                        React.createElement('br', null),
-                                                        React.createElement('span', { className: 'removeImage' }),
-                                                        React.createElement(
-                                                            'span',
-                                                            { className: 'imageName' },
-                                                            object.name
-                                                        ),
-                                                        React.createElement('span', { className: 'right clickable', 'data-icon': '\uE019',
-                                                            onClick: remove }),
-                                                        React.createElement('hr', null),
-                                                        React.createElement('input', { type: 'hidden', value: object.uid, name: 'image[]' }),
-                                                        React.createElement(
-                                                            'div',
-                                                            { className: 'form-group' },
-                                                            React.createElement(
-                                                                'label',
-                                                                null,
-                                                                'Supporting image description'
-                                                            ),
-                                                            React.createElement('input', { className: 'form-control', type: 'text',
-                                                                id: 'imageDescription',
-                                                                name: 'imageDescription[]',
-                                                                defaultValue: object.description || '',
-                                                                required: true })
-                                                        )
-                                                    )
-                                                )
-                                            );
-                                        })
-                                    )
-                                )
-                            )
                         ),
                         React.createElement(
                             'div',
@@ -771,7 +669,8 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'samplePrep', name: 'samplePrep',
-                                                defaultValue: window.existingRequest.samplePrep || '', required: true },
+                                                defaultValue: window.existingRequest.samplePrep || '',
+                                                required: true },
                                             React.createElement('option', { disabled: true, value: '' }),
                                             React.createElement(
                                                 'option',
@@ -805,7 +704,8 @@ var App = React.createClass({
                                         ),
                                         React.createElement(
                                             'select',
-                                            { className: 'form-control', id: 'digestion', name: 'digestion', required: true,
+                                            { className: 'form-control', id: 'digestion', name: 'digestion',
+                                                required: true,
                                                 defaultValue: window.existingRequest.digestion || 'in gel' },
                                             React.createElement(
                                                 'option',
@@ -868,6 +768,132 @@ var App = React.createClass({
                                     )
                                 )
                             )
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'col-md-6' },
+                        React.createElement(
+                            'div',
+                            { className: 'group' },
+                            React.createElement(
+                                'div',
+                                { className: 'container' },
+                                React.createElement('span', { className: 'badge' }),
+                                React.createElement(
+                                    'fieldset',
+                                    null,
+                                    React.createElement('img', { src: '/img/Attachment.png', className: 'center' }),
+                                    React.createElement(
+                                        'h3',
+                                        { className: 'group-label' },
+                                        'Project Summary'
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Project description'
+                                        ),
+                                        React.createElement('textarea', { className: 'form-control', type: 'text',
+                                            id: 'projectDescription',
+                                            name: 'projectDescription',
+                                            defaultValue: window.existingRequest.projectDescription || '' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'What data do you hope to get from this analysis'
+                                        ),
+                                        React.createElement('textarea', { className: 'form-control', type: 'text', id: 'hopedAnalysis',
+                                            name: 'hopedAnalysis',
+                                            defaultValue: window.existingRequest.hopedAnalysis || '' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Buffer composition'
+                                        ),
+                                        React.createElement('input', { className: 'form-control', type: 'text', id: 'bufferComposition',
+                                            name: 'bufferComposition',
+                                            defaultValue: window.existingRequest.bufferComposition || '' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { className: 'form-group' },
+                                        React.createElement(
+                                            'label',
+                                            null,
+                                            'Supporting images ',
+                                            React.createElement('span', { 'data-icon': 't', className: 'tip',
+                                                'data-toggle': 'tooltip',
+                                                title: 'Please only use images in .png, .jpg, .jpeg or .gif format ' })
+                                        ),
+                                        React.createElement('input', { className: 'form-control', type: 'file', id: 'imageUpload',
+                                            accept: supportedFileTypes,
+                                            name: 'imageUpload' })
+                                    ),
+                                    React.createElement(
+                                        'div',
+                                        { id: 'supportingImages', name: 'supportingImages' },
+                                        self.state.supportingImages.map(function (object, i) {
+                                            //TODO
+
+                                            var remove = self.removeSupportImage.bind(null, i);
+                                            return React.createElement(
+                                                'div',
+                                                { className: 'row', key: i },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'col-sm-12' },
+                                                    React.createElement(
+                                                        'div',
+                                                        { className: 'tile' },
+                                                        React.createElement('img', {
+                                                            src: object.preview || object.url,
+                                                            className: 'img-fluid center-block' }),
+                                                        React.createElement('br', null),
+                                                        React.createElement('span', { className: 'removeImage' }),
+                                                        React.createElement(
+                                                            'span',
+                                                            { className: 'imageName' },
+                                                            object.name
+                                                        ),
+                                                        React.createElement('span', { className: 'right clickable',
+                                                            'data-icon': '\uE019',
+                                                            onClick: remove }),
+                                                        React.createElement('hr', null),
+                                                        React.createElement('input', { type: 'hidden', value: object.uid,
+                                                            name: 'image[]' }),
+                                                        React.createElement(
+                                                            'div',
+                                                            { className: 'form-group' },
+                                                            React.createElement(
+                                                                'label',
+                                                                null,
+                                                                'Supporting image description'
+                                                            ),
+                                                            React.createElement('input', { className: 'form-control', type: 'text',
+                                                                id: 'imageDescription',
+                                                                name: 'imageDescription[]',
+                                                                defaultValue: object.description || '',
+                                                                required: true })
+                                                        )
+                                                    )
+                                                )
+                                            );
+                                        })
+                                    )
+                                )
+                            )
                         ),
                         React.createElement(
                             'div',
@@ -899,7 +925,8 @@ var App = React.createClass({
                                     ),
                                     React.createElement(
                                         'div',
-                                        { className: 'btn btn-primary-outline btn-block', onClick: this.addConstruct },
+                                        { className: 'btn btn-primary-outline btn-block',
+                                            onClick: this.addConstruct },
                                         'Add Another Construct'
                                     )
                                 )

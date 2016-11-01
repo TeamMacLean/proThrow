@@ -8,7 +8,7 @@
         <% incompleteRequests.map(function(ucr){ %>
         <div class="col-sm-4">
             <div class="tile center">
-                <h3><a href="/request/<%- ucr.uuid %>"><%- ucr.yanCode %></a></h3>
+                <h3><a href="/request/<%- ucr.id %>"><%- ucr.janCode %></a></h3>
                 <br>
                 <span>Created by: <a href="/user/<%- ucr.createdBy %>"><%- ucr.createdBy %></a></span>
                 <br>
@@ -25,10 +25,10 @@
     <h3>Completed Requests</h3>
     <div class="row">
         <% completedRequests.map(function(cr){ %>
-        <li><a href="/admin/request/<%- cr.uuid %>"><%- cr.yanCode %> (<%- cr.uuid %>)</a></li>
+        <li><a href="/admin/request/<%- cr.id %>"><%- cr.janCode %> (<%- cr.id %>)</a></li>
         <div class="col-sm-3">
             <div class="tile">
-                <a href="/request/<%- cr.uuid %>"><%- cr.uuid %></a>
+                <a href="/request/<%- cr.id %>"><%- cr.id %></a>
                 <br>
                 <span>Created by: <a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></span>
                 <br>
