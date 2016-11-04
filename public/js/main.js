@@ -30,4 +30,32 @@ $(function () {
         console.log('sending search');
         socket.emit('search', $(this).val());
     });
+
+
+    $('#assign-select').bind('change', function (e) {
+        // e.preventDefault();
+
+        var id = $('#id');
+
+        if (id) {
+            socket.emit('assignTo', {id: id.val(), admin: $(this).val()});
+        } else {
+            alert('could not find ID of job, please inform Proteomics of the issue');
+        }
+
+
+    });
+
+    $('#completion-selection').bind('change', function (e) {
+
+        var id = $('#id');
+        if (id) {
+            console.log('emitting',$(this).val());
+            socket.emit('toggleCompletion', {id: id.val(), complete: $(this).val()});
+        } else {
+            alert('could not find ID of job, please inform Proteomics of the issue');
+        }
+
+    });
+
 });

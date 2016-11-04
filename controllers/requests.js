@@ -176,6 +176,8 @@ requests.newPost = (req, res) => {
         }
         if (isNew) {
             Email.newJob(savedRequest);
+        } else {
+            Email.updatedJob(savedRequest)
         }
 
 

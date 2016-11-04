@@ -42,10 +42,4 @@ server {
 
 
 ## TODO
-* pretty emails
-* 'request updated' email
-* assigning requests
-* mark requests as completed
 * better yancode
-* a/b/c/etc for duplicate JanCode
-* ability to change initials in Jancode, post submission

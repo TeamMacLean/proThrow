@@ -5,11 +5,34 @@
     <h2><%- request.yanCode %></h2>
     <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
     <br>
-    <span>Assigned to: <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo %></a></span>
+    <span>Assigned to: <a
+                href="/user/<%- request.assignedTo || 'unassigned' %>"><%- request.assignedTo || 'unassigned' %></a></span>
+
+    <input type="hidden" id="id" name="id" value="<%- request.id %>">
 
     <div class="row hidden-print">
         <div class="col-sm-12">
             <div class="form-group">
+
+                <% if(locals.signedInUser.isAdmin){ %>
+                <select id="assign-select">
+                    <% admins.map(function(admin){ %>
+                    <option <% if(admin == request.assignedTo){ %>selected
+                            <% } %>
+                    ><%- admin %></option>
+                    <% }) %>
+                </select>
+                <select id="completion-selection">
+                    <option value="true" <% if(request.complete){ %>selected
+                            <% } %>
+                    >Complete
+                    </option>
+                    <option value="false" <% if(!request.complete){ %>selected
+                            <% } %>
+                    >Incomplete
+                    </option>
+                </select>
+                <% } %>
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
                 <a href="/request/<%- request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>

@@ -1,13 +1,21 @@
-#!/usr/bin/env node
 const socketUploader = require('./lib/socketUpload');
 const socketSearch = require('./lib/socketSearch');
+const socketRequest = require('./lib/socketRequest');
 const config = require('./config');
 
 const app = require('./app');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-socketUploader(io);
-socketSearch(io);
+
+io.sockets.on('connection', socket => {
+
+    socketUploader(socket);
+    socketSearch(socket);
+    socketRequest(socket);
+
+});
+
+
 
 // var server = http.createServer(app);
 //
