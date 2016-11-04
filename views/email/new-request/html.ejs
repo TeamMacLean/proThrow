@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>New Request</title>
+</head>
+
+<body>
+<img class="center" src="<%- baseURL %>/logo.png" style="max-width: 80px; margin-bottom:20px;">
+<h1 class="center">New Proteomics Order</h1>
+<h2 class="center"><%- locals.request.janCode %></h2>
+<a class="center" href="<%- baseURL %>/request/<%- locals.request.id %>">View request on site</a>
+</body>
+
+</html>
