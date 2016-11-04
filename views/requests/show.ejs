@@ -15,23 +15,29 @@
             <div class="form-group">
 
                 <% if(locals.signedInUser.isAdmin){ %>
-                <select id="assign-select">
-                    <% admins.map(function(admin){ %>
-                    <option <% if(admin == request.assignedTo){ %>selected
-                            <% } %>
-                    ><%- admin %></option>
-                    <% }) %>
-                </select>
-                <select id="completion-selection">
-                    <option value="true" <% if(request.complete){ %>selected
-                            <% } %>
-                    >Complete
-                    </option>
-                    <option value="false" <% if(!request.complete){ %>selected
-                            <% } %>
-                    >Incomplete
-                    </option>
-                </select>
+                <div class="form-group">
+                    <label>Assign To:</label>
+                    <select id="assign-select">
+                        <% admins.map(function(admin){ %>
+                        <option <% if(admin == request.assignedTo){ %>selected
+                                <% } %>
+                        ><%- admin %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Set Completion Status:</label>
+                    <select id="completion-selection">
+                        <option value="true" <% if(request.complete){ %>selected
+                                <% } %>
+                        >Complete
+                        </option>
+                        <option value="false" <% if(!request.complete){ %>selected
+                                <% } %>
+                        >Incomplete
+                        </option>
+                    </select>
+                </div>
                 <% } %>
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
