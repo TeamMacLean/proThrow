@@ -134,8 +134,8 @@ var App = React.createClass({
                         'I have completed the above'
                     )
                 ),
-                window.existingRequest.id ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
-                window.existingRequest.janCode ? React.createElement(
+                window.existingRequest.id && !window.existingRequest.isClone ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
+                window.existingRequest.janCode && !window.existingRequest.isClone ? React.createElement(
                     'div',
                     { className: 'form-group' },
                     React.createElement(

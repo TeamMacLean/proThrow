@@ -143,12 +143,12 @@ const App = React.createClass({
                                required/> <span>I have completed the above</span>
                     </label>
 
-                    {(window.existingRequest.id
+                    {(window.existingRequest.id && !window.existingRequest.isClone
                             ? <input type="hidden" name="requestID" id="requestID" value={window.existingRequest.id}/>
                             : <div></div>
                     )}
 
-                    {(window.existingRequest.janCode
+                    {(window.existingRequest.janCode && !window.existingRequest.isClone
                             ?
                             <div className="form-group">
                                 <label>Label</label>

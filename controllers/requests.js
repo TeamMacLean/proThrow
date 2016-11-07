@@ -229,9 +229,8 @@ requests.clone = function (req, res) {
     Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
         .then(function (request) {
-
-            //TODO
-
+            request.isClone = true;
+            return res.render('requests/new', {request});
         }).catch((err)=> {
         return renderError(err, res);
     });
