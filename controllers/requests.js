@@ -217,8 +217,7 @@ requests.edit = function (req, res) {
             }
 
             if (!request.assignedTo || Util.isAdmin(req.user.username)) {
-                var jsonRequest = JSON.stringify(request);
-                return res.render('requests/new', {request:jsonRequest});
+                return res.render('requests/new', {request});
             } else {
                 return renderError("You are not allowed to edit this as it has already been assigned for action.", res);
             }
@@ -236,10 +235,7 @@ requests.clone = function (req, res) {
             });
 
             request.isClone = true;
-
-            var jsonRequest = JSON.stringify(request);
-
-            return res.render('requests/new', {request:jsonRequest, isClone: true});
+            return res.render('requests/new', {request, isClone: true});
         }).catch((err)=> {
         return renderError(err, res);
     });
