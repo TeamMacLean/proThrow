@@ -25,14 +25,15 @@
     <h3>Completed Requests</h3>
     <div class="row">
         <% completedRequests.map(function(cr){ %>
-        <li><a href="/admin/request/<%- cr.id %>"><%- cr.janCode %> (<%- cr.id %>)</a></li>
-        <div class="col-sm-3">
-            <div class="tile">
-                <a href="/request/<%- cr.id %>"><%- cr.id %></a>
+        <div class="col-sm-4">
+            <div class="tile center">
+                <h4><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></h4>
                 <br>
-                <span>Created by: <a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></span>
+                <span>Created by: <a href="/user/<%- ucr.createdBy %>"><%- cr.createdBy %></a></span>
                 <br>
                 <span>Assigned to: <a href="/user/<%- cr.assignedTo %>"><%- cr.assignedTo %></a></span>
+                <br>
+                <span>Status: <%- cr.getStatus() %></span>
             </div>
         </div>
         <% }); %>

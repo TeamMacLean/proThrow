@@ -1,7 +1,8 @@
 const Request = require('../models/request');
+const renderError = require('../lib/renderError');
 const admin = {};
 
-admin.index = (req, res, next) => {
+admin.index = (req, res) => {
 
     Request
         .run()
@@ -20,54 +21,56 @@ admin.index = (req, res, next) => {
                 completedRequests,
                 incompleteRequests
             });
-        }).error(err => {
-        next(err);
+        }).catch(err => {
+            return renderError(err, res);
     });
 };
 
-admin.toggle = (req, res, next) => {
-    const requestUUID = req.params.uuid;
-    Request.filter({uuid: requestUUID})
-        .run()
-        .then(requests => {
-            if (requests.length) {
-                const req = requests[0];
-                req.complete = !req.complete;
-                req.save();
-                res.send('done');
-            } else {
-                res.send('bad');
-            }
+//TODO delete this when sure is not needed
 
-        });
-};
-
-admin.addNote = (req, res, next) => {
-
-    const text = req.body.text;
-
-    const requestUUID = req.params.uuid;
-    Request.filter({uuid: requestUUID})
-        .run()
-        .then(requests => {
-            if (requests.length) {
-                const req = requests[0];
-
-
-                //if(!req.notes){
-                //  req.notes = [];
-                //}
-
-                req.notes.push(text);
-
-                req.save();
-                res.send('done');
-            } else {
-                res.send('bad');
-            }
-
-        });
-
-
-};
+// admin.toggle = (req, res) => {
+//     const requestUUID = req.params.uuid;
+//     Request.filter({uuid: requestUUID})
+//         .run()
+//         .then(requests => {
+//             if (requests.length) {
+//                 const req = requests[0];
+//                 req.complete = !req.complete;
+//                 req.save();
+//                 res.send('done');
+//             } else {
+//                 res.send('bad');
+//             }
+//
+//         });
+// };
+//
+// admin.addNote = (req, res) => {
+//
+//     const text = req.body.text;
+//
+//     const requestUUID = req.params.uuid;
+//     Request.filter({uuid: requestUUID})
+//         .run()
+//         .then(requests => {
+//             if (requests.length) {
+//                 const req = requests[0];
+//
+//
+//                 //if(!req.notes){
+//                 //  req.notes = [];
+//                 //}
+//
+//                 req.notes.push(text);
+//
+//                 req.save();
+//                 res.send('done');
+//             } else {
+//                 res.send('bad');
+//             }
+//
+//         });
+//
+//
+// };
 module.exports = admin;
