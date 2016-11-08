@@ -2,7 +2,7 @@
 
 <script>
     <% if(typeof request != 'undefined'){ %>
-    window.existingRequest = '<%- JSON.stringify(request) %>';
+    window.existingRequest = <%- JSON.stringify(request) %>;
     <% } %>
 </script>
 
