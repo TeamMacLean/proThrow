@@ -659,6 +659,4 @@ const Sample = React.createClass({
 });
 
 
-$(function () {
     ReactDOM.render(React.createElement(App), document.getElementById('app'));
-});
