@@ -46,11 +46,9 @@
 
 
 <script>
-    $(function () {
-        <% if(typeof request != 'undefined'){ %>
-        window.existingRequest = <%- JSON.stringify(request) %>;
-        <% } %>
-    })
+    <% if(typeof request != 'undefined'){ %>
+    window.existingRequest = <%- JSON.stringify(request) %>;
+    <% } %>
 </script>
 
 <script src="/components/react/react.js"></script>
