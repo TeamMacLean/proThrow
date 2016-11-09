@@ -13,3 +13,4 @@ module.exports = SampleDescription;
 
 const Request = require('./request');
 SampleDescription.belongsTo(Request, 'request', 'requestID', 'id');
+

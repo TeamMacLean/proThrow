@@ -9,7 +9,7 @@ const Request = thinky.createModel('Request', {
     janCode: type.string().required(),
     assignedTo: type.string(),
     complete: type.boolean().default(false),
-    notes: type.array().default([]).schema(type.string()),
+    // notes: type.array().default([]).schema(type.string()),
 
     //Biological Materia
     species: type.string().required(),
