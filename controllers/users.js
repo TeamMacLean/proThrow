@@ -3,12 +3,12 @@ const renderError = require('../lib/renderError');
 
 const Users = {};
 
-Users.show = function (req, res) {
+Users.show = (req, res)=> {
 
     const username = req.params.username;
     console.log('username', username);
 
-    Request.filter({createdBy: username}).then(function (requests) {
+    Request.filter({createdBy: username}).then((requests) => {
 
         if (!requests.length) {
             return renderError('No requests found for user ' + username, res);
@@ -17,7 +17,7 @@ Users.show = function (req, res) {
         }
 
 
-    }).error(function (err) {
+    }).error((err) => {
         return renderError(err, res);
     })
 

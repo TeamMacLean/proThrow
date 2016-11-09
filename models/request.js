@@ -51,11 +51,11 @@ const Request = thinky.createModel('Request', {
 
 module.exports = Request;
 
-Request.define('getStatus', function () {
+Request.define('getStatus', () => {
     return this.complete ? 'Complete' : 'In Progress';
 });
 
-Request.define('removeChildren', function () {
+Request.define('removeChildren', () => {
 
     var requestID = this.id;
 

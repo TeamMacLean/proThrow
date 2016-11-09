@@ -11,10 +11,10 @@ const SampleImage = thinky.createModel('SampleImage', {
 });
 
 
-SampleImage.define('getURL', function () {
+SampleImage.define('getURL', () => {
     return config.supportingImageRootURL + this.uid;
 });
-SampleImage.define('getPreviewURL', function () {
+SampleImage.define('getPreviewURL', () => {
     return config.supportingImagePreviewRootURL + this.uid;
 });
 module.exports = SampleImage;

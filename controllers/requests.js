@@ -34,7 +34,7 @@ requests.newPost = (req, res) => {
             }).catch((err)=>renderError(err, res));
     } else {
         Util.generateJanCode(req.user.firstName, req.user.lastName, req.user.username)
-            .then(function (janCode) {
+            .then((janCode) => {
                 const request = new Request({
                     createdBy: username,
                     janCode: janCode,
@@ -62,7 +62,7 @@ requests.newPost = (req, res) => {
                     processIt(savedRequest, true);
                 });
             })
-            .catch(function (err) {
+            .catch((err)=> {
                 return renderError(err, res);
             });
 
@@ -89,7 +89,7 @@ requests.newPost = (req, res) => {
 
         if (bodyConstructAccession) {
             if (Array.isArray(bodyConstructAccession)) {
-                bodyConstructAccession.map(function (accession, i) {
+                bodyConstructAccession.map((accession, i)=> {
                     // console.log('accession', accession);
                     var c = new Construct({
                         requestID: savedRequest.id,
@@ -97,8 +97,8 @@ requests.newPost = (req, res) => {
                         sequenceInfo: bodyConstructSequenceInfo[i],
                         dbEntry: bodyConstructDBEntry[i]
                     });
-                    c.save().then(function () {
-                    }).catch(function (err) {
+                    c.save().then(()=> {
+                    }).catch((err) => {
                         console.error(err);
                     })
                 });
@@ -109,8 +109,8 @@ requests.newPost = (req, res) => {
                     sequenceInfo: bodyConstructSequenceInfo,
                     dbEntry: bodyConstructDBEntry
                 });
-                c.save().then(function () {
-                }).catch(function (err) {
+                c.save().then(()=> {
+                }).catch((err) => {
                     console.error(err);
                 })
             }
@@ -119,25 +119,25 @@ requests.newPost = (req, res) => {
 
         if (bodyImages) {
             if (Array.isArray(bodyImages)) {
-                bodyImages.map(function (img, i) {
-                    SampleImage.filter({uid: img}).then(function (images) {
+                bodyImages.map((img, i)=> {
+                    SampleImage.filter({uid: img}).then((images) => {
                         if (images) {
                             images[0].description = bodyImageDescriptions[i];
                             images[0].requestID = savedRequest.id;
-                            images[0].save().then(function (saved) {
+                            images[0].save().then((saved) => {
                             });
                         }
 
-                    }).catch(function (err) {
+                    }).catch((err)=> {
                         console.error(err);
                     });
                 });
             } else {
-                SampleImage.filter({uid: bodyImages}).then(function (images) {
+                SampleImage.filter({uid: bodyImages}).then((images)=> {
                     if (images) {
                         images[0].description = bodyImageDescriptions;
                         images[0].requestID = savedRequest.id;
-                        images[0].save().then(function (saved) {
+                        images[0].save().then((saved) => {
                         });
                     }
                 });
@@ -147,15 +147,15 @@ requests.newPost = (req, res) => {
 
         if (bodySampleNumbers) {
             if (Array.isArray(bodySampleNumbers)) {
-                bodySampleNumbers.map(function (num, i) {
+                bodySampleNumbers.map((num, i) => {
                     var nsd = new SampleDescription({
                         requestID: savedRequest.id,
                         position: i,
                         sampleNumber: num,
                         sampleDescription: bodySampleDescriptions[i]
                     });
-                    nsd.save().then(function () {
-                    }).catch(function (err) {
+                    nsd.save().then(() => {
+                    }).catch((err) => {
                         console.error(err);
                     })
 
@@ -167,9 +167,9 @@ requests.newPost = (req, res) => {
                     sampleNumber: bodySampleNumbers,
                     sampleDescription: bodySampleDescriptions
                 });
-                nsd.save().then(function () {
+                nsd.save().then(() => {
 
-                }).catch(function (err) {
+                }).catch((err) => {
                     console.error(err);
                 })
             }
@@ -202,13 +202,13 @@ requests.show = (req, res) => {
     });
 };
 
-requests.edit = function (req, res) {
+requests.edit = (req, res)=> {
     const requestID = req.params.id;
     Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
-        .then(function (request) {
+        .then((request)=> {
 
-            request.supportingImages.map(function (ri) {
+            request.supportingImages.map((ri) => {
                 ri.url = ri.getPreviewURL();
             });
 
@@ -224,13 +224,13 @@ requests.edit = function (req, res) {
         })
 };
 
-requests.clone = function (req, res) {
+requests.clone = (req, res) => {
     const requestID = req.params.id;
     Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
-        .then(function (request) {
+        .then((request) => {
 
-            request.supportingImages.map(function (ri) {
+            request.supportingImages.map((ri)=> {
                 ri.url = ri.getPreviewURL();
             });
 

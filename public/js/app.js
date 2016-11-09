@@ -41,7 +41,6 @@ var App = React.createClass({
     },
     getInitialState: function getInitialState() {
         if (window.existingRequest) {
-            window.existingRequest = JSON.parse(window.existingRequest);
 
             // console.log('constructs',window.existingRequest.constructs);
 
