@@ -1067,7 +1067,7 @@ var Sample = React.createClass({
                             { className: 'row' },
                             React.createElement(
                                 'div',
-                                { className: 'col-md-6' },
+                                { className: 'col-md-4' },
                                 React.createElement(
                                     'div',
                                     { className: 'form-group' },
@@ -1084,7 +1084,24 @@ var Sample = React.createClass({
                             ),
                             React.createElement(
                                 'div',
-                                { className: 'col-md-6' },
+                                { className: 'col-md-4' },
+                                React.createElement(
+                                    'div',
+                                    { className: 'form-group' },
+                                    React.createElement(
+                                        'label',
+                                        null,
+                                        'Sample label'
+                                    ),
+                                    React.createElement('input', { className: 'form-control', type: 'text',
+                                        id: 'sampleLabel',
+                                        name: 'sampleLabel[]', defaultValue: self.props.data.sampleLabel || '',
+                                        required: true })
+                                )
+                            ),
+                            React.createElement(
+                                'div',
+                                { className: 'col-md-4' },
                                 React.createElement(
                                     'div',
                                     { className: 'form-group' },

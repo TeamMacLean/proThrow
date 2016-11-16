@@ -6,7 +6,9 @@ const SampleDescription = thinky.createModel('SampleDescription', {
     requestID: type.string(),
     position: type.number().required(),
     sampleNumber: type.string().required(),
+    sampleLabel: type.string().required().default(''),
     sampleDescription: type.string().required()
+
 });
 
 module.exports = SampleDescription;

@@ -10,6 +10,29 @@ const renderError = require('../lib/renderError');
 
 var requests = {};
 
+function fillFieldsFromForm(req, request) {
+
+    request.species = req.body.species;
+    request.secondSpecies = req.body.secondSpecies;
+    request.tissue = req.body.tissue;
+    request.tissueAgeNum = req.body.tissueAgeNum;
+    request.tissueAgeType = req.body.tissueAgeType;
+    request.growthConditions = req.body.growthConditions;
+    request.projectDescription = req.body.projectDescription;
+    request.hopedAnalysis = req.body.hopedAnalysis;
+    request.bufferComposition = req.body.bufferComposition;
+    request.analysisType = req.body.analysisType;
+    request.secondaryAnalysisType = req.body.secondaryAnalysisType;
+    request.typeOfPTM = req.body.typeOfPTM;
+    request.quantitativeAnalysisRequired = req.body.quantitativeAnalysisRequired;
+    request.typeOfLabeling = req.body.typeOfLabeling;
+    request.labelUsed = req.body.labelUsed;
+    request.samplePrep = req.body.samplePrep;
+    request.digestion = req.body.digestion;
+    request.enzyme = req.body.enzyme;
+
+    return request;
+}
 
 requests.new = (req, res, next) => res.render('requests/new');
 
@@ -25,6 +48,7 @@ requests.newPost = (req, res) => {
                 request.removeChildren()
                     .then(()=> {
                         request.janCode = newJanCode;
+                        request = fillFieldsFromForm(req, request);//TODO tidy this up
                         request.save()
                             .then((savedRequest)=> {
                                 processIt(savedRequest, false);
@@ -35,28 +59,11 @@ requests.newPost = (req, res) => {
     } else {
         Util.generateJanCode(req.user.firstName, req.user.lastName, req.user.username)
             .then((janCode) => {
-                const request = new Request({
+                var request = new Request({
                     createdBy: username,
-                    janCode: janCode,
-                    species: req.body.species,
-                    secondSpecies: req.body.secondSpecies,
-                    tissue: req.body.tissue,
-                    tissueAgeNum: req.body.tissueAgeNum,
-                    tissueAgeType: req.body.tissueAgeType,
-                    growthConditions: req.body.growthConditions,
-                    projectDescription: req.body.projectDescription,
-                    hopedAnalysis: req.body.hopedAnalysis,
-                    bufferComposition: req.body.bufferComposition,
-                    analysisType: req.body.analysisType,
-                    secondaryAnalysisType: req.body.secondaryAnalysisType,
-                    typeOfPTM: req.body.typeOfPTM,
-                    quantitativeAnalysisRequired: req.body.quantitativeAnalysisRequired,
-                    typeOfLabeling: req.body.typeOfLabeling,
-                    labelUsed: req.body.labelUsed,
-                    samplePrep: req.body.samplePrep,
-                    digestion: req.body.digestion,
-                    enzyme: req.body.enzyme
+                    janCode: janCode
                 });
+                request = fillFieldsFromForm(req, request); //TODO tidy this up
 
                 request.save().then(savedRequest => {
                     processIt(savedRequest, true);
@@ -81,6 +88,7 @@ requests.newPost = (req, res) => {
         //Sample
         var bodySampleNumbers = req.body['sampleNumber[]'];
         var bodySampleDescriptions = req.body['sampleDescription[]'];
+        var bodySampleLabels = req.body['sampleLabel[]'];
 
         //Construct
         var bodyConstructAccession = req.body['accession[]'];
@@ -152,6 +160,7 @@ requests.newPost = (req, res) => {
                         requestID: savedRequest.id,
                         position: i,
                         sampleNumber: num,
+                        sampleLabels: bodySampleLabels[i],
                         sampleDescription: bodySampleDescriptions[i]
                     });
                     nsd.save().then(() => {
@@ -165,6 +174,7 @@ requests.newPost = (req, res) => {
                     requestID: savedRequest.id,
                     position: 0,
                     sampleNumber: bodySampleNumbers,
+                    sampleLabels: bodySampleLabels,
                     sampleDescription: bodySampleDescriptions
                 });
                 nsd.save().then(() => {
@@ -174,6 +184,8 @@ requests.newPost = (req, res) => {
                 })
             }
         }
+
+
         if (isNew) {
             Email.newRequest(savedRequest);
         } else {

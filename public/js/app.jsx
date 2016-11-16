@@ -624,7 +624,7 @@ const Sample = React.createClass({
                     <div className="row">
                         <div className="col-md-10 fix-10">
                             <div className="row">
-                                <div className="col-md-6">
+                                <div className="col-md-4">
                                     <div className="form-group">
                                         <label>Sample number</label>
                                         <input className="form-control" type="number" min="0" max="150"
@@ -633,7 +633,16 @@ const Sample = React.createClass({
                                                required/>
                                     </div>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label>Sample label</label>
+                                        <input className="form-control" type="text"
+                                               id="sampleLabel"
+                                               name="sampleLabel[]" defaultValue={self.props.data.sampleLabel || ''}
+                                               required/>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
                                     <div className="form-group">
                                         <label>Sample description</label>
                                         <input className="form-control" type="text" id="sampleDescription"
@@ -658,4 +667,4 @@ const Sample = React.createClass({
 });
 
 
-    ReactDOM.render(React.createElement(App), document.getElementById('app'));
+ReactDOM.render(React.createElement(App), document.getElementById('app'));
