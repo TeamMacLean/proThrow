@@ -133,7 +133,7 @@ var App = React.createClass({
                         'I have completed the above'
                     )
                 ),
-                window.existingRequest.id && !window.existingRequest.isClone ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', value: window.existingRequest.id }) : React.createElement('div', null),
+                window.existingRequest.id && !window.existingRequest.isClone ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', defaultValue: window.existingRequest.id }) : React.createElement('div', null),
                 window.existingRequest.janCode && !window.existingRequest.isClone ? React.createElement(
                     'div',
                     { className: 'form-group' },
@@ -143,7 +143,7 @@ var App = React.createClass({
                         'Label'
                     ),
                     React.createElement('input', { type: 'text', className: 'form-control', name: 'janCode', id: 'janCode',
-                        value: window.existingRequest.janCode })
+                        defaultValue: window.existingRequest.janCode })
                 ) : React.createElement('div', null),
                 React.createElement(
                     'div',
@@ -183,7 +183,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'species', name: 'species',
                                                 defaultValue: window.existingRequest.species || '',
                                                 required: true },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             Species.map(function (object, i) {
                                                 return React.createElement(
                                                     'option',
@@ -210,7 +210,7 @@ var App = React.createClass({
                                                 name: 'secondSpecies',
                                                 defaultValue: window.existingRequest.secondSpecies || 'None',
                                                 required: true },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             ['None'].concat(Species).map(function (object, i) {
                                                 return React.createElement(
                                                     'option',
@@ -232,7 +232,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'tissue', name: 'tissue', required: true,
                                                 defaultValue: window.existingRequest.tissue || '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -300,7 +300,7 @@ var App = React.createClass({
                                                         name: 'tissueAgeType',
                                                         defaultValue: window.existingRequest.tissueAgeType || '',
                                                         required: true },
-                                                    React.createElement('option', { disabled: true, value: '' }),
+                                                    React.createElement('option', { disabled: true, defaultValue: '' }),
                                                     React.createElement(
                                                         'option',
                                                         null,
@@ -334,7 +334,7 @@ var App = React.createClass({
                                                 name: 'growthConditions',
                                                 required: true,
                                                 defaultValue: window.existingRequest.growthConditions || '' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -437,7 +437,7 @@ var App = React.createClass({
                                                 name: 'secondaryAnalysisType',
                                                 required: true,
                                                 defaultValue: window.existingRequest.secondaryAnalysisType || 'None' },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -675,7 +675,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'samplePrep', name: 'samplePrep',
                                                 defaultValue: window.existingRequest.samplePrep || '',
                                                 required: true },
-                                            React.createElement('option', { disabled: true, value: '' }),
+                                            React.createElement('option', { disabled: true, defaultValue: '' }),
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -875,7 +875,7 @@ var App = React.createClass({
                                                             'data-icon': '\uE019',
                                                             onClick: remove }),
                                                         React.createElement('hr', null),
-                                                        React.createElement('input', { type: 'hidden', value: object.uid,
+                                                        React.createElement('input', { type: 'hidden', defaultValue: object.uid,
                                                             name: 'image[]' }),
                                                         React.createElement(
                                                             'div',
