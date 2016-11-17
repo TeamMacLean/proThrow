@@ -52,7 +52,8 @@ requests.newPost = (req, res) => {
                         request.save()
                             .then((savedRequest)=> {
                                 processIt(savedRequest, false);
-                            }).catch((err)=>renderError(err, res));
+                            })
+                            .catch((err)=>renderError(err, res));
                     }).catch((err)=>renderError(err, res));
 
             }).catch((err)=>renderError(err, res));
