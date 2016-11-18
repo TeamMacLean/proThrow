@@ -148,8 +148,12 @@ input[type="checkbox"] {
     }
 }
 
-tbody{
+tbody {
     word-break: break-all;
+}
+
+th {
+    word-break: normal;
 }
 
 /*.bold {*/
