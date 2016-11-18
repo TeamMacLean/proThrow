@@ -59,32 +59,40 @@ Request.define('removeChildren', () => {
 
     var requestID = this.id;
 
-    return new Promise((good, bad)=> {
-        Construct.filter({requestID: requestID})
-            .then(constructs=> {
-                return Promise.all(constructs.map(function (construct) {
-                    construct.delete();
-                }))
-            });
+    Construct.filter({requestID: requestID})
+        .then(function (constructs) {
+            return Promise.all(constructs.map(function (construct) {
+                construct.delete();
+            }))
+        })
+        // .then(function () {
+        //     console.log('done all')
+        // })
+        .catch(function (err) {
+            console.error('error deleting', err);
+        });
+
+    SampleDescription.filter({requestID: requestID})
+        .then(function (sampleDescriptions) {
+            return Promise.all(sampleDescriptions.map(function (sampleDescription) {
+                sampleDescription.delete();
+            }))
+        })
+        // .then(function () {
+        //     console.log('done all')
+        // })
+        .catch(function (err) {
+            console.error('error deleting', err);
+        });
 
 
-        SampleDescription.filter({requestID: requestID})
-            .then(sds=> {
-                return Promise.all(sds.map(function (sd) {
-                    sd.delete();
-                }))
-            });
+    // SampleImage.filter({requestID: requestID})
+    //     .then(sis=> {
+    //         return Promise.all(sis.map(function (si) {
+    //             si.delete();
+    //         }))
+    //     });
 
-        // SampleImage.filter({requestID: requestID})
-        //     .then(sis=> {
-        //         return Promise.all(sis.map(function (si) {
-        //             si.delete();
-        //         }))
-        //     });
-
-        good();
-        return good();
-    })
 });
 
 const SampleDescription = require('./sampleDescription');
