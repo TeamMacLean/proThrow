@@ -59,11 +59,30 @@ Request.define('removeChildren', () => {
 
     var requestID = this.id;
 
-
     return new Promise((good, bad)=> {
-        Construct.filter({requestID}).delete().run();
-        SampleDescription.filter({requestID}).delete().run();
-        SampleImage.filter({requestID}).delete().run();
+        Construct.filter({requestID: requestID})
+            .then(constructs=> {
+                return Promise.all(constructs.map(function (construct) {
+                    construct.delete();
+                }))
+            });
+
+
+        SampleDescription.filter({requestID: requestID})
+            .then(sds=> {
+                return Promise.all(sds.map(function (sd) {
+                    sd.delete();
+                }))
+            });
+
+        // SampleImage.filter({requestID: requestID})
+        //     .then(sis=> {
+        //         return Promise.all(sis.map(function (si) {
+        //             si.delete();
+        //         }))
+        //     });
+
+        good();
         return good();
     })
 });
