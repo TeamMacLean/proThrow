@@ -174,7 +174,6 @@ const App = React.createClass({
                                             <select className="form-control" id="species" name="species"
                                                     defaultValue={window.existingRequest.species || ''}
                                                     required>
-                                                <option disabled defaultValue=''/>
                                                 {Species.map(function (object, i) {
                                                     return <option key={i}>{object}</option>;
                                                 })}
@@ -188,7 +187,6 @@ const App = React.createClass({
                                                     name="secondSpecies"
                                                     defaultValue={window.existingRequest.secondSpecies || 'None'}
                                                     required>
-                                                <option disabled defaultValue=''/>
                                                 {['None'].concat(Species).map(function (object, i) {
                                                     return <option key={i}>{object}</option>;
                                                 })}
@@ -198,7 +196,6 @@ const App = React.createClass({
                                             <label>Tissue</label>
                                             <select className="form-control" id="tissue" name="tissue" required
                                                     defaultValue={window.existingRequest.tissue || ''}>
-                                                <option disabled defaultValue=''/>
                                                 <option>seedlings</option>
                                                 <option>leaves</option>
                                                 <option>rosette</option>
@@ -225,7 +222,6 @@ const App = React.createClass({
                                                             name="tissueAgeType"
                                                             defaultValue={window.existingRequest.tissueAgeType || ''}
                                                             required>
-                                                        <option disabled defaultValue=''/>
                                                         <option>hour(s)</option>
                                                         <option>day(s)</option>
                                                         <option>week(s)</option>
@@ -241,7 +237,6 @@ const App = React.createClass({
                                                     name="growthConditions"
                                                     required
                                                     defaultValue={window.existingRequest.growthConditions || ''}>
-                                                <option disabled defaultValue=''/>
                                                 <option>plate</option>
                                                 <option>liquid</option>
                                                 <option>6well</option>
@@ -284,7 +279,6 @@ const App = React.createClass({
                                                     name="secondaryAnalysisType"
                                                     required
                                                     defaultValue={window.existingRequest.secondaryAnalysisType || 'None'}>
-                                                <option disabled defaultValue=''/>
                                                 <option>None</option>
                                                 <option>Discovery</option>
                                                 <option>SRM</option>
@@ -370,7 +364,6 @@ const App = React.createClass({
                                             <select className="form-control" id="samplePrep" name="samplePrep"
                                                     defaultValue={window.existingRequest.samplePrep || ''}
                                                     required>
-                                                <option disabled defaultValue=''/>
                                                 <option>crude extract</option>
                                                 <option>microsomal</option>
                                                 <option>plasma membrane</option>
