@@ -99,7 +99,7 @@ requests.newPost = (req, res) => {
         var bodySampleLabels = req.body['sampleLabel[]'];
 
 
-        console.log('sampleLabel[] =', bodySampleLabels);
+        // console.log('sampleLabel[] =', bodySampleLabels);
 
         //Construct
         var bodyConstructAccession = req.body['accession[]'];
