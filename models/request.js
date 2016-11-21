@@ -59,37 +59,27 @@ Request.define('removeChildren', () => {
 
     var requestID = this.id;
 
-    return new Promise((good, bad)=> {
 
-        Construct.filter({requestID: requestID})
-            .then(function (constructs) {
-                return Promise.all(constructs.map(function (construct) {
-                    construct.delete();
-                }))
-            })
-            .then(()=> {
-                SampleDescription.filter({requestID: requestID})
-                    .then(function (sampleDescriptions) {
-                        return Promise.all(sampleDescriptions.map(function (sampleDescription) {
-                            sampleDescription.delete();
-                        }))
-                    })
-                    .then(function () {
-                        good();
-                    })
-                    .catch(function (err) {
-                        return bad(err);
-                    });
-            })
-            // .then(function () {
-            //     console.log('done all')
-            // })
-            .catch(function (err) {
-                return bad(err);
-            });
-
-
-    })
+    return Promise.all([
+        Construct.filter({requestID: requestID}).delete().execute(),
+        SampleDescription.filter({requestID: requestID}).delete().execute()
+    ]);
+    //
+    //     Construct.filter({requestID: requestID})
+    //         .then(function (constructs) {
+    //             return Promise.all(constructs.map(function (construct) {
+    //                 construct.delete();
+    //             }))
+    //         });
+    //
+    //
+    //     SampleDescription.filter({requestID: requestID})
+    //         .then(function (sampleDescriptions) {
+    //             return Promise.all(sampleDescriptions.map(function (sampleDescription) {
+    //                 sampleDescription.delete();
+    //             }))
+    //         })
+    // });
 
     // SampleImage.filter({requestID: requestID})
     //     .then(sis=> {
