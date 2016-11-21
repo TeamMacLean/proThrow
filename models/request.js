@@ -51,48 +51,48 @@ const Request = thinky.createModel('Request', {
 
 module.exports = Request;
 
-Request.define('getStatus', () => {
+Request.define('getStatus', function() {
     return this.complete ? 'Complete' : 'In Progress';
 });
 
-Request.define('removeChildren', () => {
+Request.define('removeChildren', function() {
 
     var requestID = this.id;
 
-    // return Promise.all([
-    //     Construct.filter({requestID: requestID}).delete().execute(),
-    //     SampleDescription.filter({requestID: requestID}).delete().execute()
-    // ]);
+    return Promise.all([
+        Construct.filter({requestID: requestID}).delete().execute(),
+        SampleDescription.filter({requestID: requestID}).delete().execute()
+    ]);
     //
 
-    function deleteConstructs() {
-        return new Promise(function (good, bad) {
-            Construct.filter({requestID: requestID})
-                .then(function (constructs) {
-                    return Promise.all(constructs.map(function (construct) {
-                        construct.delete();
-                    }))
-                })
-                .then(good)
-                .catch(bad)
-        })
-
-    }
-
-    function deleteSampleDescriptions() {
-        return new Promise(function (good, bad) {
-            SampleDescription.filter({requestID: requestID})
-                .then(function (sampleDescriptions) {
-                    return Promise.all(sampleDescriptions.map(function (sampleDescription) {
-                        sampleDescription.delete();
-                    }))
-                })
-                .then(good)
-                .catch(bad)
-        })
-    }
-
-    return Promise.all([deleteConstructs(), deleteSampleDescriptions()]);
+    // function deleteConstructs() {
+    //     return new Promise(function (good, bad) {
+    //         Construct.filter({requestID: requestID})
+    //             .then(function (constructs) {
+    //                 return Promise.all(constructs.map(function (construct) {
+    //                     construct.delete();
+    //                 }))
+    //             })
+    //             .then(good)
+    //             .catch(bad)
+    //     })
+    //
+    // }
+    //
+    // function deleteSampleDescriptions() {
+    //     return new Promise(function (good, bad) {
+    //         SampleDescription.filter({requestID: requestID})
+    //             .then(function (sampleDescriptions) {
+    //                 return Promise.all(sampleDescriptions.map(function (sampleDescription) {
+    //                     sampleDescription.delete();
+    //                 }))
+    //             })
+    //             .then(good)
+    //             .catch(bad)
+    //     })
+    // }
+    //
+    // return Promise.all([deleteConstructs(), deleteSampleDescriptions()]);
 
     //
     //
