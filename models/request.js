@@ -66,7 +66,7 @@ Request.define('removeChildren', () => {
     //
 
     function deleteConstructs() {
-        return new Promise((good, bad)=> {
+        return new Promise(function (good, bad) {
             Construct.filter({requestID: requestID})
                 .then(function (constructs) {
                     return Promise.all(constructs.map(function (construct) {
@@ -80,7 +80,7 @@ Request.define('removeChildren', () => {
     }
 
     function deleteSampleDescriptions() {
-        return new Promise((good, bad)=> {
+        return new Promise(function (good, bad) {
             SampleDescription.filter({requestID: requestID})
                 .then(function (sampleDescriptions) {
                     return Promise.all(sampleDescriptions.map(function (sampleDescription) {
