@@ -167,7 +167,7 @@ requests.newPost = (req, res) => {
                         requestID: savedRequest.id,
                         position: i,
                         sampleNumber: num,
-                        sampleLabels: bodySampleLabels[i],
+                        sampleLabel: bodySampleLabels[i],
                         sampleDescription: bodySampleDescriptions[i]
                     });
                     nsd.save().then(() => {
@@ -181,7 +181,7 @@ requests.newPost = (req, res) => {
                     requestID: savedRequest.id,
                     position: 0,
                     sampleNumber: bodySampleNumbers,
-                    sampleLabels: bodySampleLabels,
+                    sampleLabel: bodySampleLabels,
                     sampleDescription: bodySampleDescriptions
                 });
                 nsd.save().then(() => {
