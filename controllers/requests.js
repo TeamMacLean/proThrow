@@ -135,6 +135,7 @@ requests.newPost = (req, res) => {
         if (bodyImages) {
 
             console.log('~BODY IMAGES', bodyImages);
+            console.log('~BODY IMAGE DESCIRPTIONS', bodyImageDescriptions);
 
             if (Array.isArray(bodyImages)) {
                 bodyImages.map((img, i)=> {
