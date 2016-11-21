@@ -89,6 +89,10 @@ requests.newPost = (req, res) => {
         var bodyImages = req.body['image[]'];
         var bodyImageDescriptions = req.body['imageDescription[]'];
 
+        var bodyImageName = req.body['imageName[]'];
+        var bodyImagePath = req.body['imagePath[]'];
+
+
         //Sample
         var bodySampleNumbers = req.body['sampleNumber[]'];
         var bodySampleDescriptions = req.body['sampleDescription[]'];
@@ -137,8 +141,9 @@ requests.newPost = (req, res) => {
             if (Array.isArray(bodyImages)) {
                 bodyImages.map((img, i)=> {
 
-
                     new SampleImage({
+                        path: bodyImagePath[i],
+                        name: bodyImageName[i],
                         uid: img,
                         description: bodyImageDescriptions[i],
                         requestID: savedRequest.id
@@ -151,6 +156,8 @@ requests.newPost = (req, res) => {
                 });
             } else {
                 new SampleImage({
+                    path: bodyImagePath,
+                    name: bodyImageName,
                     uid: bodyImages,
                     description: bodyImageDescriptions,
                     requestID: savedRequest.id

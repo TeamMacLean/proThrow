@@ -458,6 +458,8 @@ const App = React.createClass({
                                                                 className="img-fluid center-block"/>
                                                             <br/>
                                                             <span className="removeImage"/>
+                                                            <input type="hidden" name="imageName[]" defaultValue={object.name}/>
+                                                            <input type="hidden" name="imagePath[]" defaultValue={object.preview || object.url}/>
                                                             <span className="imageName">{object.name}</span>
                                                             <span className="right clickable"
                                                                   data-icon="&#xe019;"
