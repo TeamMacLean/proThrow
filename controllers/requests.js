@@ -134,14 +134,12 @@ requests.newPost = (req, res) => {
 
         if (bodyImages) {
 
-            console.log('~BODY IMAGES', bodyImages);
-            console.log('~BODY IMAGE DESCIRPTIONS', bodyImageDescriptions);
-
             if (Array.isArray(bodyImages)) {
                 bodyImages.map((img, i)=> {
 
 
                     new SampleImage({
+                        uid: img,
                         description: bodyImageDescriptions[i],
                         requestID: savedRequest.id
                     })
@@ -153,6 +151,7 @@ requests.newPost = (req, res) => {
                 });
             } else {
                 new SampleImage({
+                    uid: bodyImages,
                     description: bodyImageDescriptions,
                     requestID: savedRequest.id
                 })
