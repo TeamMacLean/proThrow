@@ -139,27 +139,28 @@ requests.newPost = (req, res) => {
 
             if (Array.isArray(bodyImages)) {
                 bodyImages.map((img, i)=> {
-                    SampleImage.filter({uid: img}).then((images) => {
-                        if (images) {
-                            images[0].description = bodyImageDescriptions[i];
-                            images[0].requestID = savedRequest.id;
-                            images[0].save().then((saved) => {
-                            });
-                        }
 
-                    }).catch((err)=> {
-                        console.error(err);
-                    });
+
+                    new SampleImage({
+                        description: bodyImageDescriptions[i],
+                        requestID: savedRequest.id
+                    })
+                        .save()
+                        .then()
+                        .catch(err=> {
+                            console.error(err);
+                        });
                 });
             } else {
-                SampleImage.filter({uid: bodyImages}).then((images)=> {
-                    if (images) {
-                        images[0].description = bodyImageDescriptions;
-                        images[0].requestID = savedRequest.id;
-                        images[0].save().then((saved) => {
-                        });
-                    }
-                });
+                new SampleImage({
+                    description: bodyImageDescriptions,
+                    requestID: savedRequest.id
+                })
+                    .save()
+                    .then()
+                    .catch(err=> {
+                        console.error(err);
+                    });
             }
         }
 
@@ -167,28 +168,26 @@ requests.newPost = (req, res) => {
         if (bodySampleNumbers) {
             if (Array.isArray(bodySampleNumbers)) {
                 bodySampleNumbers.map((num, i) => {
-                    var nsd = new SampleDescription({
+                    new SampleDescription({
                         requestID: savedRequest.id,
                         position: i,
                         sampleNumber: num,
                         sampleLabel: bodySampleLabels[i],
                         sampleDescription: bodySampleDescriptions[i]
-                    });
-                    nsd.save().then(() => {
+                    }).save().then(() => {
                     }).catch((err) => {
                         console.error(err);
                     })
 
                 });
             } else {
-                var nsd = new SampleDescription({
+                new SampleDescription({
                     requestID: savedRequest.id,
                     position: 0,
                     sampleNumber: bodySampleNumbers,
                     sampleLabel: bodySampleLabels,
                     sampleDescription: bodySampleDescriptions
-                });
-                nsd.save().then(() => {
+                }).save().then(() => {
 
                 }).catch((err) => {
                     console.error(err);
