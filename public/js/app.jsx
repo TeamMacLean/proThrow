@@ -449,7 +449,7 @@ const App = React.createClass({
                                         <div id="supportingImages" name="supportingImages">
                                             {self.state.supportingImages.map(function (object, i) { //TODO
 
-                                                const remove = self.removeSupportImage.bind(null, i);
+                                                const removeImage = self.removeSupportImage.bind(null, i);
                                                 return <div className="row" key={i}>
                                                     <div className="col-sm-12">
                                                         <div className="tile">
@@ -461,7 +461,7 @@ const App = React.createClass({
                                                             <span className="imageName">{object.name}</span>
                                                             <span className="right clickable"
                                                                   data-icon="&#xe019;"
-                                                                  onClick={remove}/>
+                                                                  onClick={removeImage}/>
                                                             <hr/>
 
                                                             <input type="hidden" defaultValue={object.uid}
