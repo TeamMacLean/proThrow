@@ -51,17 +51,18 @@ const Request = thinky.createModel('Request', {
 
 module.exports = Request;
 
-Request.define('getStatus', function() {
+Request.define('getStatus', function () {
     return this.complete ? 'Complete' : 'In Progress';
 });
 
-Request.define('removeChildren', function() {
+Request.define('removeChildren', function () {
 
     var requestID = this.id;
 
     return Promise.all([
         Construct.filter({requestID: requestID}).delete().execute(),
-        SampleDescription.filter({requestID: requestID}).delete().execute()
+        SampleDescription.filter({requestID: requestID}).delete().execute(),
+        SampleImage.filter({requestID: requestID}).delete().execute()
     ]);
     //
 

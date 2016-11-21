@@ -133,6 +133,9 @@ requests.newPost = (req, res) => {
 
 
         if (bodyImages) {
+
+            console.log('~BODY IMAGES', bodyImages);
+
             if (Array.isArray(bodyImages)) {
                 bodyImages.map((img, i)=> {
                     SampleImage.filter({uid: img}).then((images) => {
