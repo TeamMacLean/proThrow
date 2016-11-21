@@ -90,10 +90,10 @@ const App = React.createClass({
         });
         this.setState({samples: newSamples});
     },
-    removeSupportImage: function removeSupportImage(index) {
+    removeSupportImage: function removeSupportImage(index) { //TODO
         const replacement = this.state.supportingImages;
         delete replacement[index];
-        this.setState({samples: replacement});
+        this.setState({supportingImages: replacement});
     },
     initSocketUpload: function initSocketUpload() {
 
