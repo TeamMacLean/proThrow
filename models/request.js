@@ -59,18 +59,41 @@ Request.define('removeChildren', () => {
 
     var requestID = this.id;
 
-
-    return Promise.all([
-        Construct.filter({requestID: requestID}).delete().execute(),
-        SampleDescription.filter({requestID: requestID}).delete().execute()
-    ]);
+    // return Promise.all([
+    //     Construct.filter({requestID: requestID}).delete().execute(),
+    //     SampleDescription.filter({requestID: requestID}).delete().execute()
+    // ]);
     //
-    //     Construct.filter({requestID: requestID})
-    //         .then(function (constructs) {
-    //             return Promise.all(constructs.map(function (construct) {
-    //                 construct.delete();
-    //             }))
-    //         });
+
+    function deleteConstructs() {
+        return new Promise((good, bad)=> {
+            Construct.filter({requestID: requestID})
+                .then(function (constructs) {
+                    return Promise.all(constructs.map(function (construct) {
+                        construct.delete();
+                    }))
+                })
+                .then(good)
+                .catch(bad)
+        })
+
+    }
+
+    function deleteSampleDescriptions() {
+        return new Promise((good, bad)=> {
+            SampleDescription.filter({requestID: requestID})
+                .then(function (sampleDescriptions) {
+                    return Promise.all(sampleDescriptions.map(function (sampleDescription) {
+                        sampleDescription.delete();
+                    }))
+                })
+                .then(good)
+                .catch(bad)
+        })
+    }
+
+    return Promise.all([deleteConstructs(), deleteSampleDescriptions()]);
+
     //
     //
     //     SampleDescription.filter({requestID: requestID})
