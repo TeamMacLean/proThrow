@@ -59,32 +59,37 @@ Request.define('removeChildren', () => {
 
     var requestID = this.id;
 
-    Construct.filter({requestID: requestID})
-        .then(function (constructs) {
-            return Promise.all(constructs.map(function (construct) {
-                construct.delete();
-            }))
-        })
-        // .then(function () {
-        //     console.log('done all')
-        // })
-        .catch(function (err) {
-            console.error('error deleting', err);
-        });
+    return new Promise((good, bad)=> {
 
-    SampleDescription.filter({requestID: requestID})
-        .then(function (sampleDescriptions) {
-            return Promise.all(sampleDescriptions.map(function (sampleDescription) {
-                sampleDescription.delete();
-            }))
-        })
-        // .then(function () {
-        //     console.log('done all')
-        // })
-        .catch(function (err) {
-            console.error('error deleting', err);
-        });
+        Construct.filter({requestID: requestID})
+            .then(function (constructs) {
+                return Promise.all(constructs.map(function (construct) {
+                    construct.delete();
+                }))
+            })
+            .then(()=> {
+                SampleDescription.filter({requestID: requestID})
+                    .then(function (sampleDescriptions) {
+                        return Promise.all(sampleDescriptions.map(function (sampleDescription) {
+                            sampleDescription.delete();
+                        }))
+                    })
+                    .then(function () {
+                        good();
+                    })
+                    .catch(function (err) {
+                        return bad(err);
+                    });
+            })
+            // .then(function () {
+            //     console.log('done all')
+            // })
+            .catch(function (err) {
+                return bad(err);
+            });
 
+
+    })
 
     // SampleImage.filter({requestID: requestID})
     //     .then(sis=> {

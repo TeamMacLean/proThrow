@@ -45,16 +45,16 @@ requests.newPost = (req, res) => {
 
         Request.get(requestID)
             .then((request)=> {
-                request.removeChildren();
-                // .then(()=> {
-                request.janCode = newJanCode;
-                request = fillFieldsFromForm(req, request);//TODO tidy this up
-                request.save()
-                    .then((savedRequest)=> {
-                        processIt(savedRequest, false);
-                    })
-                    .catch((err)=>renderError(err, res));
-                // }).catch((err)=>renderError(err, res));
+                request.removeChildren()
+                    .then(()=> {
+                        request.janCode = newJanCode;
+                        request = fillFieldsFromForm(req, request);//TODO tidy this up
+                        request.save()
+                            .then((savedRequest)=> {
+                                processIt(savedRequest, false);
+                            })
+                            .catch((err)=>renderError(err, res));
+                    }).catch((err)=>renderError(err, res));
 
             }).catch((err)=>renderError(err, res));
     } else {
