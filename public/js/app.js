@@ -182,7 +182,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'species', name: 'species',
-                                                defaultValue: window.existingRequest.species,
+                                                value: window.existingRequest.species,
                                                 required: true },
                                             Species.map(function (object, i) {
                                                 return React.createElement(
@@ -208,7 +208,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'secondSpecies',
                                                 name: 'secondSpecies',
-                                                defaultValue: window.existingRequest.secondSpecies,
+                                                value: window.existingRequest.secondSpecies,
                                                 required: true },
                                             ['None'].concat(Species).map(function (object, i) {
                                                 return React.createElement(
@@ -230,7 +230,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'tissue', name: 'tissue', required: true,
-                                                defaultValue: window.existingRequest.tissue },
+                                                value: window.existingRequest.tissue },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -296,7 +296,7 @@ var App = React.createClass({
                                                     'select',
                                                     { className: 'form-control', id: 'tissueAgeType',
                                                         name: 'tissueAgeType',
-                                                        defaultValue: window.existingRequest.tissueAgeType,
+                                                        value: window.existingRequest.tissueAgeType,
                                                         required: true },
                                                     React.createElement(
                                                         'option',
@@ -330,7 +330,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'growthConditions',
                                                 name: 'growthConditions',
                                                 required: true,
-                                                defaultValue: window.existingRequest.growthConditions },
+                                                value: window.existingRequest.growthConditions },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -393,7 +393,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'analysisType',
                                                 name: 'analysisType',
                                                 required: true,
-                                                defaultValue: window.existingRequest.analysisType },
+                                                value: window.existingRequest.analysisType },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -432,7 +432,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'secondaryAnalysisType',
                                                 name: 'secondaryAnalysisType',
                                                 required: true,
-                                                defaultValue: window.existingRequest.secondaryAnalysisType },
+                                                value: window.existingRequest.secondaryAnalysisType },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -475,7 +475,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'typeOfPTM', name: 'typeOfPTM',
                                                 required: true,
-                                                defaultValue: window.existingRequest.typeOfPTM },
+                                                value: window.existingRequest.typeOfPTM },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -524,7 +524,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'quantitativeAnalysisRequired',
                                                 name: 'quantitativeAnalysisRequired',
-                                                defaultValue: window.existingRequest.quantitativeAnalysisRequired,
+                                                value: window.existingRequest.quantitativeAnalysisRequired,
                                                 required: true },
                                             React.createElement(
                                                 'option',
@@ -564,7 +564,7 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'typeOfLabeling',
                                                 name: 'typeOfLabeling',
                                                 required: true,
-                                                defaultValue: window.existingRequest.typeOfLabeling },
+                                                value: window.existingRequest.typeOfLabeling },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -602,7 +602,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'labelUsed', name: 'labelUsed',
                                                 required: true,
-                                                defaultValue: window.existingRequest.labelUsed },
+                                                value: window.existingRequest.labelUsed },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -668,7 +668,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'samplePrep', name: 'samplePrep',
-                                                defaultValue: window.existingRequest.samplePrep,
+                                                value: window.existingRequest.samplePrep,
                                                 required: true },
                                             React.createElement(
                                                 'option',
@@ -704,7 +704,7 @@ var App = React.createClass({
                                             'select',
                                             { className: 'form-control', id: 'digestion', name: 'digestion',
                                                 required: true,
-                                                defaultValue: window.existingRequest.digestion },
+                                                value: window.existingRequest.digestion },
                                             React.createElement(
                                                 'option',
                                                 null,
@@ -736,7 +736,7 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'enzyme', name: 'enzyme', required: true,
-                                                defaultValue: window.existingRequest.enzyme },
+                                                value: window.existingRequest.enzyme },
                                             React.createElement(
                                                 'option',
                                                 null,
