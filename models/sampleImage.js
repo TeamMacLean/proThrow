@@ -11,7 +11,7 @@ const SampleImage = thinky.createModel('SampleImage', {
 });
 
 
-SampleImage.define('getURL', function () => {
+SampleImage.define('getURL', function () {
     return config.supportingImageRootURL + this.uid;
 });
 SampleImage.define('getPreviewURL', function () {
