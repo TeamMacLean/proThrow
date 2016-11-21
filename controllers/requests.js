@@ -54,7 +54,11 @@ requests.newPost = (req, res) => {
                                 processIt(savedRequest, false);
                             })
                             .catch((err)=>renderError(err, res));
-                    }).catch((err)=>renderError(err, res));
+                    })
+                    .catch((err)=> {
+                        console.log('ERROR REMOVING CHILDREN');
+                        renderError(err, res)
+                    });
 
             }).catch((err)=>renderError(err, res));
     } else {
