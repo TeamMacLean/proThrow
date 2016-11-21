@@ -56,7 +56,6 @@ requests.newPost = (req, res) => {
                             .catch((err)=>renderError(err, res));
                     })
                     .catch((err)=> {
-                        console.log('ERROR REMOVING CHILDREN');
                         renderError(err, res)
                     });
 
@@ -94,6 +93,9 @@ requests.newPost = (req, res) => {
         var bodySampleNumbers = req.body['sampleNumber[]'];
         var bodySampleDescriptions = req.body['sampleDescription[]'];
         var bodySampleLabels = req.body['sampleLabel[]'];
+
+
+        console.log('sampleLabel[] =', sampleLabel);
 
         //Construct
         var bodyConstructAccession = req.body['accession[]'];
