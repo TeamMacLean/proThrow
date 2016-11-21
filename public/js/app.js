@@ -860,6 +860,8 @@ var App = React.createClass({
                                                             className: 'img-fluid center-block' }),
                                                         React.createElement('br', null),
                                                         React.createElement('span', { className: 'removeImage' }),
+                                                        React.createElement('input', { type: 'hidden', name: 'imageName[]', defaultValue: object.name }),
+                                                        React.createElement('input', { type: 'hidden', name: 'imagePath[]', defaultValue: object.preview || object.url }),
                                                         React.createElement(
                                                             'span',
                                                             { className: 'imageName' },

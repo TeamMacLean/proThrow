@@ -170,7 +170,6 @@ requests.newPost = (req, res) => {
             }
         }
 
-
         if (bodySampleNumbers) {
             if (Array.isArray(bodySampleNumbers)) {
                 bodySampleNumbers.map((num, i) => {

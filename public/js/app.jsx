@@ -466,6 +466,7 @@ const App = React.createClass({
                                                                   onClick={removeImage}/>
                                                             <hr/>
 
+                                                            
                                                             <input type="hidden" defaultValue={object.uid}
                                                                    name="image[]"/>
 
