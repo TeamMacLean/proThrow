@@ -220,8 +220,15 @@ requests.show = (req, res) => {
         .run()
         .then(request => {
             // console.log(requests);
+            //TODO sort samples
             request.supportingImages = request.supportingImages || [];
             request.samples = request.samples || [];
+
+            request.samples = request.samples.sort(
+                function(a, b) {
+                    return a.position - b.position
+                }
+            );
 
             return res.render('requests/show', {request: request, admins: config.admins});
         }).catch((err)=> {
@@ -238,6 +245,12 @@ requests.edit = (req, res)=> {
             request.supportingImages.map((ri) => {
                 ri.url = ri.getPreviewURL();
             });
+
+            request.samples = request.samples.sort(
+                function(a, b) {
+                    return a.position - b.position
+                }
+            );
 
             if (request.createdBy != req.user.username && !Util.isAdmin(req.user.username)) {
                 return renderError("This is not your request, you cannot edit it.", res);
@@ -260,6 +273,12 @@ requests.clone = (req, res) => {
             request.supportingImages.map((ri)=> {
                 ri.url = ri.getPreviewURL();
             });
+
+            request.samples = request.samples.sort(
+                function(a, b) {
+                    return a.position - b.position
+                }
+            );
 
             request.isClone = true;
             return res.render('requests/new', {request, isClone: true});
