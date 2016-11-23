@@ -12,7 +12,8 @@
                 <br>
                 <span>Created by: <a href="/user/<%- ucr.createdBy %>"><%- ucr.createdBy %></a></span>
                 <br>
-                <span>Assigned to: <a href="/user/<%- ucr.assignedTo %>"><%- ucr.assignedTo %></a></span>
+                <span>Assigned to: <a
+                            href="/user/<%- ucr.assignedTo || 'unassigned' %>"><%- ucr.assignedTo %></a></span>
                 <br>
                 <span>Status: <%- ucr.getStatus() %></span>
             </div>
@@ -31,7 +32,7 @@
                 <br>
                 <span>Created by: <a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></span>
                 <br>
-                <span>Assigned to: <a href="/user/<%- cr.assignedTo %>"><%- cr.assignedTo %></a></span>
+                <span>Assigned to: <a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo %></a></span>
                 <br>
                 <span>Status: <%- cr.getStatus() %></span>
             </div>
