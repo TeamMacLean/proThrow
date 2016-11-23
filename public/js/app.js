@@ -182,12 +182,12 @@ var App = React.createClass({
                                         React.createElement(
                                             'select',
                                             { className: 'form-control', id: 'species', name: 'species',
-                                                value: window.existingRequest.species,
+                                                defaultValue: window.existingRequest.species,
                                                 required: true },
                                             Species.map(function (object, i) {
                                                 return React.createElement(
                                                     'option',
-                                                    { key: i },
+                                                    { value: object, key: i },
                                                     object
                                                 );
                                             })

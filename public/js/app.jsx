@@ -172,10 +172,10 @@ const App = React.createClass({
                                                                  data-toggle="tooltip"
                                                                  title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
                                             <select className="form-control" id="species" name="species"
-                                                   value={window.existingRequest.species}
+                                                   defaultValue={window.existingRequest.species}
                                                     required>
                                                 {Species.map(function (object, i) {
-                                                    return <option key={i}>{object}</option>;
+                                                    return <option value={object} key={i}>{object}</option>;
                                                 })}
                                             </select>
                                         </div>
