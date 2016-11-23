@@ -172,7 +172,7 @@ const App = React.createClass({
                                                                  data-toggle="tooltip"
                                                                  title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
                                             <select className="form-control" id="species" name="species"
-                                                    value={window.existingRequest.species}
+                                                   defaultValue={window.existingRequest.species}
                                                     required>
                                                 {Species.map(function (object, i) {
                                                     return <option key={i}>{object}</option>;
@@ -185,7 +185,7 @@ const App = React.createClass({
                                                                         title="Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
                                             <select className="form-control" id="secondSpecies"
                                                     name="secondSpecies"
-                                                    value={window.existingRequest.secondSpecies }
+                                                   defaultValue={window.existingRequest.secondSpecies }
                                                     required>
                                                 {['None'].concat(Species).map(function (object, i) {
                                                     return <option key={i}>{object}</option>;
@@ -195,7 +195,7 @@ const App = React.createClass({
                                         <div className="form-group">
                                             <label>Tissue</label>
                                             <select className="form-control" id="tissue" name="tissue" required
-                                                    value={window.existingRequest.tissue }>
+                                                   defaultValue={window.existingRequest.tissue }>
                                                 <option>seedlings</option>
                                                 <option>leaves</option>
                                                 <option>rosette</option>
@@ -220,7 +220,7 @@ const App = React.createClass({
                                                 <div className="col-md-6">
                                                     <select className="form-control" id="tissueAgeType"
                                                             name="tissueAgeType"
-                                                            value={window.existingRequest.tissueAgeType }
+                                                           defaultValue={window.existingRequest.tissueAgeType }
                                                             required>
                                                         <option>hour(s)</option>
                                                         <option>day(s)</option>
@@ -236,7 +236,7 @@ const App = React.createClass({
                                             <select className="form-control" id="growthConditions"
                                                     name="growthConditions"
                                                     required
-                                                    value={window.existingRequest.growthConditions }>
+                                                   defaultValue={window.existingRequest.growthConditions }>
                                                 <option>plate</option>
                                                 <option>liquid</option>
                                                 <option>6well</option>
@@ -264,7 +264,7 @@ const App = React.createClass({
                                             <select className="form-control" id="analysisType"
                                                     name="analysisType"
                                                     required
-                                                    value={window.existingRequest.analysisType }>
+                                                   defaultValue={window.existingRequest.analysisType }>
                                                 <option>Discovery</option>
                                                 <option>SRM</option>
                                                 <option>PRM</option>
@@ -278,7 +278,7 @@ const App = React.createClass({
                                             <select className="form-control" id="secondaryAnalysisType"
                                                     name="secondaryAnalysisType"
                                                     required
-                                                    value={window.existingRequest.secondaryAnalysisType}>
+                                                   defaultValue={window.existingRequest.secondaryAnalysisType}>
                                                 <option>None</option>
                                                 <option>Discovery</option>
                                                 <option>SRM</option>
@@ -292,7 +292,7 @@ const App = React.createClass({
                                                                      title="Select the type of PTM you are interested in"/></label>
                                             <select className="form-control" id="typeOfPTM" name="typeOfPTM"
                                                     required
-                                                    value={window.existingRequest.typeOfPTM}>
+                                                   defaultValue={window.existingRequest.typeOfPTM}>
                                                 <option>None</option>
                                                 <option>Phosphorylation</option>
                                                 <option>Acetylation</option>
@@ -308,7 +308,7 @@ const App = React.createClass({
                                                                                         title="Select the type of quantitative analysis if you have discussed with the Proteomics team. Otherwise leave this in the default option "/></label>
                                             <select className="form-control" id="quantitativeAnalysisRequired"
                                                     name="quantitativeAnalysisRequired"
-                                                    value={window.existingRequest.quantitativeAnalysisRequired }
+                                                   defaultValue={window.existingRequest.quantitativeAnalysisRequired }
                                                     required>
                                                 <option>None</option>
                                                 <option>Semi</option>
@@ -323,7 +323,7 @@ const App = React.createClass({
                                             <select className="form-control" id="typeOfLabeling"
                                                     name="typeOfLabeling"
                                                     required
-                                                    value={window.existingRequest.typeOfLabeling }>
+                                                   defaultValue={window.existingRequest.typeOfLabeling }>
                                                 <option>None</option>
                                                 <option>Label-free</option>
                                                 <option>Post-extraction</option>
@@ -336,7 +336,7 @@ const App = React.createClass({
                                                                     title="Select the type of label if you have discussed with the proteomics team. Otherwise leave this in the default option"/></label>
                                             <select className="form-control" id="labelUsed" name="labelUsed"
                                                     required
-                                                    value={window.existingRequest.labelUsed }>
+                                                   defaultValue={window.existingRequest.labelUsed }>
                                                 <option>None</option>
                                                 <option>TMT0</option>
                                                 <option>TMT6</option>
@@ -362,7 +362,7 @@ const App = React.createClass({
                                                                             data-toggle="tooltip"
                                                                             title="Select the type of sample preparation used. If not available let the proteomics team know so it can be added "/></label>
                                             <select className="form-control" id="samplePrep" name="samplePrep"
-                                                    value={window.existingRequest.samplePrep }
+                                                   defaultValue={window.existingRequest.samplePrep }
                                                     required>
                                                 <option>crude extract</option>
                                                 <option>microsomal</option>
@@ -375,7 +375,7 @@ const App = React.createClass({
                                             <label>Digestion</label>
                                             <select className="form-control" id="digestion" name="digestion"
                                                     required
-                                                    value={window.existingRequest.digestion }>
+                                                   defaultValue={window.existingRequest.digestion }>
                                                 <option>in gel</option>
                                                 <option>on bead</option>
                                                 <option>in solution</option>
@@ -388,7 +388,7 @@ const App = React.createClass({
                                                                 data-toggle="tooltip"
                                                                 title="Other enzyme combinations can be selected if previously discussed with proteomics team"/></label>
                                             <select className="form-control" id="enzyme" name="enzyme" required
-                                                    value={window.existingRequest.enzyme }>
+                                                   defaultValue={window.existingRequest.enzyme }>
                                                 <option>Trypsin</option>
                                                 <option>AspN</option>
                                                 <option>Trypsin AspN</option>
