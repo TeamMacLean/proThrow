@@ -34,13 +34,11 @@ var Option = React.createClass({
     displayName: 'Option',
 
     render: function render() {
-        console.log(this.props);
-        console.log(this.state);
-        console.log(this.refs);
+        var text = this.props.children;
         return React.createElement(
             'option',
-            { value: this.text },
-            this.text
+            { value: text },
+            text
         );
     }
 });

@@ -47,11 +47,9 @@ function initToolTips() {
 
 const Option = React.createClass({
     render: function render() {
-        console.log(this.props);
-        console.log(this.state);
-        console.log(this.refs);
+        var text = this.props.children;
         return (
-            <option value={this.text}>{this.text}</option>
+            <option value={text}>{text}</option>
         )
     }
 });
