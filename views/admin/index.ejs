@@ -24,21 +24,25 @@
 
     <% if(completedRequests && completedRequests.length){ %>
     <h3>Completed Requests</h3>
-    <div class="row">
+
+    <table style="width:100%">
+        <tr>
+            <th>ID</th>
+            <th>Created by</th>
+            <th>Assigned to</th>
+            <th>Status</th>
+        </tr>
+
         <% completedRequests.map(function(cr){ %>
-        <div class="col-sm-4">
-            <div class="tile center">
-                <h4><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></h4>
-                <br>
-                <span>Created by: <a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></span>
-                <br>
-                <span>Assigned to: <a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo %></a></span>
-                <br>
-                <span>Status: <%- cr.getStatus() %></span>
-            </div>
-        </div>
+        <tr>
+            <td><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></td>
+            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo %></a></td>
+            <td><%- cr.getStatus() %></td>
+        </tr>
         <% }); %>
-    </div>
+
+    </table>
+    
     <% } %>
 
     <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length) { %>
