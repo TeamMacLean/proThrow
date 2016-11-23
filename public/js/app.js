@@ -34,9 +34,10 @@ var Option = React.createClass({
     displayName: 'Option',
 
     render: function render() {
+        console.log(this);
         return React.createElement(
             Option,
-            null,
+            { value: this.text },
             this.text
         );
     }
