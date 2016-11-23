@@ -18,8 +18,9 @@
                 <div class="form-group">
                     <label>Assign To:</label>
                     <select id="assign-select">
+                        <option value="unassigned">unassigned</option>
                         <% admins.map(function(admin){ %>
-                        <option <% if(admin == request.assignedTo){ %>selected
+                        <option value="<%- admin %>" <% if(admin == request.assignedTo){ %>selected
                                 <% } %>
                         ><%- admin %></option>
                         <% }) %>
