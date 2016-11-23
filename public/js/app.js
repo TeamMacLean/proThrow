@@ -34,9 +34,11 @@ var Option = React.createClass({
     displayName: 'Option',
 
     render: function render() {
-        console.log(this);
+        console.log(this.props);
+        console.log(this.state);
+        console.log(this.refs);
         return React.createElement(
-            Option,
+            'option',
             { value: this.text },
             this.text
         );
