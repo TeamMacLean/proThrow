@@ -43,6 +43,72 @@ var Option = React.createClass({
     }
 });
 
+var Construct = React.createClass({
+    displayName: 'Construct',
+    render: function render() {
+        var self = this;
+        return React.createElement(
+            'div',
+            null,
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Species and accession of the parent gene ',
+                    React.createElement('span', { 'data-icon': 't',
+                        className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: 'Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct' })
+                ),
+                React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
+                    name: 'accession[]',
+                    defaultValue: self.props.data.accession || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Amino acid sequence ',
+                    React.createElement('span', { 'data-icon': 't', className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: 'Provided the entire amino acid sequence of the construct including tags and junctions' })
+                ),
+                React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
+                    name: 'sequenceInfo[]',
+                    defaultValue: self.props.data.sequenceInfo || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'form-group' },
+                React.createElement(
+                    'label',
+                    null,
+                    'Database entry ',
+                    React.createElement('span', { 'data-icon': 't', className: 'tip',
+                        'data-toggle': 'tooltip',
+                        title: '>date_of_submition|protein_short_name|for_whom some description if required e.g. >160201|RRS1-R-HF|for_Zane' })
+                ),
+                React.createElement('input', { className: 'form-control', type: 'text', id: 'dbEntry',
+                    name: 'dbEntry[]',
+                    defaultValue: self.props.data.dbEntry || '',
+                    required: true })
+            ),
+            React.createElement(
+                'div',
+                { className: 'removeSample', onClick: this.props.removeConstruct.bind(null, this) },
+                React.createElement('span', { 'data-icon': '\uE019' })
+            ),
+            React.createElement('hr', null)
+        );
+    }
+});
+
 var App = React.createClass({
     displayName: 'app',
     componentDidMount: function componentDidMount() {
@@ -54,8 +120,6 @@ var App = React.createClass({
     },
     getInitialState: function getInitialState() {
         if (window.existingRequest) {
-
-            // console.log('constructs',window.existingRequest.constructs);
 
             return {
                 samples: window.existingRequest.samples || [],
@@ -930,13 +994,8 @@ var App = React.createClass({
                                         'div',
                                         { id: 'constructs' },
                                         this.state.constructs.map(function (construct) {
-                                            {/*console.log(construct);*/
-                                            }
-                                            return React.createElement(Construct, {
-                                                key: construct.key || construct.id,
-                                                data: construct,
-                                                removeConstruct: self.removeConstruct
-                                            });
+                                            return React.createElement(Construct, { key: construct.key || construct.id, data: construct,
+                                                removeConstruct: self.removeConstruct });
                                         })
                                     ),
                                     React.createElement(
@@ -966,11 +1025,8 @@ var App = React.createClass({
                             'div',
                             { id: 'samples' },
                             this.state.samples.map(function (sample) {
-                                return React.createElement(Sample, {
-                                    key: sample.key || sample.id,
-                                    data: sample,
-                                    removeSample: self.removeSample
-                                });
+                                return React.createElement(Sample, { key: sample.key || sample.id, data: sample,
+                                    removeSample: self.removeSample });
                             })
                         ),
                         React.createElement(
@@ -988,72 +1044,6 @@ var App = React.createClass({
                 ),
                 React.createElement('input', { type: 'submit', className: 'btn btn-success btn-block' })
             )
-        );
-    }
-});
-
-var Construct = React.createClass({
-    displayName: 'Construct',
-    render: function render() {
-        var self = this;
-        return React.createElement(
-            'div',
-            null,
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement(
-                    'label',
-                    null,
-                    'Species and accession of the parent gene ',
-                    React.createElement('span', { 'data-icon': 't',
-                        className: 'tip',
-                        'data-toggle': 'tooltip',
-                        title: 'Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct' })
-                ),
-                React.createElement('input', { className: 'form-control', type: 'text', id: 'accession',
-                    name: 'accession[]',
-                    defaultValue: self.props.data.accession || '',
-                    required: true })
-            ),
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement(
-                    'label',
-                    null,
-                    'Amino acid sequence ',
-                    React.createElement('span', { 'data-icon': 't', className: 'tip',
-                        'data-toggle': 'tooltip',
-                        title: 'Provided the entire amino acid sequence of the construct including tags and junctions' })
-                ),
-                React.createElement('textarea', { className: 'form-control', type: 'text', id: 'sequenceInfo',
-                    name: 'sequenceInfo[]',
-                    defaultValue: self.props.data.sequenceInfo || '',
-                    required: true })
-            ),
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement(
-                    'label',
-                    null,
-                    'Database entry ',
-                    React.createElement('span', { 'data-icon': 't', className: 'tip',
-                        'data-toggle': 'tooltip',
-                        title: '>date_of_submition|protein_short_name|for_whom some description if required e.g. >160201|RRS1-R-HF|for_Zane' })
-                ),
-                React.createElement('input', { className: 'form-control', type: 'text', id: 'dbEntry',
-                    name: 'dbEntry[]',
-                    defaultValue: self.props.data.dbEntry || '',
-                    required: true })
-            ),
-            React.createElement(
-                'div',
-                { className: 'removeSample', onClick: this.props.removeConstruct.bind(null, this) },
-                React.createElement('span', { 'data-icon': '\uE019' })
-            ),
-            React.createElement('hr', null)
         );
     }
 });
@@ -1146,4 +1136,4 @@ var Sample = React.createClass({
 
 });
 
-ReactDOM.render(React.createElement(App), document.getElementById('app'));
+ReactDOM.render(React.createElement(App, null), document.getElementById('app'));
