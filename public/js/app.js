@@ -30,6 +30,18 @@ function initToolTips() {
     $('[data-toggle="tooltip"]').tooltip();
 }
 
+var Option = React.createClass({
+    displayName: 'Option',
+
+    render: function render() {
+        return React.createElement(
+            Option,
+            null,
+            this.text
+        );
+    }
+});
+
 var App = React.createClass({
     displayName: 'app',
     componentDidMount: function componentDidMount() {
@@ -134,7 +146,8 @@ var App = React.createClass({
                         'I have completed the above'
                     )
                 ),
-                window.existingRequest.id && !window.existingRequest.isClone ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID', defaultValue: window.existingRequest.id }) : React.createElement('div', null),
+                window.existingRequest.id && !window.existingRequest.isClone ? React.createElement('input', { type: 'hidden', name: 'requestID', id: 'requestID',
+                    defaultValue: window.existingRequest.id }) : React.createElement('div', null),
                 window.existingRequest.janCode && !window.existingRequest.isClone ? React.createElement(
                     'div',
                     { className: 'form-group' },
@@ -186,8 +199,8 @@ var App = React.createClass({
                                                 required: true },
                                             Species.map(function (object, i) {
                                                 return React.createElement(
-                                                    'option',
-                                                    { value: object, key: i },
+                                                    Option,
+                                                    { key: i },
                                                     object
                                                 );
                                             })
@@ -212,7 +225,7 @@ var App = React.createClass({
                                                 required: true },
                                             ['None'].concat(Species).map(function (object, i) {
                                                 return React.createElement(
-                                                    'option',
+                                                    Option,
                                                     { key: i },
                                                     object
                                                 );
@@ -232,37 +245,37 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'tissue', name: 'tissue', required: true,
                                                 defaultValue: window.existingRequest.tissue },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'seedlings'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'leaves'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'rosette'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'roots'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'cell culture'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'callus'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'flower'
                                             )
@@ -299,17 +312,17 @@ var App = React.createClass({
                                                         defaultValue: window.existingRequest.tissueAgeType,
                                                         required: true },
                                                     React.createElement(
-                                                        'option',
+                                                        Option,
                                                         null,
                                                         'hour(s)'
                                                     ),
                                                     React.createElement(
-                                                        'option',
+                                                        Option,
                                                         null,
                                                         'day(s)'
                                                     ),
                                                     React.createElement(
-                                                        'option',
+                                                        Option,
                                                         null,
                                                         'week(s)'
                                                     )
@@ -332,27 +345,27 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.growthConditions },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'plate'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'liquid'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 '6well'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'soil grown'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'hydrophonics'
                                             )
@@ -395,22 +408,22 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.analysisType },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Discovery'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'SRM'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'PRM'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'DIA'
                                             )
@@ -434,27 +447,27 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.secondaryAnalysisType },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'None'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Discovery'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'SRM'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'PRM'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'DIA'
                                             )
@@ -477,32 +490,32 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.typeOfPTM },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'None'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Phosphorylation'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Acetylation'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Ubiquitination'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Glycosylation'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Poly ADP Ribosylation'
                                             )
@@ -527,22 +540,22 @@ var App = React.createClass({
                                                 defaultValue: window.existingRequest.quantitativeAnalysisRequired,
                                                 required: true },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'None'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Semi'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Relative'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Absolute'
                                             )
@@ -566,22 +579,22 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.typeOfLabeling },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'None'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Label-free'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Post-extraction'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Metabolic'
                                             )
@@ -604,32 +617,32 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.labelUsed },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'None'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'TMT0'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'TMT6'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'TMT10'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'iTRAQ'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 '15N'
                                             )
@@ -671,22 +684,22 @@ var App = React.createClass({
                                                 defaultValue: window.existingRequest.samplePrep,
                                                 required: true },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'crude extract'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'microsomal'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'plasma membrane'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'IP'
                                             )
@@ -706,17 +719,17 @@ var App = React.createClass({
                                                 required: true,
                                                 defaultValue: window.existingRequest.digestion },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'in gel'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'on bead'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'in solution'
                                             )
@@ -738,27 +751,27 @@ var App = React.createClass({
                                             { className: 'form-control', id: 'enzyme', name: 'enzyme', required: true,
                                                 defaultValue: window.existingRequest.enzyme },
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Trypsin'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'AspN'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Trypsin AspN'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'LysC'
                                             ),
                                             React.createElement(
-                                                'option',
+                                                Option,
                                                 null,
                                                 'Trypsin LysC'
                                             )
@@ -860,8 +873,10 @@ var App = React.createClass({
                                                             className: 'img-fluid center-block' }),
                                                         React.createElement('br', null),
                                                         React.createElement('span', { className: 'removeImage' }),
-                                                        React.createElement('input', { type: 'hidden', name: 'imageName[]', defaultValue: object.name }),
-                                                        React.createElement('input', { type: 'hidden', name: 'imagePath[]', defaultValue: object.preview || object.url }),
+                                                        React.createElement('input', { type: 'hidden', name: 'imageName[]',
+                                                            defaultValue: object.name }),
+                                                        React.createElement('input', { type: 'hidden', name: 'imagePath[]',
+                                                            defaultValue: object.preview || object.url }),
                                                         React.createElement(
                                                             'span',
                                                             { className: 'imageName' },
