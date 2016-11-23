@@ -36,4 +36,8 @@
         margin-bottom: 0;
     }
 
+    [class^="col-"], [class*=" col-"] {
+        width: 100%;
+    }
+
 }
