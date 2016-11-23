@@ -12,7 +12,8 @@
                 <br>
                 <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
                 <br>
-                <span>Assigned to: <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo %></a></span>
+                <span>Assigned to: <a
+                            href="/user/<%- request.assignedTo %>"><%- request.assignedTo | 'unassigned' %> </a></span>
                 <br>
                 <span>Status: <%- request.getStatus() %></span>
                 <hr>
