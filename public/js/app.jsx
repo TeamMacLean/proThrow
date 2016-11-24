@@ -10,7 +10,9 @@ const Species = [
     'Zea mays',
     'Phytophthora infestans',
     'Magnaporthe oryzae',
-    'Pseudomonas syringae'
+    'Pseudomonas syringae',
+    'Sclerotonia sclerotiorum',
+    'Phaseolus vulgaris'
 ];
 
 var supportedFileTypes = global.supportedFileTypes;
