@@ -13,7 +13,7 @@ const Species = [
     'Pseudomonas syringae',
     'Sclerotonia sclerotiorum',
     'Phaseolus vulgaris'
-];
+].sort();
 
 var supportedFileTypes = global.supportedFileTypes;
 
