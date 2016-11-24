@@ -2,6 +2,9 @@
 <link href="/css/print.css" rel="stylesheet">
 
 <div class="container">
+
+    <h1 class="center"><%- request.janCode %></h1>
+
     <h2><%- request.yanCode %></h2>
     <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
     <input type="hidden" id="id" name="id" value="<%- request.id %>">
