@@ -16,10 +16,9 @@ admin.index = (req, res) => {
             });
 
             requests.map(m => {
-                console.log('status', m.status);
                 if (m.status == 'complete') {
                     completedRequests.push(m);
-                } else if (m.status = 'samples finished') {
+                } else if (m.status == 'samples finished') {
                     samplesFinished.push(m);
                 } else {
                     incompleteRequests.push(m);
