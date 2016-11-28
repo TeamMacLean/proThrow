@@ -162,6 +162,10 @@ th {
 
 /*LOADER*/
 
+.pull-right {
+    float: right;
+}
+
 #page-loader {
     display: block;
     width: 100%;

@@ -44,12 +44,17 @@ router.route('/request/:id')
 
 router.route('/request/:id/edit')
     .all(isAuthenticated)
-//    .all(isAdmin)
+    //    .all(isAdmin)
     .get(Requests.edit);
 
 router.route('/request/:id/clone')
     .all(isAuthenticated)
     .get(Requests.clone);
+
+router.route('/request/:id/delete')
+    .all(isAuthenticated)
+    .all(isAdmin)
+    .get(Requests.delete);
 
 // router.route('/request/:id/toggle')
 //     .all(isAuthenticated)

@@ -1,6 +1,9 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
+const r = thinky.r;
 
+
+//complete, incomplete, samples finished
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
@@ -8,8 +11,11 @@ const Request = thinky.createModel('Request', {
     createdBy: type.string().required(),
     janCode: type.string().required(),
     assignedTo: type.string(),
-    complete: type.boolean().default(false),
-    // notes: type.array().default([]).schema(type.string()),
+    // complete: type.boolean().default(false),
+    status: type.string().default('incomplete'),
+    createdAt: type.date().default(r.now()),
+    updatedAt: type.date(),
+    notes: type.array().default([]).schema(type.string()),
 
     //Biological Materia
     species: type.string().required(),
@@ -39,13 +45,19 @@ const Request = thinky.createModel('Request', {
     digestion: type.string().required(),
     enzyme: type.string().required(),
 
-    // Sample Description
-    // typeOfDigestion: type.string().required(),
-    // preferredOrder: type.string().required(),
-    // sampleNumber: type.string().required(),
-    // sampleDescription: type.string().required(),
+// Sample Description
+// typeOfDigestion: type.string().required(),
+// preferredOrder: type.string().required(),
+// sampleNumber: type.string().required(),
+// sampleDescription: type.string().required(),
 
 
+});
+
+
+Request.pre('save', function (next) {
+    this.updatedAt = new Date();
+    next();
 });
 
 

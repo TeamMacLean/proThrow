@@ -26,15 +26,25 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Set completion status:</label>
-                    <select id="completion-selection">
-                        <option value="true" <% if(request.complete){ %>selected
+                    <label>Set status:</label>
+                    <select id="completion-selection" value="<%- request.status %>">
+                        <option
+                                <% if (request.status == 'incomplete') { %>
+                                selected
                                 <% } %>
-                        >Complete
+                        >incomplete
                         </option>
-                        <option value="false" <% if(!request.complete){ %>selected
+                        <option
+                                <% if (request.status == 'samples finished') { %>
+                                selected
                                 <% } %>
-                        >Incomplete
+                        >samples finished
+                        </option>
+                        <option
+                                <% if (request.status == 'complete')  { %>
+                                selected
+                                <% } %>
+                        >complete
                         </option>
                     </select>
                 </div>
@@ -42,6 +52,8 @@
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
                 <a href="/request/<%- request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>
+                <a href="/request/<%- request.id %>/delete"
+                   class="btn btn-danger btn-tiny pull-right areyousure">Delete</a>
                 <% } %>
                 <a href="/request/<%- request.id %>/clone" class="btn btn-success btn-tiny">Clone</a>
             </div>
@@ -217,6 +229,22 @@
             <% }); %>
             </tbody>
         </table>
+    </div>
+
+    <div class="tile">
+        <h3>Notes</h3>
+
+        <ul id="notes">
+            <% request.notes.map(function(note){ %>
+            <li><%- note %></li>
+            <% }); %>
+
+        </ul>
+
+        <div class="form-group">
+            <textarea class="form-control" id="new-note" rows="5"></textarea>
+            <button id="notes-button" class="btn btn-success">Add Note</button>
+        </div>
     </div>
 
 

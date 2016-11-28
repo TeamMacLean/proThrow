@@ -50,12 +50,35 @@ $(function () {
 
         var id = $('#id');
         if (id) {
-            console.log('emitting',$(this).val());
-            socket.emit('toggleCompletion', {id: id.val(), complete: $(this).val()});
+            console.log('emitting', $(this).val());
+            socket.emit('toggleStatus', {id: id.val(), status: $(this).val()});
         } else {
             alert('could not find ID of job, please inform Proteomics of the issue');
         }
 
     });
+
+    $('.areyousure').click(function () {
+        return window.confirm('Are you sure?');
+    });
+
+    $('#notes-button').on('click', function () {
+
+
+        var id = $('#id');
+
+        if (id) {
+            socket.emit('addNote', {id: id.val(), note: $('#new-note').val()});
+        } else {
+            alert('could not find ID of job, please inform Proteomics of the issue');
+        }
+
+    });
+
+
+    socket.on('noteAdded', function (obj) {
+        $('#notes').append('<li>' + obj.note + '</li>');
+        $('#new-note').val('');
+    })
 
 });

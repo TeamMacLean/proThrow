@@ -15,7 +15,7 @@
                 <span>Assigned to: <a
                             href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a></span>
                 <br>
-                <span>Status: <%- request.getStatus() %></span>
+                <span>Status: <%- request.status %></span>
                 <hr>
                 <a href="/request/<%- request.id %>/edit" class="btn btn-tiny btn-primary">Edit</a>
                 <a href="/request/<%- request.id %>/clone" class="btn btn-tiny btn-success">Clone</a>

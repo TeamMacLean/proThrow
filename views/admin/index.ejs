@@ -3,7 +3,7 @@
 <div class="container">
 
     <% if(incompleteRequests && incompleteRequests.length){ %>
-    <h2>Incomplete Requests</h2>
+    <h2>Incomplete</h2>
     <div class="row">
         <% incompleteRequests.map(function(ucr){ %>
         <div class="col-sm-4">
@@ -18,9 +18,31 @@
         </div>
         <% }); %>
     </div>
+    <hr>
     <% } %>
 
+    <% if(samplesFinished && samplesFinished.length) { %>
+    <h3>Samples Finished</h3>
+
+    <table style="width:100%">
+        <tr>
+            <th>ID</th>
+            <th>Created by</th>
+            <th>Assigned to</th>
+        </tr>
+
+        <% samplesFinished.map(function(cr){ %>
+        <tr>
+            <td><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></td>
+            <td><a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></td>
+            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo || 'unassigned' %></a></td>
+        </tr>
+        <% }); %>
+
+    </table>
+
     <hr>
+    <% } %>
 
     <% if(completedRequests && completedRequests.length){ %>
     <h3>Completed Requests</h3>
@@ -36,7 +58,7 @@
         <tr>
             <td><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></td>
             <td><a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></td>
-            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo %></a></td>
+            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo || 'unassigned' %></a></td>
         </tr>
         <% }); %>
 

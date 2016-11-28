@@ -212,20 +212,18 @@ requests.newPost = (req, res) => {
     }
 };
 
-requests.show = (req, res) => {
+requests.show = (req, res, next) => {
 
     const requestID = req.params.id;
     Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
         .run()
         .then(request => {
-            // console.log(requests);
-            //TODO sort samples
             request.supportingImages = request.supportingImages || [];
             request.samples = request.samples || [];
 
             request.samples = request.samples.sort(
-                function(a, b) {
+                function (a, b) {
                     return a.position - b.position
                 }
             );
@@ -247,7 +245,7 @@ requests.edit = (req, res)=> {
             });
 
             request.samples = request.samples.sort(
-                function(a, b) {
+                function (a, b) {
                     return a.position - b.position
                 }
             );
@@ -275,7 +273,7 @@ requests.clone = (req, res) => {
             });
 
             request.samples = request.samples.sort(
-                function(a, b) {
+                function (a, b) {
                     return a.position - b.position
                 }
             );
@@ -285,6 +283,27 @@ requests.clone = (req, res) => {
         }).catch((err)=> {
         return renderError(err, res);
     });
+};
+
+requests.delete = (req, res) => {
+    const requestID = req.params.id;
+    Request.get(requestID)
+    // .getJoin({supportingImages: true, samples: true, constructs: true})
+        .then((request) => {
+
+            request.deleteAll({supportingImages: true, samples: true, constructs: true})
+                .then(function (result) {
+                    // michel, marc, sophia and ben are deleted from the database
+                    return res.render('admin/index');
+                })
+                .catch((err)=> {
+                    return renderError(err, res);
+                });
+
+        })
+        .catch((err)=> {
+            return renderError(err, res);
+        });
 };
 
 module.exports = requests;
