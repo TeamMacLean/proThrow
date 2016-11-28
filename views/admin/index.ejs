@@ -31,11 +31,11 @@
             <th>Assigned to</th>
         </tr>
 
-        <% samplesFinished.map(function(cr){ %>
+        <% samplesFinished.map(function(sf){ %>
         <tr>
-            <td><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></td>
-            <td><a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></td>
-            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo || 'unassigned' %></a></td>
+            <td><a href="/request/<%- sf.id %>"><%- sf.janCode %></a></td>
+            <td><a href="/user/<%- sf.createdBy %>"><%- sf.createdBy %></a></td>
+            <td><a href="/user/<%- sf.assignedTo || 'unassigned' %>"><%- sf.assignedTo || 'unassigned' %></a></td>
         </tr>
         <% }); %>
 
