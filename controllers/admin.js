@@ -16,6 +16,7 @@ admin.index = (req, res) => {
             });
 
             requests.map(m => {
+                console.log('status', m.status);
                 if (m.status == 'complete') {
                     completedRequests.push(m);
                 } else if (m.status = 'samples finished') {
