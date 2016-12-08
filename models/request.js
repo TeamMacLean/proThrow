@@ -3,7 +3,7 @@ const type = thinky.type;
 const r = thinky.r;
 
 
-//complete, incomplete, samples finished
+//
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
@@ -53,6 +53,10 @@ const Request = thinky.createModel('Request', {
 
 
 });
+
+Request.statuses = {
+    COMPLETE: 'complete', INCOMPLETE: 'incomplete', USEDUP: 'used up', DISCARDED: 'discarded'
+};
 
 
 Request.pre('save', function (next) {

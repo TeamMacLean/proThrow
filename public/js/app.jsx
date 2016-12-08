@@ -1,4 +1,5 @@
 const Species = [
+    'Albugo candida',
     'Arabidopsis thaliana',
     'Lotus japonicus',
     'Medicago truncatula',
@@ -198,7 +199,7 @@ const App = React.createClass({
 
                     <label>
                         <input type="checkbox" id="required-readme"
-                               defaultChecked={window.existingRequest != null}
+                               defaultChecked={window.existingRequest.id}
                                required/> <span>I have completed the above</span>
                     </label>
 

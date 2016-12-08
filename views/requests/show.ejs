@@ -35,10 +35,16 @@
                         >incomplete
                         </option>
                         <option
-                                <% if (request.status == 'samples finished') { %>
+                                <% if (request.status == 'used up') { %>
                                 selected
                                 <% } %>
-                        >samples finished
+                        >samples used up
+                        </option>
+                        <option
+                                <% if (request.status == 'discarded') { %>
+                                selected
+                                <% } %>
+                        >discarded
                         </option>
                         <option
                                 <% if (request.status == 'complete')  { %>

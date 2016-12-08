@@ -77,9 +77,7 @@ requests.newPost = (req, res) => {
                 return renderError(err, res);
             });
 
-
     }
-
 
     function processIt(savedRequest, isNew) {
 
@@ -294,7 +292,7 @@ requests.delete = (req, res) => {
             request.deleteAll({supportingImages: true, samples: true, constructs: true})
                 .then(function (result) {
                     // michel, marc, sophia and ben are deleted from the database
-                    return res.redirect('/admin');
+                    return res.redirect('/admin/index');
                 })
                 .catch((err)=> {
                     return renderError(err, res);

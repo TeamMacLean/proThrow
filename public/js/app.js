@@ -1,6 +1,6 @@
 'use strict';
 
-var Species = ['Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula', 'Nicotiana benthamiana', 'Nicotiana tabacum', 'Oryza sativa', 'Populus', 'Solanum lycopersicum', 'Zea mays', 'Phytophthora infestans', 'Magnaporthe oryzae', 'Pseudomonas syringae', 'Sclerotonia sclerotiorum', 'Phaseolus vulgaris'].sort();
+var Species = ['Albugo candida', 'Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula', 'Nicotiana benthamiana', 'Nicotiana tabacum', 'Oryza sativa', 'Populus', 'Solanum lycopersicum', 'Zea mays', 'Phytophthora infestans', 'Magnaporthe oryzae', 'Pseudomonas syringae', 'Sclerotonia sclerotiorum', 'Phaseolus vulgaris'].sort();
 
 var supportedFileTypes = '.png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF' /*defines: supportedFileTypes = ".png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF"*/;
 
@@ -202,7 +202,7 @@ var App = React.createClass({
                     'label',
                     null,
                     React.createElement('input', { type: 'checkbox', id: 'required-readme',
-                        defaultChecked: window.existingRequest != null,
+                        defaultChecked: window.existingRequest.id,
                         required: true }),
                     ' ',
                     React.createElement(

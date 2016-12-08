@@ -21,8 +21,8 @@
     <hr>
     <% } %>
 
-    <% if(samplesFinished && samplesFinished.length) { %>
-    <h3>Samples Finished</h3>
+    <% if(usedUp && usedUp.length) { %>
+    <h3>Samples Used Up</h3>
 
     <table style="width:100%">
         <tr>
@@ -31,7 +31,30 @@
             <th>Assigned to</th>
         </tr>
 
-        <% samplesFinished.map(function(sf){ %>
+        <% usedUp.map(function(sf){ %>
+
+        <tr>
+            <td><a href="/request/<%- sf.id %>"><%- sf.janCode %></a></td>
+            <td><a href="/user/<%- sf.createdBy %>"><%- sf.createdBy %></a></td>
+            <td><a href="/user/<%- sf.assignedTo || 'unassigned' %>"><%- sf.assignedTo || 'unassigned' %></a></td>
+        </tr>
+        <% }); %>
+
+    </table>
+
+    <hr>
+    <% } %>
+    <% if(discarded && discarded.length) { %>
+    <h3>Samples Discarded</h3>
+
+    <table style="width:100%">
+        <tr>
+            <th>ID</th>
+            <th>Created by</th>
+            <th>Assigned to</th>
+        </tr>
+
+        <% discarded.map(function(sf){ %>
 
         <tr>
             <td><a href="/request/<%- sf.id %>"><%- sf.janCode %></a></td>
@@ -67,7 +90,7 @@
 
     <% } %>
 
-    <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length && samplesFinished && !samplesFinished.length) { %>
+    <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length && discarded && !discarded.length  && usedUp && !usedUp.length) { %>
 
     <h2>No requests submitted yet.</h2>
 

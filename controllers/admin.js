@@ -9,7 +9,8 @@ admin.index = (req, res) => {
         .then(requests => {
             var completedRequests = [];
             var incompleteRequests = [];
-            var samplesFinished = [];
+            var usedUp = [];
+            var discarded = [];
 
             requests.sort(function (a, b) {
                 return new Date(b.createdAt) - new Date(a.createdAt);
@@ -18,17 +19,19 @@ admin.index = (req, res) => {
             requests.map(m => {
                 if (m.status == 'complete') {
                     completedRequests.push(m);
-                } else if (m.status == 'samples finished') {
-                    samplesFinished.push(m);
+                } else if (m.status == 'used up') {
+                    usedUp.push(m);
+                } else if (m.status == 'discarded') {
+                    discarded.push(m);
                 } else {
                     incompleteRequests.push(m);
                 }
             });
 
-
             return res.render('admin/index', {
                 completedRequests,
-                samplesFinished,
+                usedUp,
+                discarded,
                 incompleteRequests,
             });
         }).catch(err => {
