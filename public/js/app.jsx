@@ -356,6 +356,7 @@ const App = React.createClass({
                                                     required
                                                     defaultValue={window.existingRequest.typeOfPTM}>
                                                 <Option>None</Option>
+                                                <Option>Biotinylation</Option>
                                                 <Option>Phosphorylation</Option>
                                                 <Option>Acetylation</Option>
                                                 <Option>Ubiquitination</Option>
