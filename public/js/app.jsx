@@ -13,10 +13,12 @@ const Species = [
     'Magnaporthe oryzae',
     'Pseudomonas syringae',
     'Sclerotonia sclerotiorum',
-    'Phaseolus vulgaris'
+    'Phaseolus vulgaris',
+    'Xanthomonas euvesicatoria',
+    'Botrytis cinerea'
 ].sort();
 
-var supportedFileTypes = global.supportedFileTypes;
+const supportedFileTypes = global.supportedFileTypes;
 
 function guid() {
     function s4() {
@@ -331,6 +333,7 @@ const App = React.createClass({
                                                 <Option>SRM</Option>
                                                 <Option>PRM</Option>
                                                 <Option>DIA</Option>
+                                                <Option>Acurate Mass</Option>
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -346,6 +349,7 @@ const App = React.createClass({
                                                 <Option>SRM</Option>
                                                 <Option>PRM</Option>
                                                 <Option>DIA</Option>
+                                                <Option>Acurate Mass</Option>
                                             </select>
                                         </div>
                                         <div className="form-group">
@@ -431,6 +435,8 @@ const App = React.createClass({
                                                 <Option>microsomal</Option>
                                                 <Option>plasma membrane</Option>
                                                 <Option>IP</Option>
+                                                <Option>HPLC purified</Option>
+                                                <Option>FPLC purified</Option>
                                             </select>
                                         </div>
 

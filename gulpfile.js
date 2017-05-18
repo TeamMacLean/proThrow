@@ -1,8 +1,8 @@
-var gulp = require('gulp');
-var babel = require('gulp-babel');
-var rename = require('gulp-rename');
-var config = require('./config.js');
-var uglify = require('gulp-uglify');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const rename = require('gulp-rename');
+const config = require('./config.js');
+const uglify = require('gulp-uglify');
 
 const jsPath = 'public/js';
 const appPath = `${jsPath}/app.jsx`;

@@ -1,6 +1,6 @@
 'use strict';
 
-var Species = ['Albugo candida', 'Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula', 'Nicotiana benthamiana', 'Nicotiana tabacum', 'Oryza sativa', 'Populus', 'Solanum lycopersicum', 'Zea mays', 'Phytophthora infestans', 'Magnaporthe oryzae', 'Pseudomonas syringae', 'Sclerotonia sclerotiorum', 'Phaseolus vulgaris'].sort();
+var Species = ['Albugo candida', 'Arabidopsis thaliana', 'Lotus japonicus', 'Medicago truncatula', 'Nicotiana benthamiana', 'Nicotiana tabacum', 'Oryza sativa', 'Populus', 'Solanum lycopersicum', 'Zea mays', 'Phytophthora infestans', 'Magnaporthe oryzae', 'Pseudomonas syringae', 'Sclerotonia sclerotiorum', 'Phaseolus vulgaris', 'Xanthomonas euvesicatoria', 'Botrytis cinerea'].sort();
 
 var supportedFileTypes = '.png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF' /*defines: supportedFileTypes = ".png,.PNG,.jpg,.JPG,.jpeg,.JPEG,.gif,.GIF"*/;
 
@@ -491,6 +491,11 @@ var App = React.createClass({
                                                 Option,
                                                 null,
                                                 'DIA'
+                                            ),
+                                            React.createElement(
+                                                Option,
+                                                null,
+                                                'Acurate Mass'
                                             )
                                         )
                                     ),
@@ -535,6 +540,11 @@ var App = React.createClass({
                                                 Option,
                                                 null,
                                                 'DIA'
+                                            ),
+                                            React.createElement(
+                                                Option,
+                                                null,
+                                                'Acurate Mass'
                                             )
                                         )
                                     ),
@@ -558,6 +568,11 @@ var App = React.createClass({
                                                 Option,
                                                 null,
                                                 'None'
+                                            ),
+                                            React.createElement(
+                                                Option,
+                                                null,
+                                                'Biotinylation'
                                             ),
                                             React.createElement(
                                                 Option,
@@ -767,6 +782,16 @@ var App = React.createClass({
                                                 Option,
                                                 null,
                                                 'IP'
+                                            ),
+                                            React.createElement(
+                                                Option,
+                                                null,
+                                                'HPLC purified'
+                                            ),
+                                            React.createElement(
+                                                Option,
+                                                null,
+                                                'FPLC purified'
                                             )
                                         )
                                     ),
