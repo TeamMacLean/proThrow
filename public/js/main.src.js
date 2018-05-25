@@ -1,4 +1,4 @@
-
+// import $ from 'jquery';
 $(function () {
 
     var resultsDiv = $('#nav-search-results');

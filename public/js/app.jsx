@@ -8,31 +8,9 @@ import 'dragula/dist/dragula.css';
 import {} from 'delivery/lib/client/delivery'
 import Tax from 'taxlookup';
 
-import $ from 'jquery';
-
-// window.jQuery = $;
-// window.$ = $;
-// import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-
-// const Species = [
-//     'Albugo candida',
-//     'Arabidopsis thaliana',
-//     'Lotus japonicus',
-//     'Medicago truncatula',
-//     'Nicotiana benthamiana',
-//     'Nicotiana tabacum',
-//     'Oryza sativa',
-//     'Populus',
-//     'Solanum lycopersicum',
-//     'Zea mays',
-//     'Phytophthora infestans',
-//     'Magnaporthe oryzae',
-//     'Pseudomonas syringae',
-//     'Sclerotonia sclerotiorum',
-//     'Phaseolus vulgaris',
-//     'Xanthomonas euvesicatoria',
-//     'Botrytis cinerea'
-// ].sort();
+import jqueryReact from 'jquery';
+import {} from 'popper.js'
+import {} from 'bootstrap/js/src/tooltip';
 
 const supportedFileTypes = global.supportedFileTypes;
 
@@ -47,7 +25,7 @@ function guid() {
         s4() + '-' + s4() + s4() + s4();
 }
 
-$(function () {
+jqueryReact(function () {
     initDrag();
     initToolTips();
 });
@@ -63,7 +41,7 @@ function initDrag() {
 }
 
 function initToolTips() {
-    $('[data-toggle="tooltip"]').tooltip();
+    jqueryReact('[data-toggle="tooltip"]').tooltip();
 }
 
 class Option extends React.Component {
@@ -127,7 +105,7 @@ class Construct extends React.Component {
 class App extends React.Component {
     componentDidMount() {
         // console.log('mounted');
-        $('#page-loader').fadeOut('slow', function () {
+        jqueryReact('#page-loader').fadeOut('slow', function () {
             this.remove();
         });
         this.initSocketUpload();
@@ -193,7 +171,7 @@ class App extends React.Component {
 
         const self = this;
 
-        $(function () {
+        jqueryReact(function () {
 
             const socket = io(window.location.host);
             socket.on('connect', function () {
@@ -201,8 +179,8 @@ class App extends React.Component {
 
 
                 delivery.on('delivery.connect', function (delivery) {
-                    $('input[type=file]').on('change', function (evt) {
-                        const file = $(this)[0].files[0];
+                    jqueryReact('input[type=file]').on('change', function (evt) {
+                        const file = jqueryReact(this)[0].files[0];
                         delivery.send(file);
                         evt.preventDefault();
                     });
@@ -217,7 +195,7 @@ class App extends React.Component {
                     // console.log('received object', obj);
 
 
-                    $('input[type=file]').val('');
+                    jqueryReact('input[type=file]').val('');
                 })
 
             });
@@ -225,6 +203,7 @@ class App extends React.Component {
     }
 
     getSpecies(input) {
+        console.log('input', input);
         if (!input) {
             return Promise.resolve({options: []});
         } else {
@@ -299,7 +278,7 @@ class App extends React.Component {
                                                 onSelectResetsInput={false}
                                                 loadOptions={this.getSpecies}
                                                 name="species"
-                                                value={this.state.species}
+                                                value={{value:this.state.species, label:this.state.species}}
                                                 onChange={value => this.setState({species: value})}
                                             />
 
@@ -318,7 +297,7 @@ class App extends React.Component {
                                                 onSelectResetsInput={false}
                                                 loadOptions={this.getSpecies}
                                                 name="secondSpecies"
-                                                value={this.state.species}
+                                                value={{value:this.state.secondSpecies, label:this.state.secondSpecies}}
                                                 onChange={value => this.setState({secondSpecies: value})}
                                             />
                                         </div>
@@ -680,7 +659,7 @@ class App extends React.Component {
                                 })}
                             </div>
 
-                            <label><i className="far fa-trash-alt"></i>Drag to reorder items</label>
+                            <label>Drag to reorder items</label>
 
                             <div className="btn btn-outline-primary btn-block" onClick={self.addSample}>Add
                                 Another
