@@ -1,102 +1,77 @@
 <% include ../head.ejs %>
-
 <div class="container">
 
-    <% if(incompleteRequests && incompleteRequests.length){ %>
-    <h2>Incomplete</h2>
-    <div class="row">
-        <% incompleteRequests.map(function(ucr){ %>
-        <div class="col-sm-4">
-            <div class="tile center">
-                <h4><a href="/request/<%- ucr.id %>"><%- ucr.janCode %></a></h4>
-                <br>
-                <span>Created by: <a href="/user/<%- ucr.createdBy %>"><%- ucr.createdBy %></a></span>
-                <br>
-                <span>Assigned to: <a
-                            href="/user/<%- ucr.assignedTo || 'unassigned' %>"><%- ucr.assignedTo || 'unassigned' %></a></span>
-            </div>
-        </div>
-        <% }); %>
-    </div>
-    <hr>
-    <% } %>
+    <% if (incompleteRequests && incompleteRequests.length){ %>
+    <h3>Incomplete Requests</h3>
 
-    <% if(usedUp && usedUp.length) { %>
-    <h3>Samples Used Up</h3>
-
-    <table style="width:100%">
+    <table class="table table-hover data-table">
+        <thead>
         <tr>
-            <th>ID</th>
-            <th>Created by</th>
-            <th>Assigned to</th>
+            <th scope="col">ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Last modified</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Status</th>
         </tr>
+        </thead>
+        <tbody>
 
-        <% usedUp.map(function(sf){ %>
-
+        <% incompleteRequests.map(function (request) { %>
         <tr>
-            <td><a href="/request/<%- sf.id %>"><%- sf.janCode %></a></td>
-            <td><a href="/user/<%- sf.createdBy %>"><%- sf.createdBy %></a></td>
-            <td><a href="/user/<%- sf.assignedTo || 'unassigned' %>"><%- sf.assignedTo || 'unassigned' %></a></td>
+            <th scope="row"><a style="text-transform: uppercase;"
+                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
+            <td><%- request.humanDate() %></td>
+            <td><%- request.modifiedHumanDate() %>"></td>
+            <td><a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></td>
+            <td>
+                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
+            </td>
+            <td><%- request.status %></td>
         </tr>
         <% }); %>
 
-    </table>
-
-    <hr>
-    <% } %>
-    <% if(discarded && discarded.length) { %>
-    <h3>Samples Discarded</h3>
-
-    <table style="width:100%">
-        <tr>
-            <th>ID</th>
-            <th>Created by</th>
-            <th>Assigned to</th>
-        </tr>
-
-        <% discarded.map(function(sf){ %>
-
-        <tr>
-            <td><a href="/request/<%- sf.id %>"><%- sf.janCode %></a></td>
-            <td><a href="/user/<%- sf.createdBy %>"><%- sf.createdBy %></a></td>
-            <td><a href="/user/<%- sf.assignedTo || 'unassigned' %>"><%- sf.assignedTo || 'unassigned' %></a></td>
-        </tr>
-        <% }); %>
-
-    </table>
-
-    <hr>
-    <% } %>
-
-    <% if(completedRequests && completedRequests.length){ %>
-    <h3>Completed Requests</h3>
-
-    <table style="width:100%">
-        <tr>
-            <th>ID</th>
-            <th>Created by</th>
-            <th>Assigned to</th>
-        </tr>
-
-        <% completedRequests.map(function(cr){ %>
-        <tr>
-            <td><a href="/request/<%- cr.id %>"><%- cr.janCode %></a></td>
-            <td><a href="/user/<%- cr.createdBy %>"><%- cr.createdBy %></a></td>
-            <td><a href="/user/<%- cr.assignedTo || 'unassigned' %>"><%- cr.assignedTo || 'unassigned' %></a></td>
-        </tr>
-        <% }); %>
-
+        </tbody>
     </table>
 
     <% } %>
 
-    <% if (incompleteRequests && !incompleteRequests.length && completedRequests && !completedRequests.length && discarded && !discarded.length  && usedUp && !usedUp.length) { %>
+    <hr>
 
-    <h2>No requests submitted yet.</h2>
+    <% if (completedRequests && completedRequests.length){ %>
+    <h3>Complete Requests</h3>
+    <table class="table table-hover data-table">
+        <thead>
+        <tr>
+
+            <th scope="col">ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Last modified</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <% completedRequests.map(function (request) { %>
+        <tr>
+            <th scope="row"><a style="text-transform: uppercase;"
+                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
+            <td><%- request.humanDate() %></td>
+            <td><%- request.modifiedHumanDate() %>"></td>
+            <td><a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></td>
+            <td>
+                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
+            </td>
+            <td><%- request.status %></td>
+        </tr>
+        <% }); %>
+
+        </tbody>
+    </table>
 
     <% } %>
-
 </div>
-
 
 <% include ../foot.ejs %>

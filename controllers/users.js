@@ -6,7 +6,7 @@ const Users = {};
 Users.show = (req, res)=> {
 
     const username = req.params.username;
-    console.log('username', username);
+    // console.log('username', username);
 
     Request.filter({createdBy: username}).then((requests) => {
 

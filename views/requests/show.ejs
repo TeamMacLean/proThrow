@@ -15,8 +15,8 @@
 
                 <% if(locals.signedInUser.isAdmin){ %>
                 <div class="form-group">
-                    <label>Assigned to:</label>
-                    <select id="assign-select">
+                    <label for="assign-select">Assigned to:</label>
+                    <select class="form-control" id="assign-select">
                         <option value="unassigned">unassigned</option>
                         <% admins.map(function(admin){ %>
                         <option value="<%- admin %>" <% if(admin == request.assignedTo){ %>selected
@@ -26,14 +26,47 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Set status:</label>
-                    <select id="completion-selection" value="<%- request.status %>">
+                    <label for="completion-selection">Set status:</label>
+                    <select class="form-control" id="completion-selection" value="<%- request.status %>">
                         <option
                                 <% if (request.status == 'incomplete') { %>
                                 selected
                                 <% } %>
                         >incomplete
                         </option>
+
+                        <option
+                                <% if (request.status == 'samples received') { %>
+                                selected
+                                <% } %>
+                        >samples received
+                        </option>
+                        <option
+                                <% if (request.status == 'samples digested') { %>
+                                selected
+                                <% } %>
+                        >samples digested
+                        </option>
+                        <option
+                                <% if (request.status == 'samples queued') { %>
+                                selected
+                                <% } %>
+                        >samples queued
+                        </option>
+                        <option
+                                <% if (request.status == 'analysis in progress ') { %>
+                                selected
+                                <% } %>
+                        >analysis in progress
+                        </option>
+                        <option
+                                <% if (request.status == 'Data analysed') { %>
+                                selected
+                                <% } %>
+                        >data analysed
+                        </option>
+
+
                         <option
                                 <% if (request.status == 'samples used up') { %>
                                 selected

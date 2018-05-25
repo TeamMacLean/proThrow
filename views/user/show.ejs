@@ -2,29 +2,39 @@
 
 <div class="container">
 
-    <div class="row">
+
+    <table class="table table-hover data-table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
 
         <% requests.map(function (request) { %>
-
-        <div class="col-sm-4">
-            <div class="tile center">
-                <h4><a href="/request/<%- request.id %>"><%- request.janCode %></a></h4>
-                <br>
-                <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
-                <br>
-                <span>Assigned to: <a
-                            href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a></span>
-                <br>
-                <span>Status: <%- request.status %></span>
-                <hr>
+        <tr>
+            <th scope="row"><a style="text-transform: uppercase;"
+                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
+            <td><%- request.humanDate() %></td>
+            <td><a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></td>
+            <td>
+                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
+            </td>
+            <td><%- request.status %></td>
+            <td>
                 <a href="/request/<%- request.id %>/edit" class="btn btn-tiny btn-primary">Edit</a>
                 <a href="/request/<%- request.id %>/clone" class="btn btn-tiny btn-success">Clone</a>
-            </div>
-        </div>
+            </td>
+        </tr>
+        <% }); %>
 
-        <% }) %>
-    </div>
+        </tbody>
+    </table>
 </div>
-
 
 <% include ../foot.ejs %>

@@ -1,22 +1,38 @@
-const Species = [
-    'Albugo candida',
-    'Arabidopsis thaliana',
-    'Lotus japonicus',
-    'Medicago truncatula',
-    'Nicotiana benthamiana',
-    'Nicotiana tabacum',
-    'Oryza sativa',
-    'Populus',
-    'Solanum lycopersicum',
-    'Zea mays',
-    'Phytophthora infestans',
-    'Magnaporthe oryzae',
-    'Pseudomonas syringae',
-    'Sclerotonia sclerotiorum',
-    'Phaseolus vulgaris',
-    'Xanthomonas euvesicatoria',
-    'Botrytis cinerea'
-].sort();
+import React from "react";
+import ReactDOM from "react-dom";
+
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+import dragula from 'dragula';
+import 'dragula/dist/dragula.css';
+import {} from 'delivery/lib/client/delivery'
+import Tax from 'taxlookup';
+
+import $ from 'jquery';
+
+// window.jQuery = $;
+// window.$ = $;
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+
+// const Species = [
+//     'Albugo candida',
+//     'Arabidopsis thaliana',
+//     'Lotus japonicus',
+//     'Medicago truncatula',
+//     'Nicotiana benthamiana',
+//     'Nicotiana tabacum',
+//     'Oryza sativa',
+//     'Populus',
+//     'Solanum lycopersicum',
+//     'Zea mays',
+//     'Phytophthora infestans',
+//     'Magnaporthe oryzae',
+//     'Pseudomonas syringae',
+//     'Sclerotonia sclerotiorum',
+//     'Phaseolus vulgaris',
+//     'Xanthomonas euvesicatoria',
+//     'Botrytis cinerea'
+// ].sort();
 
 const supportedFileTypes = global.supportedFileTypes;
 
@@ -50,24 +66,22 @@ function initToolTips() {
     $('[data-toggle="tooltip"]').tooltip();
 }
 
-const Option = React.createClass({
-    render: function render() {
+class Option extends React.Component {
+    render() {
         var text = this.props.children;
         return (
             <option value={text}>{text}</option>
         )
     }
-});
+}
 
-const Construct = React.createClass({
-    displayName: 'Construct',
-    render: function () {
+class Construct extends React.Component {
+    render() {
         var self = this;
         return (
             <div>
                 <div className="form-group">
-                    <label>Species and accession of the parent gene <span data-icon="&#x74;"
-                                                                          className="tip"
+                    <label>Species and accession of the parent gene <span className="tip far fa-question-circle"
                                                                           data-toggle="tooltip"
                                                                           title="Tell us from which species the gene comes from and what the accession number is of the gene you used to create this construct"/>
                     </label>
@@ -78,7 +92,7 @@ const Construct = React.createClass({
                 </div>
 
                 <div className="form-group">
-                    <label>Amino acid sequence <span data-icon="&#x74;" className="tip"
+                    <label>Amino acid sequence <span data-icon="&#x74;" className="tip far fa-question-circle"
                                                      data-toggle="tooltip"
                                                      title="Provided the entire amino acid sequence of the construct including tags and junctions"/>
                     </label>
@@ -90,7 +104,7 @@ const Construct = React.createClass({
 
 
                 <div className="form-group">
-                    <label>Database entry <span data-icon="&#x74;" className="tip"
+                    <label>Database entry <span data-icon="&#x74;" className="tip far fa-question-circle"
                                                 data-toggle="tooltip"
                                                 title=">date_of_submition|protein_short_name|for_whom some description if required
         e.g.
@@ -102,63 +116,80 @@ const Construct = React.createClass({
                            required/>
                 </div>
                 <div className="removeSample" onClick={this.props.removeConstruct.bind(null, this)}>
-                    <span data-icon="&#xe019;"/>
+                    <i className="far fa-trash-alt"></i>
                 </div>
                 <hr/>
             </div>
         )
     }
-});
+}
 
-const App = React.createClass({
-    displayName: 'app',
-    componentDidMount: function componentDidMount() {
+class App extends React.Component {
+    componentDidMount() {
         // console.log('mounted');
         $('#page-loader').fadeOut('slow', function () {
             this.remove();
         });
         this.initSocketUpload();
 
-    },
-    getInitialState: function getInitialState() {
-        if (window.existingRequest) {
+    }
 
-            return {
+    constructor() {
+        super()
+        if (window.existingRequest) {
+            this.state = {
+                species: window.existingRequest.species || '',
+                secondSpecies: window.existingRequest.secondSpecies || '',
                 samples: window.existingRequest.samples || [],
                 supportingImages: window.existingRequest.supportingImages || [],
                 constructs: window.existingRequest.constructs || []
             };
         } else {
             window.existingRequest = {};
-            return {samples: [], supportingImages: [], constructs: []};
+            this.state = {samples: [], supportingImages: [], constructs: []};
         }
-    },
-    addConstruct: function addConstruct() {
+
+        this.addConstruct = this.addConstruct.bind(this);
+        this.addSample = this.addSample.bind(this)
+        this.removeConstruct = this.removeConstruct.bind(this)
+        this.removeSample = this.removeSample.bind(this)
+        this.removeSupportImage = this.removeSupportImage.bind(this);
+    }
+
+    addConstruct() {
         const key = guid();
         this.setState({constructs: this.state.constructs.concat([{key: key}])});
-    },
-    removeConstruct: function removeConstruct(construct) {
+    }
+
+
+    removeConstruct(construct) {
         const newConstructs = this.state.constructs.filter(function (c) {
             return c.key != construct.props.data.key || c.id != construct.props.data.id;
         });
         this.setState({constructs: newConstructs});
-    },
-    addSample: function addSample() {
+    }
+
+
+    addSample() {
         const key = guid();
         this.setState({samples: this.state.samples.concat([{key: key}])});
-    },
-    removeSample: function removeSample(sample) {
+    }
+
+
+    removeSample(sample) {
         const newSamples = this.state.samples.filter(function (s) {
             return s.key != sample.props.data.key || s.id != sample.props.data.id;
         });
         this.setState({samples: newSamples});
-    },
-    removeSupportImage: function removeSupportImage(index) { //TODO
+    }
+
+    removeSupportImage(index) { //TODO
         const replacement = this.state.supportingImages;
         delete replacement[index];
         this.setState({supportingImages: replacement});
-    },
-    initSocketUpload: function initSocketUpload() {
+    }
+
+    initSocketUpload() {
 
         const self = this;
 
@@ -191,9 +222,33 @@ const App = React.createClass({
 
             });
         })
-    },
-    render: function render() {
+    }
+
+    getSpecies(input) {
+        if (!input) {
+            return Promise.resolve({options: []});
+        } else {
+            return Tax.spell(input)
+                .then(results => {
+
+                    let options = [];
+
+                    results.map(r => {
+                        if (r.length > 0) {
+                            options.push({
+                                value: r, label: r
+                            })
+                        }
+                    })
+                    return {options: options}
+
+                })
+        }
+    }
+
+    render() {
         const self = this;
+
 
         return (
             <form action="/new" method="post" id="new-form">
@@ -232,36 +287,48 @@ const App = React.createClass({
                                         <h3 className="group-label">Biological Material</h3>
 
                                         <div className="form-group">
-                                            <label>Species <span data-icon="&#x74;" className="tip"
+                                            <label>Species <span data-icon="&#x74;"
+                                                                 className="tip far fa-question-circle"
                                                                  data-toggle="tooltip"
                                                                  title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
-                                            <select className="form-control" id="species" name="species"
-                                                    defaultValue={window.existingRequest.species}
-                                                    required>
-                                                {Species.map(function (object, i) {
-                                                    return <Option key={i}>{object}</Option>;
-                                                })}
-                                            </select>
+                                            <Select.Async
+                                                id="species"
+                                                required
+                                                simpleValue
+                                                onBlurResetsInput={false}
+                                                onSelectResetsInput={false}
+                                                loadOptions={this.getSpecies}
+                                                name="species"
+                                                value={this.state.species}
+                                                onChange={value => this.setState({species: value})}
+                                            />
+
                                         </div>
                                         <div className="form-group">
-                                            <label>Second Species <span data-icon="&#x74;" className="tip"
+                                            <label>Second Species <span data-icon="&#x74;"
+                                                                        className="tip far fa-question-circle"
                                                                         data-toggle="tooltip"
                                                                         title="Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"/></label>
-                                            <select className="form-control" id="secondSpecies"
-                                                    name="secondSpecies"
-                                                    defaultValue={window.existingRequest.secondSpecies }
-                                                    required>
-                                                {['None'].concat(Species).map(function (object, i) {
-                                                    return <Option key={i}>{object}</Option>;
-                                                })}
-                                            </select>
+
+                                            <Select.Async
+                                                id="secondSpecies"
+                                                required
+                                                simpleValue
+                                                onBlurResetsInput={false}
+                                                onSelectResetsInput={false}
+                                                loadOptions={this.getSpecies}
+                                                name="secondSpecies"
+                                                value={this.state.species}
+                                                onChange={value => this.setState({secondSpecies: value})}
+                                            />
                                         </div>
                                         <div className="form-group">
                                             <label>Tissue</label>
                                             <select className="form-control" id="tissue" name="tissue" required
-                                                    defaultValue={window.existingRequest.tissue }>
+                                                    defaultValue={window.existingRequest.tissue}>
                                                 <Option>seedlings</Option>
                                                 <Option>leaves</Option>
+                                                <Option>Ecoli culture (recombinant protein)</Option>
                                                 <Option>rosette</Option>
                                                 <Option>roots</Option>
                                                 <Option>cell culture</Option>
@@ -284,7 +351,7 @@ const App = React.createClass({
                                                 <div className="col-md-6">
                                                     <select className="form-control" id="tissueAgeType"
                                                             name="tissueAgeType"
-                                                            defaultValue={window.existingRequest.tissueAgeType }
+                                                            defaultValue={window.existingRequest.tissueAgeType}
                                                             required>
                                                         <Option>hour(s)</Option>
                                                         <Option>day(s)</Option>
@@ -300,8 +367,9 @@ const App = React.createClass({
                                             <select className="form-control" id="growthConditions"
                                                     name="growthConditions"
                                                     required
-                                                    defaultValue={window.existingRequest.growthConditions }>
+                                                    defaultValue={window.existingRequest.growthConditions}>
                                                 <Option>plate</Option>
+                                                <Option>culture</Option>
                                                 <Option>liquid</Option>
                                                 <Option>6well</Option>
                                                 <Option>soil grown</Option>
@@ -322,13 +390,14 @@ const App = React.createClass({
                                         <h3 className="group-label">Primary Analysis</h3>
 
                                         <div className="form-group">
-                                            <label>Type of analysis <span data-icon="&#x74;" className="tip"
+                                            <label>Type of analysis <span data-icon="&#x74;"
+                                                                          className="tip far fa-question-circle"
                                                                           data-toggle="tooltip"
                                                                           title="If you know the type of analysis you want, select it here"/></label>
                                             <select className="form-control" id="analysisType"
                                                     name="analysisType"
                                                     required
-                                                    defaultValue={window.existingRequest.analysisType }>
+                                                    defaultValue={window.existingRequest.analysisType}>
                                                 <Option>Discovery</Option>
                                                 <Option>SRM</Option>
                                                 <Option>PRM</Option>
@@ -337,7 +406,8 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Secondary analysis <span data-icon="&#x74;" className="tip"
+                                            <label>Secondary analysis <span data-icon="&#x74;"
+                                                                            className="tip far fa-question-circle"
                                                                             data-toggle="tooltip"
                                                                             title="Select only if you want multiple types of analysis done on the same sample, e.g. discovery and targeted"/></label>
                                             <select className="form-control" id="secondaryAnalysisType"
@@ -353,7 +423,8 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Type of PTM <span data-icon="&#x74;" className="tip"
+                                            <label>Type of PTM <span data-icon="&#x74;"
+                                                                     className="tip far fa-question-circle"
                                                                      data-toggle="tooltip"
                                                                      title="Select the type of PTM you are interested in"/></label>
                                             <select className="form-control" id="typeOfPTM" name="typeOfPTM"
@@ -370,12 +441,12 @@ const App = React.createClass({
                                         </div>
                                         <div className="form-group">
                                             <label>Quantitative analysis required <span data-icon="&#x74;"
-                                                                                        className="tip"
+                                                                                        className="tip far fa-question-circle"
                                                                                         data-toggle="tooltip"
                                                                                         title="Select the type of quantitative analysis if you have discussed with the Proteomics team. Otherwise leave this in the default option "/></label>
                                             <select className="form-control" id="quantitativeAnalysisRequired"
                                                     name="quantitativeAnalysisRequired"
-                                                    defaultValue={window.existingRequest.quantitativeAnalysisRequired }
+                                                    defaultValue={window.existingRequest.quantitativeAnalysisRequired}
                                                     required>
                                                 <Option>None</Option>
                                                 <Option>Semi</Option>
@@ -384,13 +455,14 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Type of labeling <span data-icon="&#x74;" className="tip"
+                                            <label>Type of labeling <span data-icon="&#x74;"
+                                                                          className="tip far fa-question-circle"
                                                                           data-toggle="tooltip"
                                                                           title="Select the type of labeling if you have discussed with the proteomics team. Otherwise leave this in the default option "/></label>
                                             <select className="form-control" id="typeOfLabeling"
                                                     name="typeOfLabeling"
                                                     required
-                                                    defaultValue={window.existingRequest.typeOfLabeling }>
+                                                    defaultValue={window.existingRequest.typeOfLabeling}>
                                                 <Option>None</Option>
                                                 <Option>Label-free</Option>
                                                 <Option>Post-extraction</Option>
@@ -398,12 +470,13 @@ const App = React.createClass({
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Label used <span data-icon="&#x74;" className="tip"
+                                            <label>Label used <span data-icon="&#x74;"
+                                                                    className="tip far fa-question-circle"
                                                                     data-toggle="tooltip"
                                                                     title="Select the type of label if you have discussed with the proteomics team. Otherwise leave this in the default option"/></label>
                                             <select className="form-control" id="labelUsed" name="labelUsed"
                                                     required
-                                                    defaultValue={window.existingRequest.labelUsed }>
+                                                    defaultValue={window.existingRequest.labelUsed}>
                                                 <Option>None</Option>
                                                 <Option>TMT0</Option>
                                                 <Option>TMT6</Option>
@@ -425,11 +498,12 @@ const App = React.createClass({
                                         <h3 className="group-label">Sample Preparation</h3>
 
                                         <div className="form-group">
-                                            <label>Sample preparation <span data-icon="&#x74;" className="tip"
+                                            <label>Sample preparation <span data-icon="&#x74;"
+                                                                            className="tip far fa-question-circle"
                                                                             data-toggle="tooltip"
                                                                             title="Select the type of sample preparation used. If not available let the proteomics team know so it can be added "/></label>
                                             <select className="form-control" id="samplePrep" name="samplePrep"
-                                                    defaultValue={window.existingRequest.samplePrep }
+                                                    defaultValue={window.existingRequest.samplePrep}
                                                     required>
                                                 <Option>crude extract</Option>
                                                 <Option>microsomal</Option>
@@ -444,7 +518,7 @@ const App = React.createClass({
                                             <label>Digestion</label>
                                             <select className="form-control" id="digestion" name="digestion"
                                                     required
-                                                    defaultValue={window.existingRequest.digestion }>
+                                                    defaultValue={window.existingRequest.digestion}>
                                                 <Option>in gel</Option>
                                                 <Option>on bead</Option>
                                                 <Option>in solution</Option>
@@ -453,11 +527,12 @@ const App = React.createClass({
 
 
                                         <div className="form-group">
-                                            <label>Enzyme <span data-icon="&#x74;" className="tip"
+                                            <label>Enzyme <span data-icon="&#x74;"
+                                                                className="tip far fa-question-circle"
                                                                 data-toggle="tooltip"
                                                                 title="Other enzyme combinations can be selected if previously discussed with proteomics team"/></label>
                                             <select className="form-control" id="enzyme" name="enzyme" required
-                                                    defaultValue={window.existingRequest.enzyme }>
+                                                    defaultValue={window.existingRequest.enzyme}>
                                                 <Option>Trypsin</Option>
                                                 <Option>AspN</Option>
                                                 <Option>Trypsin AspN</Option>
@@ -506,7 +581,8 @@ const App = React.createClass({
                                         </div>
 
                                         <div className="form-group">
-                                            <label>Supporting images <span data-icon="&#x74;" className="tip"
+                                            <label>Supporting images <span data-icon="&#x74;"
+                                                                           className="tip far fa-question-circle"
                                                                            data-toggle="tooltip"
                                                                            title="Please only use images in .png, .jpg, .jpeg or .gif format "/></label>
                                             <input className="form-control" type="file" id="imageUpload"
@@ -532,8 +608,7 @@ const App = React.createClass({
                                                             <input type="hidden" name="imagePath[]"
                                                                    defaultValue={object.preview || object.url}/>
                                                             <span className="imageName">{object.name}</span>
-                                                            <span className="right clickable"
-                                                                  data-icon="&#xe019;"
+                                                            <span className="right clickable far fa-trash-alt"
                                                                   onClick={removeImage}/>
                                                             <hr/>
 
@@ -578,7 +653,7 @@ const App = React.createClass({
 
                                         </div>
 
-                                        <div className="btn btn-primary-outline btn-block"
+                                        <div className="btn btn-outline-primary btn-block"
                                              onClick={this.addConstruct}>
                                             Add Another
                                             Construct
@@ -605,9 +680,9 @@ const App = React.createClass({
                                 })}
                             </div>
 
-                            <label><span data-icon="&#x2a;"/> Drag to reorder items</label>
+                            <label><i className="far fa-trash-alt"></i>Drag to reorder items</label>
 
-                            <div className="btn btn-primary-outline btn-block" onClick={this.addSample}>Add
+                            <div className="btn btn-outline-primary btn-block" onClick={self.addSample}>Add
                                 Another
                                 Sample
                             </div>
@@ -621,12 +696,10 @@ const App = React.createClass({
             </form>
         )
     }
-});
+}
 
-
-const Sample = React.createClass({
-    displayName: 'Sample',
-    render: function () {
+class Sample extends React.Component {
+    render() {
         var self = this;
         return (
             <div className="dragg">
@@ -665,7 +738,7 @@ const Sample = React.createClass({
                         </div>
                         <div className="col-md-2 fix-2">
                             <div className="removeSample" onClick={this.props.removeSample.bind(null, this)}>
-                                <span data-icon="&#xe019;"/>
+                                <i className="far fa-trash-alt"></i>
                             </div>
                         </div>
                     </div>
@@ -674,7 +747,6 @@ const Sample = React.createClass({
         )
     }
 
-});
-
+}
 
 ReactDOM.render(<App/>, document.getElementById('app'));

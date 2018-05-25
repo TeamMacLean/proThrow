@@ -1,7 +1,7 @@
 const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 const r = thinky.r;
-
+const moment = require('moment');
 
 //
 
@@ -69,6 +69,13 @@ module.exports = Request;
 
 Request.define('getStatus', function () {
     return this.complete ? 'Complete' : 'In Progress';
+});
+
+Request.define('humanDate', function(){
+    return moment(this.createdAt).format("YYYY-MM-DD");
+});
+Request.define('modifiedHumanDate', function(){
+    return moment(this.updatedAt).format("YYYY-MM-DD");
 });
 
 Request.define('removeChildren', function () {

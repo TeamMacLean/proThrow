@@ -25,7 +25,8 @@ Auth.signInPost = (req, res, next) => {
     passport.authenticate('ldapauth', (err, user, info) => {
         if (err) {
             console.error(err);
-            return next(err);
+            return renderError(err, res);
+            // return next(err);
         }
         if (info) {
             console.info(info);
@@ -36,7 +37,6 @@ Auth.signInPost = (req, res, next) => {
                 message += `, ${info.message}`;
             }
             return renderError(message, res);
-            //return res.render('error', {error: message});
         }
         req.logIn(user, err => {
             if (err) {
