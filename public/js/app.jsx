@@ -203,25 +203,38 @@ class App extends React.Component {
     }
 
     getSpecies(input) {
-        console.log('input', input);
+        // console.log('input', input);
         if (!input) {
             return Promise.resolve({options: []});
         } else {
-            return Tax.spell(input)
-                .then(results => {
 
-                    let options = [];
+            return new Promise((good, bad) => {
+                Tax.search(input)
+                    .then(results => {
+                        console.log(results, results.length);
+                        if (results.length) { //its valid!
+                            // console.log("ITS GOOD", {value: input, label: input})
+                            return good({options: [{value: input, label: input}]})
+                        } else {
+                            Tax.spell(input)
+                                .then(results => {
+                                    let options = [];
+                                    results.map(r => {
+                                        if (r.length > 0) {
+                                            options.push({
+                                                value: r, label: r
+                                            })
+                                        }
+                                    })
+                                    return good({options: options})
 
-                    results.map(r => {
-                        if (r.length > 0) {
-                            options.push({
-                                value: r, label: r
-                            })
+                                })
                         }
-                    })
-                    return {options: options}
 
-                })
+                    })
+            })
+
+
         }
     }
 
@@ -278,7 +291,7 @@ class App extends React.Component {
                                                 onSelectResetsInput={false}
                                                 loadOptions={this.getSpecies}
                                                 name="species"
-                                                value={{value:this.state.species, label:this.state.species}}
+                                                value={{value: this.state.species, label: this.state.species}}
                                                 onChange={value => this.setState({species: value})}
                                             />
 
@@ -297,7 +310,10 @@ class App extends React.Component {
                                                 onSelectResetsInput={false}
                                                 loadOptions={this.getSpecies}
                                                 name="secondSpecies"
-                                                value={{value:this.state.secondSpecies, label:this.state.secondSpecies}}
+                                                value={{
+                                                    value: this.state.secondSpecies,
+                                                    label: this.state.secondSpecies
+                                                }}
                                                 onChange={value => this.setState({secondSpecies: value})}
                                             />
                                         </div>
