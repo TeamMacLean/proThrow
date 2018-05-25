@@ -6,7 +6,7 @@
     <h1 class="center"><%- request.janCode %></h1>
 
     <h2><%- request.yanCode %></h2>
-    <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></span>
+    <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></span>
     <input type="hidden" id="id" name="id" value="<%- request.id %>">
 
     <div class="row hidden-print">

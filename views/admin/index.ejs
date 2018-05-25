@@ -23,7 +23,7 @@
                                href="/request/<%- request.id %>"><%- request.janCode %></a></th>
             <td><%- request.humanDate() %></td>
             <td><%- request.modifiedHumanDate() %></td>
-            <td><a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></td>
+            <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
             <td>
                 <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
             </td>
@@ -59,10 +59,10 @@
             <th scope="row"><a style="text-transform: uppercase;"
                                href="/request/<%- request.id %>"><%- request.janCode %></a></th>
             <td><%- request.humanDate() %></td>
-            <td><%- request.modifiedHumanDate() %>"></td>
-            <td><a href="/user/<%- request.createdBy %>"><%- request.createdBy %></a></td>
+            <td><%- request.modifiedHumanDate() %></td>
+            <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
             <td>
-                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
+                <a href="/user/<%- request.assignedTo %>"><%- request.getAssignedToName() || 'unassigned' %> </a>
             </td>
             <td><%- request.status %></td>
         </tr>

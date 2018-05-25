@@ -2,6 +2,7 @@ const thinky = require('../lib/thinky.js');
 const type = thinky.type;
 const r = thinky.r;
 const moment = require('moment');
+const ldap = require('../lib/ldap');
 
 //
 
@@ -9,8 +10,10 @@ const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
     createdBy: type.string().required(),
+    createdByName: type.string(),
     janCode: type.string().required(),
     assignedTo: type.string(),
+    assignedToName: type.string(),
     // complete: type.boolean().default(false),
     status: type.string().default('incomplete'),
     createdAt: type.date().default(r.now()),
@@ -71,16 +74,66 @@ Request.define('getStatus', function () {
     return this.complete ? 'Complete' : 'In Progress';
 });
 
-Request.define('humanDate', function(){
-    return moment(this.createdAt).format("YYYY-MM-DD");
+Request.define('humanDate', function () {
+    return moment(this.createdAt).format("YYYY/MM/DD");
 });
-Request.define('modifiedHumanDate', function(){
-    return moment(this.updatedAt).format("YYYY-MM-DD");
+Request.define('modifiedHumanDate', function () {
+    return moment(this.updatedAt).format("YYYY/MM/DD");
+});
+
+Request.define('getAssignedToName', function () {
+    const self = this;
+
+    function getItForNextTime() {
+        ldap.getNameFromUsername(self.assignedTo)
+            .then((users) => {
+                if (users.length >= 1) {
+                    const user = users[0];
+                    self.assignedToName = user.name;
+                    self.save();
+                }
+            })
+            .catch(err => {
+                return console.error(err);
+            });
+    }
+
+    if (this.assignedToName) {
+        return self.assignedToName;
+    } else {
+        getItForNextTime();
+        return self.assignedTo;
+    }
+});
+
+Request.define('getCreatedByName', function () {
+    const self = this;
+
+    function getItForNextTime() {
+        ldap.getNameFromUsername(self.createdBy)
+            .then((users) => {
+                if (users.length >= 1) {
+                    const user = users[0];
+                    self.createdByName = user.name;
+                    self.save();
+                }
+            })
+            .catch(err => {
+                return console.error(err);
+            });
+    }
+
+    if (this.createdByName) {
+        return self.createdByName;
+    } else {
+        getItForNextTime();
+        return self.createdBy;
+    }
 });
 
 Request.define('removeChildren', function () {
 
-    var requestID = this.id;
+    const requestID = this.id;
 
     return Promise.all([
         Construct.filter({requestID: requestID}).delete().execute(),
