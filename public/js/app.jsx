@@ -1,13 +1,12 @@
+import 'promise-polyfill/src/polyfill';
 import React from "react";
 import ReactDOM from "react-dom";
-
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import dragula from 'dragula';
 import 'dragula/dist/dragula.css';
 import {} from 'delivery/lib/client/delivery'
 import Tax from 'taxlookup';
-
 import jqueryReact from 'jquery';
 import {} from 'popper.js'
 import {} from 'bootstrap/js/src/tooltip';
