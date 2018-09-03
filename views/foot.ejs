@@ -16,7 +16,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
 
 <script>
-    $('.data-table').DataTable();
+    $('.data-table').DataTable({"dom":"lrtip"});
 
     $('#search-all-requests').on('change paste keyup input propertychange', function () {
         $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
