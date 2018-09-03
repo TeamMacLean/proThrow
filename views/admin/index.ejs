@@ -1,13 +1,15 @@
 <% include ../head.ejs %>
 <div class="container">
 
-    <% if (incompleteRequests && incompleteRequests.length){ %>
-    <h3>Incomplete Requests</h3>
-
+    <% if(incompleteRequests || completedRequests){ %>
     <div class="form-group">
         <label for="search-all-requests">Search all requests</label>
         <input type="text" class="form-control" id="search-all-requests" placeholder="Search...">
     </div>
+    <% } %>
+
+    <% if (incompleteRequests && incompleteRequests.length){ %>
+    <h3>Incomplete Requests</h3>
 
     <table class="table table-hover data-table">
         <thead>
