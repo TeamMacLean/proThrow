@@ -16,10 +16,9 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
 
 <script>
-    $('.data-table').DataTable({searching: false});
+    $('.data-table').DataTable();
 
     $('#search-all-requests').on('change paste keyup input propertychange', function () {
-        console.log($(this).val());
         $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
     })
 </script>
