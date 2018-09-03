@@ -18,8 +18,7 @@
 <script>
     $('.data-table').DataTable({searching: false});
 
-    $('#search-all-requests').on('change', function (a) {
-        console.log(a, $(this), $(this.text));
-        $.fn.dataTable.tables({api: true}).search($(this).text).draw();
+    $('#search-all-requests').on('change paste keyup', function (a) {
+        $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
     })
 </script>
