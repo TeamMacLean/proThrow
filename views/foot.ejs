@@ -18,7 +18,8 @@
 <script>
     $('.data-table').DataTable({searching: false});
 
-    $('#search-all-requests').on('change', function () {
+    $('#search-all-requests').on('change', function (a) {
+        console.log(a, $(this), $(this.text()));
         $.fn.dataTable.tables({api: true}).search($(this).text()).draw();
     })
 </script>
