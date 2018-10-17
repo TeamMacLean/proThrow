@@ -16,7 +16,10 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
 
 <script>
-    $('.data-table').DataTable({"dom":"lrtip"});
+    $('.data-table').DataTable({"dom":"lrtip", "columnDefs":[
+		{"targets":[6], "visible":false}
+		]
+	});
 
     $('#search-all-requests').on('change paste keyup input propertychange', function () {
         $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
