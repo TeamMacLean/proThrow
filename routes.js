@@ -39,7 +39,7 @@ router.route('/new')
 
 router.route('/request/:id')
     .all(isAuthenticated)
-    .all(isAdmin)
+    //.all(isAdmin)
     .get(Requests.show);
 
 router.route('/request/:id/edit')
