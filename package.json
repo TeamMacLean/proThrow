@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server",
-    "build": "gulp"
+    "build": "webpack"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -27,6 +27,7 @@
     "sharp": "^0.16.2",
     "socket.io": "^1.4.8",
     "thinky": "^2.3.3",
+    "taxlookup": "^2.5.1",
     "ldapjs": "latest"
   },
   "devDependencies": {
@@ -45,7 +46,6 @@
     "react-dom": "^16.3.2",
     "react-select": "1.2.1",
     "style-loader": "^0.21.0",
-    "taxlookup": "^2.5.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.3"
   }

@@ -51,6 +51,11 @@ app.use((req, res, next) => {
     }
 });
 
+app.use((req, res, next)=>{
+    console.log(req.url)
+    next()
+})
+
 
 //ensure essential folders exist
 fs.ensureDir(config.supportingImageRoot, err => {

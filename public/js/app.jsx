@@ -6,7 +6,6 @@ import 'react-select/dist/react-select.css';
 import dragula from 'dragula';
 import 'dragula/dist/dragula.css';
 import {} from 'delivery/lib/client/delivery'
-import Tax from 'taxlookup';
 import jqueryReact from 'jquery';
 import {} from 'popper.js'
 import {} from 'bootstrap/js/src/tooltip';
@@ -208,31 +207,16 @@ class App extends React.Component {
         } else {
 
             return new Promise((good, bad) => {
-                Tax.search(input)
-                    .then(results => {
-                        console.log(results, results.length);
-                        if (results.length) { //its valid!
-                            // console.log("ITS GOOD", {value: input, label: input})
-                            return good({options: [{value: input, label: input}]})
-                        } else {
-                            Tax.spell(input)
-                                .then(results => {
-                                    let options = [];
-                                    results.map(r => {
-                                        if (r.length > 0) {
-                                            options.push({
-                                                value: r, label: r
-                                            })
-                                        }
-                                    })
-                                    return good({options: options})
 
-                                })
-                        }
-
+                jqueryReact.get('/taxlookup/' + encodeURIComponent(input))
+                    .done(function (data) {
+                        console.log('from search', data);
+                        return good(data);
+                    })
+                    .fail(function () {
+                        good({options: []})
                     })
             })
-
 
         }
     }

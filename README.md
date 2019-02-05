@@ -4,11 +4,9 @@
 
 > NOTE: You need VIPS (brew install homebrew/science/vips --with-webp --with-graphicsmagick)
 ```
-npm install -g bower gulp
 npm install
-bower install
 
-npm run-script build
-npm run-script start
+npm run build
+npm run start
 ```
 

@@ -7,6 +7,7 @@ const index = require('./controllers/index');
 const Auth = require('./controllers/auth');
 const Users = require('./controllers/users');
 const Requests = require('./controllers/requests');
+const Tax = require('taxlookup');
 
 
 function isAuthenticated(req, res, next) {
@@ -65,6 +66,45 @@ router.route('/request/:id/delete')
 //     .all(isAuthenticated)
 //     .all(isAdmin)
 //     .post(admin.addNote);
+
+
+//TAXLOOKUP
+router.route('/taxlookup/:input')
+    .get(function (req, res, next) {
+
+        const input = req.params.input;
+
+        Tax.search(input)
+            .then(results => {
+                if (results.length) { //its valid!
+                    return res.json({options: [{value: input, label: input}]})
+                } else {
+                    Tax.spell(input)
+                        .then(results => {
+                            let options = [];
+                            results.map(r => {
+                                if (r.length > 0) {
+                                    options.push({
+                                        value: r, label: r
+                                    })
+                                }
+                            });
+                            return res.json({options: options})
+
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            return res.json({})
+                        })
+                }
+
+            })
+            .catch(err => {
+                console.error(err);
+                return res.json({});
+            })
+
+    });
 
 
 //USER
