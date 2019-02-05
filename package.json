@@ -27,7 +27,7 @@
     "sharp": "^0.16.2",
     "socket.io": "^1.4.8",
     "thinky": "^2.3.3",
-    "taxlookup": "^2.5.1",
+    "taxlookup": "^2.7.0",
     "ldapjs": "latest"
   },
   "devDependencies": {

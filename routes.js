@@ -9,6 +9,8 @@ const Users = require('./controllers/users');
 const Requests = require('./controllers/requests');
 const Tax = require('taxlookup');
 
+const config = require('./config');
+
 
 function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -74,12 +76,12 @@ router.route('/taxlookup/:input')
 
         const input = req.params.input;
 
-        Tax.search(input)
+        Tax.search(input, config.NCBIAPIKey)
             .then(results => {
                 if (results.length) { //its valid!
                     return res.json({options: [{value: input, label: input}]})
                 } else {
-                    Tax.spell(input)
+                    Tax.spell(input, config.NCBIAPIKey)
                         .then(results => {
                             let options = [];
                             results.map(r => {

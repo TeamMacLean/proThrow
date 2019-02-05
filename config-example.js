@@ -10,6 +10,7 @@ module.exports = {
         searchBase: 'OU=user,dc=server,dc=org',
         searchFilter: '(sAMAccountName={{username}})'
     },
+    NCBIAPIKey:'',
     supportingImageRoot: './public/uploads/',
     supportingImageRootURL: '/uploads/',
     supportingImagePreviewRoot: './public/preview',
