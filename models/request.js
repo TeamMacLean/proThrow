@@ -8,24 +8,27 @@ const ldap = require('../lib/ldap');
 
 const updateAssignedToFromLdap = function () {
 
-    const self = this;
+    return new Promise((good, bad) => {
 
-    if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
-        self.assignedToName = 'Unassigned';
-    } else {
-        ldap.getNameFromUsername(self.assignedTo)
-            .then((users) => {
-                if (users.length >= 1) {
-                    const user = users[0];
-                    self.assignedToName = user.name;
-                    self.save();
-                }
-            })
-            .catch(err => {
-                return console.error(err);
-            });
-    }
+        const self = this;
 
+        if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
+            self.assignedToName = 'unassigned';
+            good();
+        } else {
+            ldap.getNameFromUsername(self.assignedTo)
+                .then((users) => {
+                    if (users.length >= 1) {
+                        const user = users[0];
+                        self.assignedToName = user.name;
+                    }
+                    good();
+                })
+                .catch(err => {
+                    bad(err);
+                });
+        }
+    })
 
 }
 
@@ -90,9 +93,16 @@ Request.pre('save', function (next) {
 
 
     //todo udate ldap stuff
-    updateAssignedToFromLdap();
+    updateAssignedToFromLdap()
+        .then(() => {
+            next();
+        })
+        .catch(err => {
+            console.error(err);
+            next();
+        })
 
-    next();
+
 });
 
 
