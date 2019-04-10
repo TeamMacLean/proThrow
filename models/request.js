@@ -6,6 +6,29 @@ const ldap = require('../lib/ldap');
 
 //
 
+const updateAssignedToFromLdap = function () {
+
+    const self = this;
+
+    if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
+        self.assignedToName = 'Unassigned';
+    } else {
+        ldap.getNameFromUsername(self.assignedTo)
+            .then((users) => {
+                if (users.length >= 1) {
+                    const user = users[0];
+                    self.assignedToName = user.name;
+                    self.save();
+                }
+            })
+            .catch(err => {
+                return console.error(err);
+            });
+    }
+
+
+}
+
 const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
@@ -64,6 +87,11 @@ Request.statuses = {
 
 Request.pre('save', function (next) {
     this.updatedAt = new Date();
+
+
+    //todo udate ldap stuff
+    updateAssignedToFromLdap();
+
     next();
 });
 
@@ -84,24 +112,9 @@ Request.define('modifiedHumanDate', function () {
 Request.define('getAssignedToName', function () {
     const self = this;
 
-    function getItForNextTime() {
-        ldap.getNameFromUsername(self.assignedTo)
-            .then((users) => {
-                if (users.length >= 1) {
-                    const user = users[0];
-                    self.assignedToName = user.name;
-                    self.save();
-                }
-            })
-            .catch(err => {
-                return console.error(err);
-            });
-    }
-
-    if (this.assignedToName) {
+    if (self.assignedToName) {
         return self.assignedToName;
     } else {
-        getItForNextTime();
         return self.assignedTo;
     }
 });
@@ -123,7 +136,7 @@ Request.define('getCreatedByName', function () {
             });
     }
 
-    if (this.createdByName) {
+    if (self.createdByName) {
         return self.createdByName;
     } else {
         getItForNextTime();
