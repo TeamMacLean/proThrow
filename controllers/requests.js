@@ -44,22 +44,22 @@ requests.newPost = (req, res) => {
         var newJanCode = req.body.janCode;
 
         Request.get(requestID)
-            .then((request)=> {
+            .then((request) => {
                 request.removeChildren()
-                    .then(()=> {
+                    .then(() => {
                         request.janCode = newJanCode;
                         request = fillFieldsFromForm(req, request);//TODO tidy this up
                         request.save()
-                            .then((savedRequest)=> {
+                            .then((savedRequest) => {
                                 processIt(savedRequest, false);
                             })
-                            .catch((err)=>renderError(err, res));
+                            .catch((err) => renderError(err, res));
                     })
-                    .catch((err)=> {
+                    .catch((err) => {
                         renderError(err, res)
                     });
 
-            }).catch((err)=>renderError(err, res));
+            }).catch((err) => renderError(err, res));
     } else {
         Util.generateJanCode(req.user.firstName, req.user.lastName, req.user.username)
             .then((janCode) => {
@@ -73,7 +73,7 @@ requests.newPost = (req, res) => {
                     processIt(savedRequest, true);
                 });
             })
-            .catch((err)=> {
+            .catch((err) => {
                 return renderError(err, res);
             });
 
@@ -106,7 +106,7 @@ requests.newPost = (req, res) => {
 
         if (bodyConstructAccession) {
             if (Array.isArray(bodyConstructAccession)) {
-                bodyConstructAccession.map((accession, i)=> {
+                bodyConstructAccession.map((accession, i) => {
                     // console.log('accession', accession);
                     var c = new Construct({
                         requestID: savedRequest.id,
@@ -114,7 +114,7 @@ requests.newPost = (req, res) => {
                         sequenceInfo: bodyConstructSequenceInfo[i],
                         dbEntry: bodyConstructDBEntry[i]
                     });
-                    c.save().then(()=> {
+                    c.save().then(() => {
                     }).catch((err) => {
                         console.error(err);
                     })
@@ -126,7 +126,7 @@ requests.newPost = (req, res) => {
                     sequenceInfo: bodyConstructSequenceInfo,
                     dbEntry: bodyConstructDBEntry
                 });
-                c.save().then(()=> {
+                c.save().then(() => {
                 }).catch((err) => {
                     console.error(err);
                 })
@@ -137,7 +137,7 @@ requests.newPost = (req, res) => {
         if (bodyImages) {
 
             if (Array.isArray(bodyImages)) {
-                bodyImages.map((img, i)=> {
+                bodyImages.map((img, i) => {
 
                     new SampleImage({
                         path: bodyImagePath[i],
@@ -148,7 +148,7 @@ requests.newPost = (req, res) => {
                     })
                         .save()
                         .then()
-                        .catch(err=> {
+                        .catch(err => {
                             console.error(err);
                         });
                 });
@@ -162,7 +162,7 @@ requests.newPost = (req, res) => {
                 })
                     .save()
                     .then()
-                    .catch(err=> {
+                    .catch(err => {
                         console.error(err);
                     });
             }
@@ -227,16 +227,16 @@ requests.show = (req, res, next) => {
             );
 
             return res.render('requests/show', {request: request, admins: config.admins});
-        }).catch((err)=> {
+        }).catch((err) => {
         return renderError(err, res);
     });
 };
 
-requests.edit = (req, res)=> {
+requests.edit = (req, res) => {
     const requestID = req.params.id;
     Request.get(requestID)
         .getJoin({supportingImages: true, samples: true, constructs: true})
-        .then((request)=> {
+        .then((request) => {
 
             request.supportingImages.map((ri) => {
                 ri.url = ri.getPreviewURL();
@@ -252,7 +252,7 @@ requests.edit = (req, res)=> {
                 return renderError("This is not your request, you cannot edit it.", res);
             }
 
-            if (!request.assignedTo || Util.isAdmin(req.user.username)) {
+            if (!request.assignedTo || request.assignedTo === 'unassigned' || Util.isAdmin(req.user.username)) {
                 return res.render('requests/new', {request});
             } else {
                 return renderError("You are not allowed to edit this as it has already been assigned for action.", res);
@@ -266,7 +266,7 @@ requests.clone = (req, res) => {
         .getJoin({supportingImages: true, samples: true, constructs: true})
         .then((request) => {
 
-            request.supportingImages.map((ri)=> {
+            request.supportingImages.map((ri) => {
                 ri.url = ri.getPreviewURL();
             });
 
@@ -278,7 +278,7 @@ requests.clone = (req, res) => {
 
             request.isClone = true;
             return res.render('requests/new', {request, isClone: true});
-        }).catch((err)=> {
+        }).catch((err) => {
         return renderError(err, res);
     });
 };
@@ -294,12 +294,12 @@ requests.delete = (req, res) => {
                     // michel, marc, sophia and ben are deleted from the database
                     return res.redirect('/admin/index');
                 })
-                .catch((err)=> {
+                .catch((err) => {
                     return renderError(err, res);
                 });
 
         })
-        .catch((err)=> {
+        .catch((err) => {
             return renderError(err, res);
         });
 };
