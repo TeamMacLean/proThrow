@@ -6,31 +6,31 @@ const ldap = require('../lib/ldap');
 
 //
 
-const updateAssignedToFromLdap = function () {
-
-    return new Promise((good, bad) => {
-
-        const self = this;
-
-        if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
-            self.assignedToName = 'unassigned';
-            good();
-        } else {
-            ldap.getNameFromUsername(self.assignedTo)
-                .then((users) => {
-                    if (users.length >= 1) {
-                        const user = users[0];
-                        self.assignedToName = user.name;
-                    }
-                    good();
-                })
-                .catch(err => {
-                    bad(err);
-                });
-        }
-    })
-
-}
+// const updateAssignedToFromLdap = function () {
+//
+//     return new Promise((good, bad) => {
+//
+//         const self = this;
+//
+//         if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
+//             self.assignedToName = 'unassigned';
+//             good();
+//         } else {
+//             ldap.getNameFromUsername(self.assignedTo)
+//                 .then((users) => {
+//                     if (users.length >= 1) {
+//                         const user = users[0];
+//                         self.assignedToName = user.name;
+//                     }
+//                     good();
+//                 })
+//                 .catch(err => {
+//                     bad(err);
+//                 });
+//         }
+//     })
+//
+// }
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
@@ -92,15 +92,15 @@ Request.pre('save', function (next) {
     this.updatedAt = new Date();
 
 
-    //todo udate ldap stuff
-    updateAssignedToFromLdap()
-        .then(() => {
-            next();
-        })
-        .catch(err => {
-            console.error(err);
-            next();
-        })
+    // //todo udate ldap stuff
+    // updateAssignedToFromLdap()
+    //     .then(() => {
+    //         next();
+    //     })
+    //     .catch(err => {
+    //         console.error(err);
+    //         next();
+    //     })
 
 
 });

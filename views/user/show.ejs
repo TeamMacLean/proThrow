@@ -23,7 +23,7 @@
             <td><%- request.humanDate() %></td>
             <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
             <td>
-                <a href="/user/<%- request.assignedTo %>"><%- request.getAssignedToName() || 'unassigned' %> </a>
+                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
             </td>
             <td><%- request.status %></td>
             <td>
