@@ -6,31 +6,7 @@ const ldap = require('../lib/ldap');
 
 //
 
-// const updateAssignedToFromLdap = function () {
-//
-//     return new Promise((good, bad) => {
-//
-//         const self = this;
-//
-//         if (self.assignedTo === 'unassigned' || self.assignedTo === '' || !self.assignedTo) {
-//             self.assignedToName = 'unassigned';
-//             good();
-//         } else {
-//             ldap.getNameFromUsername(self.assignedTo)
-//                 .then((users) => {
-//                     if (users.length >= 1) {
-//                         const user = users[0];
-//                         self.assignedToName = user.name;
-//                     }
-//                     good();
-//                 })
-//                 .catch(err => {
-//                     bad(err);
-//                 });
-//         }
-//     })
-//
-// }
+// z
 
 const Request = thinky.createModel('Request', {
     id: type.string(),
@@ -91,6 +67,7 @@ Request.statuses = {
 Request.pre('save', function (next) {
     this.updatedAt = new Date();
 
+    next();
 
     // //todo udate ldap stuff
     // updateAssignedToFromLdap()
