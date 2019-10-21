@@ -289,9 +289,11 @@
         <h3>Linked Requests</h3>
 
         <ul id="linked-requests">
-            <% request.linkedRequests.map(function(request){ %>
-                <li><%- request.janCode %></li>
-            <% }); %>
+            <% if (request.linkedRequests){ %>
+                <% request.linkedRequests.map(function(request){ %>
+                    <li><%- request.janCode %></li>
+                <% }); %>
+            <% } %>
         </ul>
 
         <div class="form-group">
