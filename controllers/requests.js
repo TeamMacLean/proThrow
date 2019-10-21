@@ -214,7 +214,7 @@ requests.show = (req, res, next) => {
 
     const requestID = req.params.id;
     Request.get(requestID)
-        .getJoin({supportingImages: true, samples: true, constructs: true})
+        .getJoin({supportingImages: true, samples: true, constructs: true, linkedRequests: true})
         .run()
         .then(request => {
             request.supportingImages = request.supportingImages || [];

@@ -4,28 +4,23 @@ const r = thinky.r;
 const moment = require('moment');
 const ldap = require('../lib/ldap');
 
-//
-
-// z
-
 const Request = thinky.createModel('Request', {
     id: type.string(),
     uuid: type.string(),
+    linkID: type.string().default(null),
     createdBy: type.string().required(),
     createdByName: type.string(),
     janCode: type.string().required(),
     assignedTo: type.string(),
     assignedToName: type.string(),
-    // complete: type.boolean().default(false),
     status: type.string().default('incomplete'),
     createdAt: type.date().default(r.now()),
     updatedAt: type.date(),
     notes: type.array().default([]).schema(type.string()),
 
-    //Biological Materia
+    //Biological Material
     species: type.string().required(),
     secondSpecies: type.string().required(),
-    // searchDatabase: type.string().required(),
     tissue: type.string().required(),
     tissueAgeNum: type.string().required(),
     tissueAgeType: type.string().required(),
@@ -35,7 +30,6 @@ const Request = thinky.createModel('Request', {
     projectDescription: type.string().required(),
     hopedAnalysis: type.string().required(),
     bufferComposition: type.string().required(),
-
 
     // Primary Analysis
     analysisType: type.string().required(),
@@ -50,13 +44,6 @@ const Request = thinky.createModel('Request', {
     digestion: type.string().required(),
     enzyme: type.string().required(),
 
-// Sample Description
-// typeOfDigestion: type.string().required(),
-// preferredOrder: type.string().required(),
-// sampleNumber: type.string().required(),
-// sampleDescription: type.string().required(),
-
-
 });
 
 Request.statuses = {
@@ -66,20 +53,7 @@ Request.statuses = {
 
 Request.pre('save', function (next) {
     this.updatedAt = new Date();
-
     next();
-
-    // //todo udate ldap stuff
-    // updateAssignedToFromLdap()
-    //     .then(() => {
-    //         next();
-    //     })
-    //     .catch(err => {
-    //         console.error(err);
-    //         next();
-    //     })
-
-
 });
 
 
@@ -140,53 +114,6 @@ Request.define('removeChildren', function () {
         SampleDescription.filter({requestID: requestID}).delete().execute(),
         SampleImage.filter({requestID: requestID}).delete().execute()
     ]);
-    //
-
-    // function deleteConstructs() {
-    //     return new Promise(function (good, bad) {
-    //         Construct.filter({requestID: requestID})
-    //             .then(function (constructs) {
-    //                 return Promise.all(constructs.map(function (construct) {
-    //                     construct.delete();
-    //                 }))
-    //             })
-    //             .then(good)
-    //             .catch(bad)
-    //     })
-    //
-    // }
-    //
-    // function deleteSampleDescriptions() {
-    //     return new Promise(function (good, bad) {
-    //         SampleDescription.filter({requestID: requestID})
-    //             .then(function (sampleDescriptions) {
-    //                 return Promise.all(sampleDescriptions.map(function (sampleDescription) {
-    //                     sampleDescription.delete();
-    //                 }))
-    //             })
-    //             .then(good)
-    //             .catch(bad)
-    //     })
-    // }
-    //
-    // return Promise.all([deleteConstructs(), deleteSampleDescriptions()]);
-
-    //
-    //
-    //     SampleDescription.filter({requestID: requestID})
-    //         .then(function (sampleDescriptions) {
-    //             return Promise.all(sampleDescriptions.map(function (sampleDescription) {
-    //                 sampleDescription.delete();
-    //             }))
-    //         })
-    // });
-
-    // SampleImage.filter({requestID: requestID})
-    //     .then(sis=> {
-    //         return Promise.all(sis.map(function (si) {
-    //             si.delete();
-    //         }))
-    //     });
 
 });
 
@@ -196,3 +123,5 @@ const Construct = require('./construct');
 Request.hasMany(SampleDescription, 'samples', 'id', 'requestID');
 Request.hasMany(SampleImage, 'supportingImages', 'id', 'requestID');
 Request.hasMany(Construct, 'constructs', 'id', 'requestID');
+
+Request.hasAndBelongsToMany(Request, 'linkedRequests', 'linkID', 'linkID');
