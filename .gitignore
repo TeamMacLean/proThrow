@@ -6,3 +6,7 @@ dist
 public/preview
 public/uploads
 npm-debug.log
+
+package-lock.json
+yarn.lock
+

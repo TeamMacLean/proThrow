@@ -285,28 +285,33 @@
             <button id="notes-button" class="btn btn-success">Add Note</button>
         </div>
     </div>
-    <div class="tile">
-        <h3>Linked Requests</h3>
 
-        <ul id="linked-requests">
-            <% if (request.linkedRequests){ %>
-                <% request.linkedRequests.map(function(request){ %>
-                    <li><%- request.janCode %></li>
-                <% }); %>
-            <% } else { %>
-                <p>None</p>
-            <% } %>
-        </ul>
+    <% if(locals.signedInUser.isAdmin){ %>
+        <div class="tile">
+            <h3>Linked Requests</h3>
 
-        <div class="form-group">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Request id to link" aria-label="Request id to link" aria-describedby="button-addon2">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Find and link</button>
+            <ul id="linked-requests">
+                <% if (request.linkedRequests){ %>
+                    <% request.linkedRequests.map(function(request){ %>
+                        <li><%- request.janCode %></li>
+                    <% }); %>
+                <% } else { %>
+                    <p>None</p>
+                <% } %>
+            </ul>
+
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Request id to link"
+                           aria-label="Request id to link" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon2">Find and link
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <% } %>
 
 </div>
 <% include ../foot.ejs %>
