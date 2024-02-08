@@ -1,88 +1,147 @@
 <% include ../head.ejs %>
 <div class="container">
+  <% if(incompleteRequests || completedRequests || discardedRequests){ %>
+  <div class="form-group">
+    <label for="search-all-requests">Search all requests</label>
+    <input
+      type="text"
+      class="form-control"
+      id="search-all-requests"
+      placeholder="Search..."
+    />
+  </div>
+  <% } if (incompleteRequests && incompleteRequests.length){ %>
+  <h3>Incomplete Requests</h3>
+  <table class="table table-hover data-table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Date</th>
+        <th scope="col">Last modified</th>
+        <th scope="col">Created by</th>
+        <th scope="col">Assigned to</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="displayNone">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% incompleteRequests.map(function (request) { %>
+      <tr>
+        <th scope="row">
+          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
+            ><%- request.janCode %></a
+          >
+        </th>
+        <td><%- request.humanDate() %></td>
+        <td><%- request.modifiedHumanDate() %></td>
+        <td>
+          <a href="/user/<%- request.createdBy %>"
+            ><%- request.getCreatedByName() %></a
+          >
+        </td>
+        <td>
+          <a href="/user/<%- request.assignedTo %>"
+            ><%- request.assignedTo || 'unassigned' %>
+          </a>
+        </td>
+        <td><%- request.status %></td>
+        <td class="displayNone"><%- request.projectDescription %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <hr />
 
-    <% if(incompleteRequests || completedRequests){ %>
-    <div class="form-group">
-        <label for="search-all-requests">Search all requests</label>
-        <input type="text" class="form-control" id="search-all-requests" placeholder="Search...">
-    </div>
-    <% } %>
+  <% } else { %>
+  <h3>No incomplete requests</h3>
+  <hr />
+  <% } if (completedRequests && completedRequests.length){ %>
+  <h3>Complete Requests</h3>
 
-    <% if (incompleteRequests && incompleteRequests.length){ %>
-    <h3>Incomplete Requests</h3>
-
-    <table class="table table-hover data-table">
-        <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Date</th>
-            <th scope="col">Last modified</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Assigned to</th>
-            <th scope="col">Status</th>
-	    <th scope="col" class="displayNone">Description</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <% incompleteRequests.map(function (request) { %>
-        <tr>
-            <th scope="row"><a style="text-transform: uppercase;"
-                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
-            <td><%- request.humanDate() %></td>
-            <td><%- request.modifiedHumanDate() %></td>
-            <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
-            <td>
-                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
-            </td>
-            <td><%- request.status %></td>
-	    <td class="displayNone"><%- request.projectDescription %></td>
-        </tr>
-        <% }); %>
-
-        </tbody>
-    </table>
-
-    <% } %>
-
-    <hr>
-
-    <% if (completedRequests && completedRequests.length){ %>
-    <h3>Complete Requests</h3>
-    <table class="table table-hover data-table">
-        <thead>
-        <tr>
-
-            <th scope="col">ID</th>
-            <th scope="col">Date</th>
-            <th scope="col">Last modified</th>
-            <th scope="col">Created by</th>
-            <th scope="col">Assigned to</th>
-            <th scope="col">Status</th>
-            <th	scope="col" class="displayNone">Description</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <% completedRequests.map(function (request) { %>
-        <tr>
-            <th scope="row"><a style="text-transform: uppercase;"
-                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
-            <td><%- request.humanDate() %></td>
-            <td><%- request.modifiedHumanDate() %></td>
-            <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
-            <td>
-                <a href="/user/<%- request.assignedTo %>"><%- request.getAssignedToName() || 'unassigned' %> </a>
-            </td>
-            <td><%- request.status %></td>
-	    <td class="displayNone"><%- request.projectDescription %></td>
-        </tr>
-        <% }); %>
-
-        </tbody>
-    </table>
-
-    <% } %>
+  <table class="table table-hover data-table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Date</th>
+        <th scope="col">Last modified</th>
+        <th scope="col">Created by</th>
+        <th scope="col">Assigned to</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="displayNone">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% completedRequests.map(function (request) { %>
+      <tr>
+        <th scope="row">
+          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
+            ><%- request.janCode %></a
+          >
+        </th>
+        <td><%- request.humanDate() %></td>
+        <td><%- request.modifiedHumanDate() %></td>
+        <td>
+          <a href="/user/<%- request.createdBy %>"
+            ><%- request.getCreatedByName() %></a
+          >
+        </td>
+        <td>
+          <a href="/user/<%- request.assignedTo %>"
+            ><%- request.getAssignedToName() || 'unassigned' %>
+          </a>
+        </td>
+        <td><%- request.status %></td>
+        <td class="displayNone"><%- request.projectDescription %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <hr />
+  <% } else { %>
+  <h3>No complete requests</h3>
+  <hr />
+  <% } if (discardedRequests && discardedRequests.length) { %>
+  <h3>Discarded Requests</h3>
+  <table class="table table-hover data-table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Date</th>
+        <th scope="col">Last modified</th>
+        <th scope="col">Created by</th>
+        <th scope="col">Assigned to</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="displayNone">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% discardedRequests.map(function (request) { %>
+      <tr>
+        <th scope="row">
+          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
+            ><%- request.janCode %></a
+          >
+        </th>
+        <td><%- request.humanDate() %></td>
+        <td><%- request.modifiedHumanDate() %></td>
+        <td>
+          <a href="/user/<%- request.createdBy %>"
+            ><%- request.getCreatedByName() %></a
+          >
+        </td>
+        <td>
+          <a href="/user/<%- request.assignedTo %>"
+            ><%- request.getAssignedToName() || 'unassigned' %></a
+          >
+        </td>
+        <td><%- request.status %></td>
+        <td class="displayNone"><%- request.projectDescription %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <h3>No discarded requests</h3>
+  <% } %>
 </div>
-
 <% include ../foot.ejs %>
