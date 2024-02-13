@@ -8,6 +8,7 @@ admin.index = (req, res) => {
       const completedRequests = [];
       const incompleteRequests = [];
       const discardedRequests = [];
+      const samplesUsedUpRequests = [];
 
       requests.sort(function (a, b) {
         return new Date(b.createdAt) - new Date(a.createdAt);
@@ -18,6 +19,8 @@ admin.index = (req, res) => {
           completedRequests.push(m);
         } else if (m.status === "discarded") {
           discardedRequests.push(m);
+        } else if (m.status === "samples used up") {
+          samplesUsedUpRequests.push(m);
         } else {
           incompleteRequests.push(m);
         }
@@ -28,6 +31,7 @@ admin.index = (req, res) => {
         completedRequests,
         incompleteRequests,
         discardedRequests,
+        samplesUsedUpRequests,
       });
     })
     .catch((err) => {
