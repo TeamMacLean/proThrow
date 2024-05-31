@@ -1,29 +1,43 @@
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-        crossorigin="anonymous"></script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+  integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+  integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+  crossorigin="anonymous"
+></script>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/main.src.js"></script>
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"
+/>
 
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"
+></script>
 
 <script>
-    $('.data-table').DataTable({"dom":"lrtip", "columnDefs":[
-		{"targets":[6], "visible":false, "searchable":true}
-		]
-	});
+  $(".data-table").DataTable({
+    dom: "lrtip",
+    columnDefs: [{ targets: [6], visible: false, searchable: true }],
+  });
 
-    $('#search-all-requests').on('change paste keyup input propertychange', function () {
-        $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
-    })
+  $("#search-all-requests").on(
+    "change paste keyup input propertychange",
+    function () {
+      $.fn.dataTable.tables({ api: true }).search($(this).val()).draw();
+    }
+  );
 </script>
-
-<script src="http://analytics.tsl.ac.uk/client.js"></script>
