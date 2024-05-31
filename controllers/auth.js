@@ -36,6 +36,7 @@ Auth.signInPost = (req, res, next) => {
             if (info && info.message) {
                 message += `, ${info.message}`;
             }
+		console.log(message);
             return renderError(message, res);
         }
         req.logIn(user, err => {

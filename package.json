@@ -16,8 +16,10 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "fs-extra": "^8.1.0",
+    "ldapjs": "latest",
     "less": "^3.10.3",
     "less-middleware": "^3.1.0",
+    "mime": "2.4.4",
     "moment": "^2.24.0",
     "nodemailer": "^2.4.2",
     "nodemailer-smtp-transport": "^2.4.1",
@@ -26,9 +28,8 @@
     "session-rethinkdb": "^2.0.1",
     "sharp": "^0.23.1",
     "socket.io": "^2.3.0",
-    "thinky": "^2.3.9",
     "taxlookup": "^2.7.0",
-    "ldapjs": "latest"
+    "thinky": "^2.3.9"
   },
   "devDependencies": {
     "babel": "^6.23.0",

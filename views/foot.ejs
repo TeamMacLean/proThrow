@@ -17,7 +17,7 @@
 
 <script>
     $('.data-table').DataTable({"dom":"lrtip", "columnDefs":[
-		{"targets":[6], "visible":false}
+		{"targets":[6], "visible":false, "searchable":true}
 		]
 	});
 
@@ -25,3 +25,5 @@
         $.fn.dataTable.tables({api: true}).search($(this).val()).draw();
     })
 </script>
+
+<script src="http://analytics.tsl.ac.uk/client.js"></script>
