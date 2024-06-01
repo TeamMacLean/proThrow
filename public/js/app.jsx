@@ -7,7 +7,8 @@ import { listen } from "delivery/lib/delivery.server";
 import jqueryReact from "jquery";
 import {} from "popper.js";
 import {} from "bootstrap/js/src/tooltip";
-import Select from "react-select";
+import AsyncSelect from "react-select/async";
+import axios from "axios";
 
 const supportedFileTypes = global.supportedFileTypes;
 
@@ -219,6 +220,7 @@ class App extends React.Component {
     this.removeConstruct = this.removeConstruct.bind(this);
     this.removeSample = this.removeSample.bind(this);
     this.removeSupportImage = this.removeSupportImage.bind(this);
+    this.getSpecies = this.getSpecies.bind(this);
   }
 
   componentDidMount() {
@@ -292,27 +294,43 @@ class App extends React.Component {
     });
   }
 
-  getSpecies(input) {
+  getSpecies(input, callback) {
     if (!input) {
-      return Promise.resolve({ options: [] });
-    } else {
-      return new Promise((good, bad) => {
-        jqueryReact
-          .get("/taxlookup/" + encodeURIComponent(input))
-          .done(function (data) {
-            return good(data);
-          })
-          .fail(function () {
-            good({ options: [] });
-          });
-      });
+      //console.error("No Species");
+      callback([]);
+      return;
     }
+
+    axios
+      .get("/taxlookup/" + encodeURIComponent(input))
+      .then((response) => {
+        const foundOptions =
+          response &&
+          response.data &&
+          response.data.options &&
+          response.data.options.length &&
+          response.data.options;
+
+        if (!foundOptions) {
+          //console.log("no species fetched");
+          return callback([]);
+        }
+
+        const mappedFoundOptions = foundOptions.map((item) => ({
+          label: item.label,
+          value: item.value,
+        }));
+
+        return callback(mappedFoundOptions);
+      })
+      .catch(() => {
+        console.error("Error fetching Species");
+        return callback([]);
+      });
   }
 
   render() {
     const self = this;
-
-    console.log("ok darling", window);
 
     return (
       <div>
@@ -378,25 +396,19 @@ class App extends React.Component {
                             title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"
                           />
                         </label>
-                        <select>
-                          <option>Dummy Value</option>
-                        </select>
-                        {/* <Select.Async
+                        <AsyncSelect
                           id="species"
                           required
-                          simpleValue
                           onBlurResetsInput={false}
                           onSelectResetsInput={false}
                           loadOptions={this.getSpecies}
                           name="species"
-                          value={{
-                            value: this.state.species,
-                            label: this.state.species,
-                          }}
+                          isClearable
+                          value={this.state.species}
                           onChange={(value) =>
                             this.setState({ species: value })
-                          } 
-                        />*/}
+                          }
+                        />
                       </div>
                       <div className="form-group">
                         <label>
@@ -409,10 +421,7 @@ class App extends React.Component {
                           />
                         </label>
 
-                        <select>
-                          <option>Dummy Value</option>
-                        </select>
-                        {/* <Select.Async
+                        <AsyncSelect
                           id="secondSpecies"
                           required
                           simpleValue
@@ -420,14 +429,12 @@ class App extends React.Component {
                           onSelectResetsInput={false}
                           loadOptions={this.getSpecies}
                           name="secondSpecies"
-                          value={{
-                            value: this.state.secondSpecies,
-                            label: this.state.secondSpecies,
-                          }}
+                          isClearable
+                          value={this.state.secondSpecies}
                           onChange={(value) =>
                             this.setState({ secondSpecies: value })
                           }
-                        />*/}
+                        />
                       </div>
                       <div className="form-group">
                         <label>Tissue</label>
@@ -442,16 +449,14 @@ class App extends React.Component {
                             window.existingRequest.tissue
                           }
                         >
-                          <option>Dummy Value</option>
-
-                          {/*<Option>seedlings</Option>
+                          <Option>seedlings</Option>
                           <Option>leaves</Option>
                           <Option>Ecoli culture (recombinant protein)</Option>
                           <Option>rosette</Option>
                           <Option>roots</Option>
                           <Option>cell culture</Option>
                           <Option>callus</Option>
-                          <Option>flower</Option>*/}
+                          <Option>flower</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -485,11 +490,9 @@ class App extends React.Component {
                               }
                               required
                             >
-                              <option>Dummy Value</option>
-
-                              {/*<Option>hour(s)</Option>
+                              <Option>hour(s)</Option>
                               <Option>day(s)</Option>
-                              <Option>week(s)</Option>*/}
+                              <Option>week(s)</Option>
                             </select>
                           </div>
                         </div>
@@ -507,14 +510,12 @@ class App extends React.Component {
                             window.existingRequest.growthConditions
                           }
                         >
-                          <option>Dummy Value</option>
-
-                          {/*<Option>plate</Option>
+                          <Option>plate</Option>
                           <Option>culture</Option>
                           <Option>liquid</Option>
                           <Option>6well</Option>
                           <Option>soil grown</Option>
-                          <Option>hydrophonics</Option>*/}
+                          <Option>hydrophonics</Option>
                         </select>
                       </div>
                     </fieldset>
@@ -550,13 +551,11 @@ class App extends React.Component {
                             window.existingRequest.analysisType
                           }
                         >
-                          <option>Dummy Value</option>
-
-                          {/**                        <Option>Discovery</Option>
-                        <Option>SRM</Option>
-                        <Option>PRM</Option>
-                        <Option>DIA</Option>
-                        <Option>Acurate Mass</Option> */}
+                          <Option>Discovery</Option>
+                          <Option>SRM</Option>
+                          <Option>PRM</Option>
+                          <Option>DIA</Option>
+                          <Option>Acurate Mass</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -580,14 +579,12 @@ class App extends React.Component {
                             window.existingRequest.secondaryAnalysisType
                           }
                         >
-                          <option>Dummy Value</option>
-
-                          {/**<Option>None</Option>
-                        <Option>Discovery</Option>
-                        <Option>SRM</Option>
-                        <Option>PRM</Option>
-                        <Option>DIA</Option>
-                        <Option>Acurate Mass</Option>*/}
+                          <Option>None</Option>
+                          <Option>Discovery</Option>
+                          <Option>SRM</Option>
+                          <Option>PRM</Option>
+                          <Option>DIA</Option>
+                          <Option>Acurate Mass</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -611,15 +608,13 @@ class App extends React.Component {
                             window.existingRequest.typeOfPTM
                           }
                         >
-                          <option>Dummy Value</option>
-                          {/**
-                        <Option>None</Option>
-                        <Option>Biotinylation</Option>
-                        <Option>Phosphorylation</Option>
-                        <Option>Acetylation</Option>
-                        <Option>Ubiquitination</Option>
-                        <Option>Glycosylation</Option>
-                        <Option>Poly ADP Ribosylation</Option>*/}
+                          <Option>None</Option>
+                          <Option>Biotinylation</Option>
+                          <Option>Phosphorylation</Option>
+                          <Option>Acetylation</Option>
+                          <Option>Ubiquitination</Option>
+                          <Option>Glycosylation</Option>
+                          <Option>Poly ADP Ribosylation</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -643,12 +638,10 @@ class App extends React.Component {
                           }
                           required
                         >
-                          <option>Dummy Value</option>
-                          {/**
-                        <Option>None</Option>
-                        <Option>Semi</Option>
-                        <Option>Relative</Option>
-                        <Option>Absolute</Option>*/}
+                          <Option>None</Option>
+                          <Option>Semi</Option>
+                          <Option>Relative</Option>
+                          <Option>Absolute</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -672,11 +665,10 @@ class App extends React.Component {
                             window.existingRequest.typeOfLabeling
                           }
                         >
-                          <option>Dummy Value</option>
-                          {/**<Option>None</Option>
-                        <Option>Label-free</Option>
-                        <Option>Post-extraction</Option>
-                        <Option>Metabolic</Option>*/}
+                          <Option>None</Option>
+                          <Option>Label-free</Option>
+                          <Option>Post-extraction</Option>
+                          <Option>Metabolic</Option>
                         </select>
                       </div>
                       <div className="form-group">
@@ -700,13 +692,12 @@ class App extends React.Component {
                             window.existingRequest.labelUsed
                           }
                         >
-                          <option>Dummy Value</option>
-                          {/**<Option>None</Option>
-                        <Option>TMT0</Option>
-                        <Option>TMT6</Option>
-                        <Option>TMT10</Option>
-                        <Option>iTRAQ</Option>
-                        <Option>15N</Option>*/}
+                          <Option>None</Option>
+                          <Option>TMT0</Option>
+                          <Option>TMT6</Option>
+                          <Option>TMT10</Option>
+                          <Option>iTRAQ</Option>
+                          <Option>15N</Option>
                         </select>
                       </div>
                     </fieldset>
@@ -741,13 +732,12 @@ class App extends React.Component {
                           }
                           required
                         >
-                          <option>Dummy Value</option>
-                          {/**<Option>crude extract</Option>
-                        <Option>microsomal</Option>
-                        <Option>plasma membrane</Option>
-                        <Option>IP</Option>
-                        <Option>HPLC purified</Option>
-                        <Option>FPLC purified</Option>*/}
+                          <Option>crude extract</Option>
+                          <Option>microsomal</Option>
+                          <Option>plasma membrane</Option>
+                          <Option>IP</Option>
+                          <Option>HPLC purified</Option>
+                          <Option>FPLC purified</Option>
                         </select>
                       </div>
 
@@ -764,10 +754,9 @@ class App extends React.Component {
                             window.existingRequest.digestion
                           }
                         >
-                          <option>Dummy Value</option>
-                          {/**<Option>in gel</Option>
-                        <Option>on bead</Option>
-                        <Option>in solution</Option>*/}
+                          <Option>in gel</Option>
+                          <Option>on bead</Option>
+                          <Option>in solution</Option>
                         </select>
                       </div>
 
@@ -792,11 +781,11 @@ class App extends React.Component {
                             window.existingRequest.enzyme
                           }
                         >
-                          {/**<Option>Trypsin</Option>
-                        <Option>AspN</Option>
-                        <Option>Trypsin AspN</Option>
-                        <Option>LysC</Option>
-                        <Option>Trypsin LysC</Option>*/}
+                          <Option>Trypsin</Option>
+                          <Option>AspN</Option>
+                          <Option>Trypsin AspN</Option>
+                          <Option>LysC</Option>
+                          <Option>Trypsin LysC</Option>*
                         </select>
                       </div>
                     </fieldset>
