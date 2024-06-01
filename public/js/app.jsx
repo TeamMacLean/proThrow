@@ -302,7 +302,7 @@ class App extends React.Component {
     }
 
     axios
-      .get("/taxlookup/" + encodeURIComponent(input))
+      .get("/taxlookup/" + encodeURIComponent(input), { timeout: 5000 })
       .then((response) => {
         const foundOptions =
           response &&
