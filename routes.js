@@ -7,7 +7,7 @@ const index = require("./controllers/index");
 const Auth = require("./controllers/auth");
 const Users = require("./controllers/users");
 const Requests = require("./controllers/requests");
-const Tax = require("taxlookup");
+const Tax = require("./lib/taxLookup");
 
 const config = require("./config");
 
@@ -72,7 +72,7 @@ router
 router.route("/taxlookup/:input").get(function (req, res, next) {
   const input = req.params.input;
 
-  Tax.search(input, config.NCBIAPIKey)
+  Tax.search(input)
     // taxlookup still works 1-6-24
     //Tax.search("human", config.NCBIAPIKey)
     .then((mainResults) => {
@@ -96,7 +96,7 @@ router.route("/taxlookup/:input").get(function (req, res, next) {
         //console.log("primary species search went well!: " + mainResults);
         return res.json({ options: [{ value: input, label: input }] });
       } else {
-        Tax.spell(input, config.NCBIAPIKey)
+        Tax.spell(input)
           .then((alternateResults) => {
             const isEmptyAlternativeSpeciesSearch =
               !alternateResults ||

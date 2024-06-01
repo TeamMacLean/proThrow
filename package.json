@@ -32,7 +32,8 @@
     "sharp": "^0.23.4",
     "socket.io": "^2.3.0",
     "taxlookup": "^2.7.0",
-    "thinky": "^2.3.9"
+    "thinky": "^2.3.9",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/react-select": "^5.0.1",
