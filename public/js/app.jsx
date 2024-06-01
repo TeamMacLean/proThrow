@@ -9,6 +9,9 @@ import {} from "popper.js";
 import {} from "bootstrap/js/src/tooltip";
 import AsyncSelect from "react-select/async";
 import axios from "axios";
+import config from "./../../config";
+
+const api_key = config.NCBIAPIKey || null;
 
 const supportedFileTypes = global.supportedFileTypes;
 
@@ -303,7 +306,7 @@ class App extends React.Component {
 
     const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmode=json&db=taxonomy&term=${encodeURIComponent(
       input
-    )}&api_key=204221768a00ab90c8e5c67254021e24fa08`;
+    )}&api_key=${api_key}`;
 
     axios
       .get(url, {
@@ -313,26 +316,20 @@ class App extends React.Component {
         },
         timeout: 5000,
       })
-
-      .then((response) => {
+      .then((unformattedResponse) => {
         const foundOptions =
-          response &&
-          response.data &&
-          response.data.options &&
-          response.data.options.length &&
-          response.data.options;
-
+          unformattedResponse &&
+          unformattedResponse.data &&
+          unformattedResponse.data.esearchresult &&
+          unformattedResponse.data.esearchresult.idlist &&
+          unformattedResponse.data.esearchresult.idlist.length > 0;
+        //&& unformattedResponse.data.esearchresult.idlist
         if (!foundOptions) {
           //console.log("no species fetched");
           return callback([]);
         }
 
-        const mappedFoundOptions = foundOptions.map((item) => ({
-          label: item.label,
-          value: item.value,
-        }));
-
-        return callback(mappedFoundOptions);
+        return callback([{ label: input, value: input }]);
       })
       .catch(() => {
         console.error("Error fetching Species");
