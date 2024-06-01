@@ -301,8 +301,19 @@ class App extends React.Component {
       return;
     }
 
+    const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmode=json&db=taxonomy&term=${encodeURIComponent(
+      input
+    )}&api_key=204221768a00ab90c8e5c67254021e24fa08`;
+
     axios
-      .get("/taxlookup/" + encodeURIComponent(input), { timeout: 5000 })
+      .get(url, {
+        proxy: {
+          host: "swproxy.nbi.ac.uk",
+          port: 8080,
+        },
+        timeout: 5000,
+      })
+
       .then((response) => {
         const foundOptions =
           response &&
