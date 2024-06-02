@@ -1,15 +1,17 @@
 import "promise-polyfill/src/polyfill";
-import React from "react";
+import React, { Component, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import dragula from "dragula";
 import "dragula/dist/dragula.css";
-import { listen } from "delivery/lib/delivery.server";
-import jqueryReact from "jquery";
-import {} from "popper.js";
-import {} from "bootstrap/js/src/tooltip";
+import { listen } from "delivery/lib/delivery.server"; // Use delivery.client for client-side code
+import $ from "jquery"; // Import jQuery properly
+import "popper.js"; // Import Popper.js properly
+import "bootstrap/js/dist/tooltip"; // Correct Bootstrap tooltip import
 import AsyncSelect from "react-select/async";
 import axios from "axios";
 import config from "./../../config";
+import Dropzone from "react-dropzone";
+import Resizer from "react-image-file-resizer";
 
 const api_key = config.NCBIAPIKey || null;
 
@@ -37,7 +39,7 @@ function guid() {
   );
 }
 
-jqueryReact(function () {
+$(function () {
   initDrag();
   initToolTips();
 });
@@ -51,17 +53,85 @@ function initDrag() {
 }
 
 function initToolTips() {
-  jqueryReact('[data-toggle="tooltip"]').tooltip();
+  $('[data-toggle="tooltip"]').tooltip();
 }
 
-class Option extends React.Component {
+class Option extends Component {
   render() {
     var text = this.props.children;
     return <option value={text}>{text}</option>;
   }
 }
 
-class Construct extends React.Component {
+const ImageUploadForm = ({ onImagesChange }) => {
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    onImagesChange(images);
+  }, [images]);
+
+  const handleDrop = (acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      Resizer.imageFileResizer(
+        file,
+        300,
+        300,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          setImages((prevImages) => [...prevImages, { file, preview: uri }]);
+        },
+        "base64"
+      );
+    });
+  };
+
+  const removeImage = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const dropzoneStyle = {
+    border: "2px dashed #007bff",
+    padding: "20px",
+    textAlign: "center",
+    cursor: "pointer",
+  };
+
+  return (
+    <div>
+      <Dropzone
+        onDrop={handleDrop}
+        accept={{
+          "image/png": [".png", ".PNG"],
+          "image/jpeg": [".jpg", ".JPG", ".jpeg", ".JPEG"],
+          "image/gif": [".gif", ".GIF"],
+        }}
+        multiple
+      >
+        {({ getRootProps, getInputProps }) => (
+          <div {...getRootProps()} style={dropzoneStyle}>
+            <input {...getInputProps()} />
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          </div>
+        )}
+      </Dropzone>
+      <div>
+        {images.map((image, index) => (
+          <div key={index} style={{ display: "inline-block", margin: "10px" }}>
+            <img
+              src={image.preview}
+              alt={`preview ${index}`}
+              style={{ width: "100px", height: "100px" }}
+            />
+            <button onClick={() => removeImage(index)}>Remove</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+class Construct extends Component {
   render() {
     var self = this;
     return (
@@ -138,7 +208,7 @@ class Construct extends React.Component {
   }
 }
 
-class Sample extends React.Component {
+class Sample extends Component {
   render() {
     var self = this;
     return (
@@ -205,7 +275,7 @@ class Sample extends React.Component {
   }
 }
 
-class App extends React.Component {
+class App extends Component {
   constructor() {
     super();
     this.state = window.existingRequest
@@ -222,15 +292,15 @@ class App extends React.Component {
     this.addSample = this.addSample.bind(this);
     this.removeConstruct = this.removeConstruct.bind(this);
     this.removeSample = this.removeSample.bind(this);
-    this.removeSupportImage = this.removeSupportImage.bind(this);
     this.getSpecies = this.getSpecies.bind(this);
+    this.handleImagesChange = this.handleImagesChange.bind(this);
   }
 
   componentDidMount() {
-    jqueryReact("#page-loader").fadeOut("slow", function () {
-      jqueryReact(this).remove();
+    $("#page-loader").fadeOut("slow", function () {
+      $(this).remove();
     });
-    this.initSocketUpload();
+    // this.initSocketUpload();
   }
 
   addConstruct() {
@@ -261,40 +331,8 @@ class App extends React.Component {
     this.setState({ samples: newSamples });
   }
 
-  removeSupportImage(index) {
-    const replacement = this.state.supportingImages.slice();
-    replacement.splice(index, 1);
-    this.setState({ supportingImages: replacement });
-  }
-
-  initSocketUpload() {
-    const self = this;
-
-    jqueryReact(function () {
-      const socket = io(window.location.host);
-      socket.on("connect", function () {
-        const delivery = listen(socket);
-
-        delivery.on("delivery.connect", function (delivery) {
-          jqueryReact("input[type=file]").on("change", function (evt) {
-            const file = jqueryReact(this)[0].files[0];
-            delivery.send(file);
-            evt.preventDefault();
-          });
-        });
-
-        delivery.on("send.success", function (fileUID) {
-          console.log("file was successfully sent.");
-        });
-
-        socket.on("upload.complete", function (obj) {
-          self.setState({
-            supportingImages: self.state.supportingImages.concat([obj]),
-          });
-          jqueryReact("input[type=file]").val("");
-        });
-      });
-    });
+  handleImagesChange(images) {
+    this.setState({ supportingImages: images });
   }
 
   getSpecies(input, callback) {
@@ -861,80 +899,27 @@ class App extends React.Component {
                       />
                     </div>
 
-                    <div className="form-group">
-                      <label>
-                        Supporting images{" "}
-                        <span
-                          data-icon="&#x74;"
-                          className="tip far fa-question-circle"
-                          data-toggle="tooltip"
-                          title="Please only use images in .png, .jpg, .jpeg or .gif format "
-                        />
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        id="imageUpload"
-                        accept={supportedFileTypes}
-                        name="imageUpload"
-                      />
-                    </div>
-
-                    <div id="supportingImages" name="supportingImages">
-                      {self.state.supportingImages.map(function (object, i) {
-                        const removeImage = self.removeSupportImage.bind(
-                          null,
-                          i
-                        );
-                        return (
-                          <div className="row" key={i}>
-                            <div className="col-sm-12">
-                              <div className="tile">
-                                <img
-                                  src={object.preview || object.url}
-                                  className="img-fluid center-block"
-                                />
-                                <br />
-                                <span className="removeImage" />
-                                <input
-                                  type="hidden"
-                                  name="imageName[]"
-                                  defaultValue={object.name}
-                                />
-                                <input
-                                  type="hidden"
-                                  name="imagePath[]"
-                                  defaultValue={object.preview || object.url}
-                                />
-                                <span className="imageName">{object.name}</span>
-                                <span
-                                  className="right clickable far fa-trash-alt"
-                                  onClick={removeImage}
-                                />
-                                <hr />
-
-                                <input
-                                  type="hidden"
-                                  defaultValue={object.uid}
-                                  name="image[]"
-                                />
-
-                                <div className="form-group">
-                                  <label>Supporting image description</label>
-                                  <input
-                                    className="form-control"
-                                    type="text"
-                                    id="imageDescription"
-                                    name="imageDescription[]"
-                                    defaultValue={object.description || ""}
-                                    required
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
+                    <div>
+                      <label>Supporting Images:</label>
+                      <div
+                        style={{
+                          border: "2px dashed #007bff",
+                          padding: "20px",
+                          textAlign: "center",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <i>
+                          Sorry, file upload is temporarily disabled by the
+                          system administrator. It will probably be back before:
+                          Wednesday 6th June 2024. Meanwhile, you can email
+                          supporting images to george.deeks@tsl.ac.uk who will
+                          add them to your form after you have submitted it.
+                        </i>
+                      </div>
+                      {/* <ImageUploadForm
+                        onImagesChange={this.handleImagesChange}
+                      /> */}
                     </div>
                   </fieldset>
                 </div>
