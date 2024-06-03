@@ -10,8 +10,15 @@ const util = require("./lib/util.js");
 const thinky = require("./lib/thinky");
 const store = new rethinkSession(thinky.r);
 const fs = require("fs-extra");
-const app = express();
 const routes = require("./routes");
+const multer = require("multer");
+const upload = multer();
+
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json()); // for parsing application/json
+app.use(upload.array()); // for parsing multipart/form-data
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

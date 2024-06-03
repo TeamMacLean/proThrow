@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 
 const Util = require("./lib/util");
 const admin = require("./controllers/admin");
@@ -30,11 +31,13 @@ function isAdmin(req, res, next) {
 
 router.route("/").get(index.index);
 
+const upload = multer();
+
 router
   .route("/new")
   .all(isAuthenticated)
   .get(Requests.new)
-  .post(Requests.newPost);
+  .post(upload.none(), Requests.newPost);
 
 //REQUEST
 
@@ -58,22 +61,11 @@ router
   .all(isAdmin)
   .get(Requests.delete);
 
-// router.route('/request/:id/toggle')
-//     .all(isAuthenticated)
-//     .all(isAdmin)
-//     .get(admin.toggle);
-
-// router.route('/request/:id/addnote')
-//     .all(isAuthenticated)
-//     .all(isAdmin)
-//     .post(admin.addNote);
-
-//TAXLOOKUP
 router.route("/taxlookup/:input").get(function (req, res, next) {
   const input = req.params.input;
 
+  // taxlookup still works 1-6-24 but rewrote in single place it is actually used to overcome proxy
   Tax.search(input)
-    // taxlookup still works 1-6-24
     //Tax.search("human", config.NCBIAPIKey)
     .then((mainResults) => {
       //console.log("mainRessies", mainResults);
@@ -84,6 +76,7 @@ router.route("/taxlookup/:input").get(function (req, res, next) {
         (mainResults.length === 1 && mainResults[0] == "");
 
       if (!isEmptyMainSpeciesSearch) {
+        // test opposite case sometimes:
         // NB change to !!isEmptyMainSpeciesSearch
         // console.log("temp override MAIN speices results to truthy");
         // return res.json({
