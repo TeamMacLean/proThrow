@@ -11,3 +11,4 @@ install_sharp_macOS.sh
 package-lock.json
 public/js/app.js
 .DS_Store
+uploads_test
