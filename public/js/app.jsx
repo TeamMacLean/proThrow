@@ -63,8 +63,8 @@ class OptionWithChildAsValue extends Component {
   }
 }
 
-const ImageUploadForm = ({ onImagesChange }) => {
-  const [images, setImages] = useState([]);
+const ImageUploadForm = ({ onImagesChange, initialImages }) => {
+  const [images, setImages] = useState(initialImages);
 
   useEffect(() => {
     onImagesChange(images);
@@ -80,11 +80,22 @@ const ImageUploadForm = ({ onImagesChange }) => {
         100,
         0,
         (uri) => {
-          setImages((prevImages) => [...prevImages, { file, preview: uri }]);
+          setImages((prevImages) => [
+            ...prevImages,
+            { file, preview: uri, description: "" },
+          ]);
         },
         "base64"
       );
     });
+  };
+
+  const handleDescriptionChange = (index, description) => {
+    setImages((prevImages) =>
+      prevImages.map((image, i) =>
+        i === index ? { ...image, description } : image
+      )
+    );
   };
 
   const removeImage = (index) => {
@@ -96,6 +107,18 @@ const ImageUploadForm = ({ onImagesChange }) => {
     padding: "20px",
     textAlign: "center",
     cursor: "pointer",
+  };
+
+  const imageContainerStyle = {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "10px",
+  };
+
+  const descriptionInputStyle = {
+    width: "100%",
+    maxWidth: "100%",
+    marginTop: "5px",
   };
 
   return (
@@ -118,19 +141,37 @@ const ImageUploadForm = ({ onImagesChange }) => {
       </Dropzone>
       <div>
         {images.map((image, index) => (
-          <div key={index} style={{ display: "inline-block", margin: "10px" }}>
+          <div key={index} style={imageContainerStyle}>
             <img
               src={image.preview}
               alt={`preview ${index}`}
-              style={{ width: "100px", height: "100px" }}
+              style={{ width: "100px", height: "100px", marginRight: "10px" }}
+              className="img-thumbnail"
             />
-            <button onClick={() => removeImage(index)}>Remove</button>
+            <div style={{ flexGrow: 1 }}>
+              <button
+                className="btn btn-outline-danger btn-sm"
+                onClick={() => removeImage(index)}
+              >
+                Remove
+              </button>
+              <input
+                type="text"
+                className="form-control mt-2"
+                placeholder="Description"
+                maxLength="100"
+                value={image.description}
+                onChange={(e) => handleDescriptionChange(index, e.target.value)}
+                style={descriptionInputStyle}
+              />
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
 };
+
 class Construct extends Component {
   render() {
     var self = this;
@@ -415,12 +456,11 @@ const MyForm = () => {
 
     state.supportingImages.forEach((supportingImage) => {
       if (supportingImage.file.name) {
-        console.log("addy man!", supportingImage.file);
         hasFiles = true;
-        formData.append(`image[]`, supportingImage.file);
+        //formData.append(`image[]`, supportingImage.file); // TEMP REMOVE
         formData.append(
           `imageDescription[]`,
-          supportingImage.file.description || ""
+          supportingImage.description || ""
         );
         formData.append(`imageName[]`, supportingImage.file.name);
         formData.append(`imagePath[]`, supportingImage.file.path || "");
@@ -456,25 +496,27 @@ const MyForm = () => {
       formData.append("requestID", window.existingRequest.id);
     }
 
-    const axiosConfig = {};
-    hasFiles = false; // TEMP
-    if (hasFiles) {
-      axiosConfig.headers = {
-        "Content-Type": "multipart/form-data",
-      };
-    }
+    // not needed
+    // const axiosConfig = {};
+    // if (hasFiles) {
+    //   axiosConfig.headers = {
+    //     "Content-Type": "multipart/form-data",
+    //   };
+    // }
 
-    let formObject = {};
-    formData.forEach((value, key) => {
-      formObject[key] = value;
-    });
-    console.log("formObj", formObject);
-    // const sendToBackend = hasFiles ? formData : formObject;
+    // testing block
+    // let formObject = {};
+    // formData.forEach((value, key) => {
+    //   formObject[key] = value;
+    // });
+    // console.log("formObj", formObject);
 
     try {
-      const response = await axios.post("/new", formData, axiosConfig);
+      const response = await axios.post("/new", formData, {
+        "Content-Type": "multipart/form-data",
+      });
 
-      console.log("Success:", response.data);
+      console.log("Backend received:", response.data); // TEMP FOR TESTING
     } catch (error) {
       console.error("Error uploading form:", error);
     }
@@ -525,7 +567,7 @@ const MyForm = () => {
             )}
 
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-12">
               <div className="group">
                 <div className="container">
                   <span className="badge" />
@@ -617,7 +659,7 @@ const MyForm = () => {
                       <label>Tissue age</label>
 
                       <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-12">
                           <input
                             className="form-control"
                             type="number"
@@ -632,7 +674,7 @@ const MyForm = () => {
                             //required TEMP ADD BACK IN
                           />
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-12">
                           <select
                             className="form-control"
                             id="tissueAgeType"
@@ -1003,7 +1045,7 @@ const MyForm = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-12">
             <div className="group">
               <div className="container">
                 <span className="badge" />
@@ -1081,7 +1123,10 @@ const MyForm = () => {
                         them to your form after you have submitted it.
                       </i>
                     </div> */}
-                    <ImageUploadForm onImagesChange={handleImagesChange} />
+                    <ImageUploadForm
+                      onImagesChange={handleImagesChange}
+                      initialImages={state.supportingImages}
+                    />{" "}
                   </div>
                 </fieldset>
               </div>

@@ -42,9 +42,13 @@ requests.newPost = async (req, res) => {
     // probably not needed to transform but extra safe
     const reqBody = Object.assign({}, req.body);
 
-    console.log("BACKEND RESULT", reqBody);
+    //console.log("BACKEND RESULT", reqBody);
 
+    res.send(reqBody);
     return;
+
+    /////// BELOW NOT NEEDED YET //////////
+
     let request;
 
     if (req.body.requestID) {
