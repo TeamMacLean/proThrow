@@ -43,38 +43,38 @@ function initToolTips() {
   $('[data-toggle="tooltip"]').tooltip();
 }
 
-const checkFields = [
-  { name: "image[]" },
-  { name: "imageDescription[]" },
-  { name: "imageName[]" },
-  { name: "imagePath[]" },
-  { name: "sampleNumber[]" },
-  { name: "sampleDescription[]" },
-  { name: "sampleLabel[]" },
-  { name: "accession[]" },
-  { name: "sequenceInfo[]" },
-  { name: "dbEntry[]" },
-  { name: "janCode" },
-  { name: "requestID" },
-  { name: "species" },
-  { name: "secondSpecies" },
-  { name: "tissue" },
-  { name: "tissueAgeNum" },
-  { name: "tissueAgeType" },
-  { name: "growthConditions" },
-  { name: "analysisType" },
-  { name: "secondaryAnalysisType" },
-  { name: "typeOfPTM" },
-  { name: "quantitativeAnalysisRequired" },
-  { name: "typeOfLabeling" },
-  { name: "labelUsed" },
-  { name: "samplePrep" },
-  { name: "digestion" },
-  { name: "enzyme" },
-  { name: "projectDescription" },
-  { name: "hopedAnalysis" },
-  { name: "bufferComposition" },
-];
+// const checkFields = [
+//   "image[]",
+//   "imageDescription[]",
+//   "imageName[]",
+//   "imagePath[]",
+//   "sampleNumber[]",
+//   "sampleDescription[]",
+//   "sampleLabel[]",
+//   "accession[]",
+//   "sequenceInfo[]",
+//   "dbEntry[]",
+//   "janCode",
+//   "requestID",
+//   "species",
+//   "secondSpecies",
+//   "tissue",
+//   "tissueAgeNum",
+//   "tissueAgeType",
+//   "growthConditions",
+//   "analysisType",
+//   "secondaryAnalysisType",
+//   "typeOfPTM",
+//   "quantitativeAnalysisRequired",
+//   "typeOfLabeling",
+//   "labelUsed",
+//   "samplePrep",
+//   "digestion",
+//   "enzyme",
+//   "projectDescription",
+//   "hopedAnalysis",
+//   "bufferComposition",
+// ];
 
 const MyForm = () => {
   const initialState = window.existingRequest
@@ -181,16 +181,29 @@ const MyForm = () => {
 
     let hasFiles = false;
 
-    state.supportingImages.forEach((supportingImage) => {
+    // state.supportingImages.forEach((supportingImage) => {
+    //   if (supportingImage.file.name) {
+    //     hasFiles = true;
+    //     formData.append(`image[]`, supportingImage.file); // TEMP REMOVE
+    //     formData.append(
+    //       `imageDescription[]`,
+    //       supportingImage.description || ""
+    //     );
+    //     formData.append(`imageName[]`, supportingImage.file.name);
+    //     formData.append(`imagePath[]`, supportingImage.file.path || "");
+    //   }
+    // });
+
+    state.supportingImages.forEach((supportingImage, index) => {
       if (supportingImage.file.name) {
         hasFiles = true;
-        //formData.append(`image[]`, supportingImage.file); // TEMP REMOVE
+        formData.append(`image[${index}]`, supportingImage.file); // INCLUDED
         formData.append(
-          `imageDescription[]`,
+          `imageDescription[${index}]`,
           supportingImage.description || ""
         );
-        formData.append(`imageName[]`, supportingImage.file.name);
-        formData.append(`imagePath[]`, supportingImage.file.path || "");
+        formData.append(`imageName[${index}]`, supportingImage.file.name);
+        formData.append(`imagePath[${index}]`, supportingImage.file.path || "");
       }
     });
 

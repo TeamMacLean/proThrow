@@ -31,54 +31,13 @@ function isAdmin(req, res, next) {
 
 router.route("/").get(index.index);
 
-////////////////////////////////////////////////////////////////////////
-///// UPLOAD FILE SECTION ////////////////////////////////////////////////////
-
-const upload = multer();
-// router.route("/new").all(isAuthenticated).get(Requests.new).post(
-//   upload.fields([
-//     { name: "image[]" },
-//     { name: "imageDescription[]" },
-//     { name: "imageName[]" },
-//     { name: "imagePath[]" },
-//     { name: "sampleNumber[]" },
-//     { name: "sampleDescription[]" },
-//     { name: "sampleLabel[]" },
-//     { name: "accession[]" },
-//     { name: "sequenceInfo[]" },
-//     { name: "dbEntry[]" },
-//     { name: "janCode" },
-//     { name: "requestID" },
-//     { name: "species" },
-//     { name: "secondSpecies" },
-//     { name: "tissue" },
-//     { name: "tissueAgeNum" },
-//     { name: "tissueAgeType" },
-//     { name: "growthConditions" },
-//     { name: "analysisType" },
-//     { name: "secondaryAnalysisType" },
-//     { name: "typeOfPTM" },
-//     { name: "quantitativeAnalysisRequired" },
-//     { name: "typeOfLabeling" },
-//     { name: "labelUsed" },
-//     { name: "samplePrep" },
-//     { name: "digestion" },
-//     { name: "enzyme" },
-//     { name: "projectDescription" },
-//     { name: "hopedAnalysis" },
-//     { name: "bufferComposition" },
-//   ]),
-//   Requests.newPost
-// );
+const upload = multer({ limits: { fieldSize: 25 * 1024 * 1024 } });
 
 router
   .route("/new")
   .all(isAuthenticated)
   .get(Requests.new)
-  .post(Requests.newPost);
-
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
+  .post(upload.any(), Requests.newPost);
 
 router
   .route("/request/:id")

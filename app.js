@@ -11,22 +11,11 @@ const thinky = require("./lib/thinky");
 const store = new rethinkSession(thinky.r);
 const fs = require("fs-extra");
 const routes = require("./routes");
-const multer = require("multer");
 
 const app = express();
 
-////////////////////////////////////////////////////////////////////////
-// UPLOAD FILE SECTION ////////////////////////////////////////////////////
-
-const upload = multer({ limits: { fieldSize: 25 * 1024 * 1024 } }); // Adjust limit as needed
-
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
-
-app.use(upload.array()); // for parsing multipart/form-data
-
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

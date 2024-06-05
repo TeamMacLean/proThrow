@@ -40,11 +40,12 @@ requests.newPost = async (req, res) => {
     const username = req.user.username;
 
     // probably not needed to transform but extra safe
-    const reqBody = Object.assign({}, req.body);
+    // const reqBody = Object.assign({}, req.body);
 
-    //console.log("BACKEND RESULT", reqBody);
+    console.log("BACKEND RESULT", req.body);
+    console.log("FILES", req.files);
 
-    res.send(reqBody);
+    res.send("hi");
     return;
 
     /////// BELOW NOT NEEDED YET //////////
