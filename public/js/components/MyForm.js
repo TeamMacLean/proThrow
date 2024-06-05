@@ -252,7 +252,8 @@ const MyForm = () => {
               defaultChecked={
                 window && window.existingRequest && window.existingRequest.id
               }
-              //required TEMP PUT BACK
+              required
+              //required COMMENT OUT FOR TESTING
             />{" "}
             <span>I have completed the above</span>
           </label>
@@ -390,7 +391,8 @@ const MyForm = () => {
                               window.existingRequest &&
                               window.existingRequest.tissueAgeNum
                             }
-                            //required TEMP ADD BACK IN
+                            required
+                            //required COMMENT OUT FOR TESTING
                           />
                         </div>
                         <div className="col-md-12">
