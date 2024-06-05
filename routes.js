@@ -31,15 +31,54 @@ function isAdmin(req, res, next) {
 
 router.route("/").get(index.index);
 
+////////////////////////////////////////////////////////////////////////
+///// UPLOAD FILE SECTION ////////////////////////////////////////////////////
+
 const upload = multer();
+// router.route("/new").all(isAuthenticated).get(Requests.new).post(
+//   upload.fields([
+//     { name: "image[]" },
+//     { name: "imageDescription[]" },
+//     { name: "imageName[]" },
+//     { name: "imagePath[]" },
+//     { name: "sampleNumber[]" },
+//     { name: "sampleDescription[]" },
+//     { name: "sampleLabel[]" },
+//     { name: "accession[]" },
+//     { name: "sequenceInfo[]" },
+//     { name: "dbEntry[]" },
+//     { name: "janCode" },
+//     { name: "requestID" },
+//     { name: "species" },
+//     { name: "secondSpecies" },
+//     { name: "tissue" },
+//     { name: "tissueAgeNum" },
+//     { name: "tissueAgeType" },
+//     { name: "growthConditions" },
+//     { name: "analysisType" },
+//     { name: "secondaryAnalysisType" },
+//     { name: "typeOfPTM" },
+//     { name: "quantitativeAnalysisRequired" },
+//     { name: "typeOfLabeling" },
+//     { name: "labelUsed" },
+//     { name: "samplePrep" },
+//     { name: "digestion" },
+//     { name: "enzyme" },
+//     { name: "projectDescription" },
+//     { name: "hopedAnalysis" },
+//     { name: "bufferComposition" },
+//   ]),
+//   Requests.newPost
+// );
 
 router
   .route("/new")
   .all(isAuthenticated)
   .get(Requests.new)
-  .post(upload.none(), Requests.newPost);
+  .post(Requests.newPost);
 
-//REQUEST
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 router
   .route("/request/:id")
@@ -61,6 +100,7 @@ router
   .all(isAdmin)
   .get(Requests.delete);
 
+/**
 router.route("/taxlookup/:input").get(function (req, res, next) {
   const input = req.params.input;
 
@@ -132,16 +172,11 @@ router.route("/taxlookup/:input").get(function (req, res, next) {
       return res.json({});
     });
 });
+*/
 
-//USER
 router.route("/user/:username").all(isAuthenticated).get(Users.show);
-//TODO
-
-//ADMIN
 
 router.route("/admin").all(isAuthenticated).all(isAdmin).get(admin.index);
-
-//AUTH
 
 router.route("/signin").get(Auth.signIn).post(Auth.signInPost);
 

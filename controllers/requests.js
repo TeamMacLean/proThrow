@@ -38,6 +38,13 @@ requests.new = (req, res, next) => res.render("requests/new");
 requests.newPost = async (req, res) => {
   try {
     const username = req.user.username;
+
+    // probably not needed to transform but extra safe
+    const reqBody = Object.assign({}, req.body);
+
+    console.log("BACKEND RESULT", reqBody);
+
+    return;
     let request;
 
     if (req.body.requestID) {

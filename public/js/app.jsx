@@ -275,6 +275,39 @@ class Sample extends Component {
   }
 }
 
+const checkFields = [
+  { name: "image[]" },
+  { name: "imageDescription[]" },
+  { name: "imageName[]" },
+  { name: "imagePath[]" },
+  { name: "sampleNumber[]" },
+  { name: "sampleDescription[]" },
+  { name: "sampleLabel[]" },
+  { name: "accession[]" },
+  { name: "sequenceInfo[]" },
+  { name: "dbEntry[]" },
+  { name: "janCode" },
+  { name: "requestID" },
+  { name: "species" },
+  { name: "secondSpecies" },
+  { name: "tissue" },
+  { name: "tissueAgeNum" },
+  { name: "tissueAgeType" },
+  { name: "growthConditions" },
+  { name: "analysisType" },
+  { name: "secondaryAnalysisType" },
+  { name: "typeOfPTM" },
+  { name: "quantitativeAnalysisRequired" },
+  { name: "typeOfLabeling" },
+  { name: "labelUsed" },
+  { name: "samplePrep" },
+  { name: "digestion" },
+  { name: "enzyme" },
+  { name: "projectDescription" },
+  { name: "hopedAnalysis" },
+  { name: "bufferComposition" },
+];
+
 const MyForm = () => {
   const initialState = window.existingRequest
     ? {
@@ -378,23 +411,36 @@ const MyForm = () => {
     const form = e.target;
     const formData = new FormData(form);
 
-    state.supportingImages.forEach((file, index) => {
-      formData.append(`image[]`, file);
-      formData.append(`imageDescription[]`, file.description || ""); // Assuming file has a description property
-      formData.append(`imageName[]`, file.name);
-      formData.append(`imagePath[]`, file.path || ""); // Assuming file has a path property
+    let hasFiles = false;
+
+    state.supportingImages.forEach((supportingImage) => {
+      if (supportingImage.file.name) {
+        console.log("addy man!", supportingImage.file);
+        hasFiles = true;
+        formData.append(`image[]`, supportingImage.file);
+        formData.append(
+          `imageDescription[]`,
+          supportingImage.file.description || ""
+        );
+        formData.append(`imageName[]`, supportingImage.file.name);
+        formData.append(`imagePath[]`, supportingImage.file.path || "");
+      }
     });
 
-    state.samples.forEach((sample, index) => {
-      formData.append(`sampleNumber[]`, sample.number || "");
-      formData.append(`sampleDescription[]`, sample.description || "");
-      formData.append(`sampleLabel[]`, sample.label || "");
+    state.samples.forEach((sample) => {
+      if (sample.number) {
+        formData.append(`sampleNumber[]`, sample.number || "");
+        formData.append(`sampleDescription[]`, sample.description || "");
+        formData.append(`sampleLabel[]`, sample.label || "");
+      }
     });
 
-    state.constructs.forEach((construct, index) => {
-      formData.append(`accession[]`, construct.accession || "");
-      formData.append(`sequenceInfo[]`, construct.sequenceInfo || "");
-      formData.append(`dbEntry[]`, construct.dbEntry || "");
+    state.constructs.forEach((construct) => {
+      if (construct.accession) {
+        formData.append(`accession[]`, construct.accession || "");
+        formData.append(`sequenceInfo[]`, construct.sequenceInfo || "");
+        formData.append(`dbEntry[]`, construct.dbEntry || "");
+      }
     });
 
     // Add non-form stuff to formData
@@ -410,12 +456,24 @@ const MyForm = () => {
       formData.append("requestID", window.existingRequest.id);
     }
 
+    const axiosConfig = {};
+    hasFiles = false; // TEMP
+    if (hasFiles) {
+      axiosConfig.headers = {
+        "Content-Type": "multipart/form-data",
+      };
+    }
+
+    let formObject = {};
+    formData.forEach((value, key) => {
+      formObject[key] = value;
+    });
+    console.log("formObj", formObject);
+    // const sendToBackend = hasFiles ? formData : formObject;
+
     try {
-      const response = await axios.post("/new", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post("/new", formData, axiosConfig);
+
       console.log("Success:", response.data);
     } catch (error) {
       console.error("Error uploading form:", error);
@@ -433,7 +491,7 @@ const MyForm = () => {
               defaultChecked={
                 window && window.existingRequest && window.existingRequest.id
               }
-              required
+              //required TEMP PUT BACK
             />{" "}
             <span>I have completed the above</span>
           </label>
@@ -571,7 +629,7 @@ const MyForm = () => {
                               window.existingRequest &&
                               window.existingRequest.tissueAgeNum
                             }
-                            required
+                            //required TEMP ADD BACK IN
                           />
                         </div>
                         <div className="col-md-6">

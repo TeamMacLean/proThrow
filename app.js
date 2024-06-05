@@ -12,21 +12,27 @@ const store = new rethinkSession(thinky.r);
 const fs = require("fs-extra");
 const routes = require("./routes");
 const multer = require("multer");
-const upload = multer();
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(bodyParser.json()); // for parsing application/json
+////////////////////////////////////////////////////////////////////////
+// UPLOAD FILE SECTION ////////////////////////////////////////////////////
+
+const upload = multer({ limits: { fieldSize: 25 * 1024 * 1024 } }); // Adjust limit as needed
+
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+app.use(bodyParser.json({ limit: "50mb" }));
+
 app.use(upload.array()); // for parsing multipart/form-data
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(require("less-middleware")(path.join(__dirname, "public")));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
