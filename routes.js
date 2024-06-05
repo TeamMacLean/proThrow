@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const path = require("path");
 
 const Util = require("./lib/util");
 const admin = require("./controllers/admin");
@@ -33,7 +34,15 @@ router.route("/").get(index.index);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "uploads")); // Change 'uploads' to your desired directory
+    let targetDir;
+    if (file.fieldname.startsWith("preview")) {
+      targetDir = config.supportingImagePreviewRoot;
+      console.log("found a preview!");
+    } /** else if (file.fieldname.startsWith("image")) */ else {
+      targetDir = config.supportingImageRoot;
+      console.log("found a root image!");
+    }
+    cb(null, path.join(__dirname, targetDir));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);

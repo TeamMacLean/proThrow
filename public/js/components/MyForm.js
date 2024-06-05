@@ -76,6 +76,22 @@ function initToolTips() {
 //   "bufferComposition",
 // ];
 
+// Helper function to convert base64 to Blob
+const base64ToBlob = (base64, contentType) => {
+  const byteCharacters = atob(base64.split(",")[1]);
+  const byteArrays = [];
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    const slice = byteCharacters.slice(offset, offset + 512);
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+  return new Blob(byteArrays, { type: contentType });
+};
+
 const MyForm = () => {
   const initialState = window.existingRequest
     ? {
@@ -197,7 +213,14 @@ const MyForm = () => {
     state.supportingImages.forEach((supportingImage, index) => {
       if (supportingImage.file.name) {
         hasFiles = true;
-        formData.append(`image[${index}]`, supportingImage.file); // INCLUDED
+        formData.append(`image[${index}]`, supportingImage.file);
+
+        // Convert base64 preview to Blob and append to FormData
+        const previewBlob = base64ToBlob(supportingImage.preview, "image/jpeg");
+        const originalName = supportingImage.file.name;
+        //supportingImage.file.name.replace(/\.[^/.]+$/, "") + "_preview.jpg";
+        formData.append(`preview[${index}]`, previewBlob, originalName);
+
         formData.append(
           `imageDescription[${index}]`,
           supportingImage.description || ""
