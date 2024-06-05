@@ -1,5 +1,6 @@
 import "promise-polyfill/src/polyfill";
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+
 import dragula from "dragula";
 import "dragula/dist/dragula.css";
 // import { listen } from "delivery/lib/delivery.server"; // Use delivery.client for client-side code
@@ -42,39 +43,6 @@ function initDrag() {
 function initToolTips() {
   $('[data-toggle="tooltip"]').tooltip();
 }
-
-// const checkFields = [
-//   "image[]",
-//   "imageDescription[]",
-//   "imageName[]",
-//   "imagePath[]",
-//   "sampleNumber[]",
-//   "sampleDescription[]",
-//   "sampleLabel[]",
-//   "accession[]",
-//   "sequenceInfo[]",
-//   "dbEntry[]",
-//   "janCode",
-//   "requestID",
-//   "species",
-//   "secondSpecies",
-//   "tissue",
-//   "tissueAgeNum",
-//   "tissueAgeType",
-//   "growthConditions",
-//   "analysisType",
-//   "secondaryAnalysisType",
-//   "typeOfPTM",
-//   "quantitativeAnalysisRequired",
-//   "typeOfLabeling",
-//   "labelUsed",
-//   "samplePrep",
-//   "digestion",
-//   "enzyme",
-//   "projectDescription",
-//   "hopedAnalysis",
-//   "bufferComposition",
-// ];
 
 // Helper function to convert base64 to Blob
 const base64ToBlob = (base64, contentType) => {
@@ -197,19 +165,6 @@ const MyForm = () => {
 
     let hasFiles = false;
 
-    // state.supportingImages.forEach((supportingImage) => {
-    //   if (supportingImage.file.name) {
-    //     hasFiles = true;
-    //     formData.append(`image[]`, supportingImage.file); // TEMP REMOVE
-    //     formData.append(
-    //       `imageDescription[]`,
-    //       supportingImage.description || ""
-    //     );
-    //     formData.append(`imageName[]`, supportingImage.file.name);
-    //     formData.append(`imagePath[]`, supportingImage.file.path || "");
-    //   }
-    // });
-
     state.supportingImages.forEach((supportingImage, index) => {
       if (supportingImage.file.name) {
         hasFiles = true;
@@ -222,27 +177,26 @@ const MyForm = () => {
         formData.append(`preview[${index}]`, previewBlob, originalName);
 
         formData.append(
-          `imageDescription[${index}]`,
+          `imageDescriptions[${index}]`,
           supportingImage.description || ""
         );
-        formData.append(`imageName[${index}]`, supportingImage.file.name);
-        formData.append(`imagePath[${index}]`, supportingImage.file.path || "");
+        formData.append(`imageNames[${index}]`, supportingImage.file.name);
       }
     });
 
     state.samples.forEach((sample) => {
       if (sample.number) {
-        formData.append(`sampleNumber[]`, sample.number || "");
-        formData.append(`sampleDescription[]`, sample.description || "");
-        formData.append(`sampleLabel[]`, sample.label || "");
+        formData.append(`sampleNumbers[]`, sample.number || "");
+        formData.append(`sampleDescriptions[]`, sample.description || "");
+        formData.append(`sampleLabels[]`, sample.label || "");
       }
     });
 
     state.constructs.forEach((construct) => {
       if (construct.accession) {
-        formData.append(`accession[]`, construct.accession || "");
-        formData.append(`sequenceInfo[]`, construct.sequenceInfo || "");
-        formData.append(`dbEntry[]`, construct.dbEntry || "");
+        formData.append(`accessions[]`, construct.accession || "");
+        formData.append(`sequenceInfos[]`, construct.sequenceInfo || "");
+        formData.append(`dbEntries[]`, construct.dbEntry || "");
       }
     });
 
@@ -279,7 +233,9 @@ const MyForm = () => {
         "Content-Type": "multipart/form-data",
       });
 
-      console.log("Backend received:", response.data); // TEMP FOR TESTING
+      // console.log("Backend received:", response.data); // TEMP FOR TESTING
+
+      window.location.href = response.data.redirectUrl;
     } catch (error) {
       console.error("Error uploading form:", error);
     }

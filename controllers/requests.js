@@ -10,172 +10,168 @@ const renderError = require("../lib/renderError");
 
 var requests = {};
 
-function fillFieldsFromForm(req, request) {
-  request.species = req.body.species;
-  request.secondSpecies = req.body.secondSpecies;
-  request.tissue = req.body.tissue;
-  request.tissueAgeNum = req.body.tissueAgeNum;
-  request.tissueAgeType = req.body.tissueAgeType;
-  request.growthConditions = req.body.growthConditions;
-  request.analysisType = req.body.analysisType;
-  request.secondaryAnalysisType = req.body.secondaryAnalysisType;
-  request.typeOfPTM = req.body.typeOfPTM;
-  request.quantitativeAnalysisRequired = req.body.quantitativeAnalysisRequired;
-  request.typeOfLabeling = req.body.typeOfLabeling;
-  request.labelUsed = req.body.labelUsed;
-  request.samplePrep = req.body.samplePrep;
-  request.digestion = req.body.digestion;
-  request.enzyme = req.body.enzyme;
-  request.projectDescription = req.body.projectDescription;
-  request.hopedAnalysis = req.body.hopedAnalysis;
-  request.bufferComposition = req.body.bufferComposition;
-
-  return request;
-}
-
 requests.new = (req, res, next) => res.render("requests/new");
 
 requests.newPost = async (req, res) => {
   try {
-    const username = req.user.username;
+    const { username } = req.user;
 
-    // probably not needed to transform but extra safe
-    // const reqBody = Object.assign({}, req.body);
+    // Initialise the request, default to empty
+    const {
+      species = "",
+      secondSpecies = "",
+      tissue = "",
+      tissueAgeNum = "",
+      tissueAgeType = "",
+      growthConditions = "",
+      analysisType = "",
+      secondaryAnalysisType = "",
+      typeOfPTM = "",
+      quantitativeAnalysisRequired = "",
+      typeOfLabeling = "",
+      labelUsed = "",
+      samplePrep = "",
+      digestion = "",
+      enzyme = "",
+      projectDescription = "",
+      hopedAnalysis = "",
+      bufferComposition = "",
+      imageDescriptions = [],
+      imageNames = [],
+      accessions = [],
+      sequenceInfos = [],
+      dbEntries = [],
+      sampleNumbers = [],
+      sampleLabels = [],
+      sampleDescriptions = [],
+    } = req.body;
 
-    console.log("BACKEND RESULT", req.body);
-    console.log("FILES", req.files);
-
-    res.send("hi");
-    return;
-
-    /////// BELOW NOT NEEDED YET //////////
+    // bug to fix: receiving array of 2 identical strings with target value
+    const requestID =
+      req.body.requestID && req.body.requestID.length > 0
+        ? req.body.requestID[0]
+        : null;
+    // another identical bug to fix: receiving array of 2 identical strings with target value
+    const janCode =
+      req.body.janCode && req.body.janCode.length > 0
+        ? req.body.janCode[0]
+        : null;
 
     let request;
 
-    if (req.body.requestID) {
-      request = await Request.findById(req.body.requestID);
+    if (requestID) {
+      request = await Request.get(requestID);
       await request.removeChildren();
-      request.janCode = req.body.janCode;
-      request = fillFieldsFromForm(req, request);
+      Object.assign(request, {
+        janCode,
+        species,
+        secondSpecies,
+        tissue,
+        tissueAgeNum,
+        tissueAgeType,
+        growthConditions,
+        analysisType,
+        secondaryAnalysisType,
+        typeOfPTM,
+        quantitativeAnalysisRequired,
+        typeOfLabeling,
+        labelUsed,
+        samplePrep,
+        digestion,
+        enzyme,
+        projectDescription,
+        hopedAnalysis,
+        bufferComposition,
+      });
       await request.save();
-      await processIt(request, false);
     } else {
-      const janCode = await Util.generateJanCode(
+      const newJanCode = await Util.generateJanCode(
         req.user.firstName,
         req.user.lastName,
         req.user.username
       );
       request = new Request({
         createdBy: username,
-        janCode: janCode,
+        janCode: newJanCode,
+        species,
+        secondSpecies,
+        tissue,
+        tissueAgeNum,
+        tissueAgeType,
+        growthConditions,
+        analysisType,
+        secondaryAnalysisType,
+        typeOfPTM,
+        quantitativeAnalysisRequired,
+        typeOfLabeling,
+        labelUsed,
+        samplePrep,
+        digestion,
+        enzyme,
+        projectDescription,
+        hopedAnalysis,
+        bufferComposition,
       });
-      request = fillFieldsFromForm(req, request);
       await request.save();
-      await processIt(request, true);
     }
 
-    async function processIt(savedRequest, isNew) {
-      const {
-        "image[]": bodyImages,
-        "imageDescription[]": bodyImageDescriptions,
-        "imageName[]": bodyImageName,
-        "imagePath[]": bodyImagePath,
-        "sampleNumber[]": bodySampleNumbers,
-        "sampleDescription[]": bodySampleDescriptions,
-        "sampleLabel[]": bodySampleLabels,
-        "accession[]": bodyConstructAccession,
-        "sequenceInfo[]": bodyConstructSequenceInfo,
-        "dbEntry[]": bodyConstructDBEntry,
-      } = req.body;
-
-      // Ensure all fields are arrays
-      const images = Array.isArray(bodyImages) ? bodyImages : [bodyImages];
-      const imageDescriptions = Array.isArray(bodyImageDescriptions)
-        ? bodyImageDescriptions
-        : [bodyImageDescriptions];
-      const imageNames = Array.isArray(bodyImageName)
-        ? bodyImageName
-        : [bodyImageName];
-      const imagePaths = Array.isArray(bodyImagePath)
-        ? bodyImagePath
-        : [bodyImagePath];
-      const sampleNumbers = Array.isArray(bodySampleNumbers)
-        ? bodySampleNumbers
-        : [bodySampleNumbers];
-      const sampleDescriptions = Array.isArray(bodySampleDescriptions)
-        ? bodySampleDescriptions
-        : [bodySampleDescriptions];
-      const sampleLabels = Array.isArray(bodySampleLabels)
-        ? bodySampleLabels
-        : [bodySampleLabels];
-      const constructAccessions = Array.isArray(bodyConstructAccession)
-        ? bodyConstructAccession
-        : [bodyConstructAccession];
-      const constructSequenceInfos = Array.isArray(bodyConstructSequenceInfo)
-        ? bodyConstructSequenceInfo
-        : [bodyConstructSequenceInfo];
-      const constructDbEntries = Array.isArray(bodyConstructDBEntry)
-        ? bodyConstructDBEntry
-        : [bodyConstructDBEntry];
-
-      // Process constructs
-      if (constructAccessions.length > 0) {
-        await Promise.all(
-          constructAccessions.map((accession, i) => {
-            const c = new Construct({
-              requestID: savedRequest.id,
-              accession,
-              sequenceInfo: constructSequenceInfos[i],
-              dbEntry: constructDbEntries[i],
-            });
-            return c.save();
-          })
-        ).catch(console.error);
-      }
-
-      // Process images
-      if (images.length > 0) {
-        await Promise.all(
-          images.map((img, i) => {
-            const image = new SampleImage({
-              path: imagePaths[i],
-              name: imageNames[i],
-              uid: img,
-              description: imageDescriptions[i],
-              requestID: savedRequest.id,
-            });
-            return image.save();
-          })
-        ).catch(console.error);
-      }
-
-      // Process samples
-      if (sampleNumbers.length > 0) {
-        await Promise.all(
-          sampleNumbers.map((num, i) => {
-            const sample = new SampleDescription({
-              requestID: savedRequest.id,
-              position: i,
-              sampleNumber: num,
-              sampleLabel: sampleLabels[i],
-              sampleDescription: sampleDescriptions[i],
-            });
-            return sample.save();
-          })
-        ).catch(console.error);
-      }
-
-      // Send email notification
-      if (isNew) {
-        Email.newRequest(savedRequest);
-      } else {
-        Email.updatedRequest(savedRequest);
-      }
-
-      return res.render("requests/newPost", { uuid: savedRequest.janCode });
+    // Process constructs
+    if (accessions.length) {
+      await Promise.all(
+        accessions.map((accession, i) =>
+          new Construct({
+            requestID: request.id,
+            accession,
+            sequenceInfo: sequenceInfos[i],
+            dbEntry: dbEntries[i],
+          }).save()
+        )
+      );
     }
+
+    // Process samples
+    if (sampleNumbers.length > 0) {
+      await Promise.all(
+        sampleNumbers.map((num, i) =>
+          new SampleDescription({
+            requestID: request.id,
+            position: i,
+            sampleNumber: num,
+            sampleLabel: sampleLabels[i],
+            sampleDescription: sampleDescriptions[i],
+          }).save()
+        )
+      );
+    }
+
+    // Process images
+    if (req.files.length && imageNames.length) {
+      await Promise.all(
+        imageNames.map((imageName, imageNameIndex) => {
+          const imageFile = req.files[imageNameIndex * 2];
+          return new SampleImage({
+            path: imageFile.path,
+            name: imageFile.originalname || imageName,
+            uid: imageFile.filename,
+            description: imageDescriptions[imageNameIndex],
+            requestID: request.id,
+          }).save();
+        })
+      );
+    }
+
+    // Send email notification
+    if (!requestID) {
+      Email.newRequest(request);
+    } else {
+      Email.updatedRequest(request);
+    }
+
+    console.log(`Redirecting to /user/${username}`);
+
+    res.status(200).json({ redirectUrl: `/user/${username}` });
   } catch (err) {
-    console.error(err); // Log the error for debugging
+    console.error(err);
     return renderError(err, res);
   }
 };

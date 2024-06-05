@@ -18,7 +18,7 @@ class Sample extends Component {
                       min="0"
                       max="150"
                       id="sampleNumber"
-                      name="sampleNumber[]"
+                      name="sampleNumbers[]"
                       defaultValue={self.props.data.sampleNumber || ""}
                       required
                     />
@@ -31,7 +31,7 @@ class Sample extends Component {
                       className="form-control"
                       type="text"
                       id="sampleLabel"
-                      name="sampleLabel[]"
+                      name="sampleLabels[]"
                       defaultValue={self.props.data.sampleLabel || ""}
                       required
                     />
@@ -44,7 +44,7 @@ class Sample extends Component {
                       className="form-control"
                       type="text"
                       id="sampleDescription"
-                      name="sampleDescription[]"
+                      name="sampleDescriptions[]"
                       defaultValue={self.props.data.sampleDescription || ""}
                       required
                     />

@@ -18,7 +18,7 @@
                         <label for="assign-select">Assigned to:</label>
                         <select class="form-control" id="assign-select">
                             <option value="unassigned">unassigned</option>
-                            <% admins.map(function(admin){ %>
+                            <% admins && admins.map(function(admin){ %>
                                 <option value="<%- admin %>" <% if(admin == request.assignedTo){ %>selected
                                         <% } %>
                                 ><%- admin %></option>
@@ -215,7 +215,7 @@
                     </thead>
                     <tbody>
 
-                    <% request.constructs.map(function(construct){ %>
+                    <% request.constructs && request.constructs.length && request.constructs.map(function(construct){ %>
                         <tr>
                             <td><%- construct.accession %></td>
                             <td><%- construct.sequenceInfo %></td>
@@ -233,12 +233,15 @@
         <h3>Supporting Images</h3>
         <div class="row">
 
-            <% request.supportingImages.map(function(img){ %>
-                <div class="col-md-6">
-                    <img class="preview-img" src="<%- img.getURL() %>">
-                    <br>
-                    <label><%- img.description %></label>
-                </div>
+            <% request.supportingImages && request.supportingImages.length && request.supportingImages.map(function(img){ %>
+                <!-- <div class="row"> -->
+                    <div class="col-md-6">
+                        <hr />
+                        <label><%- img.description || 'No description provided' %></label>
+                        <img class="preview-img" src="<%- img.getURL() %>">
+                        <br />
+                    </div>
+                <!-- </div> -->
             <% }); %>
         </div>
     </div>
@@ -255,7 +258,7 @@
             </tr>
             </thead>
             <tbody>
-            <% request.samples.sort(function (a, b) {
+            <% request.samples && request.samples.length && request.samples.sort(function (a, b) {
                 return a.position - b.position;
             }).map(function(sd){ %>
 
@@ -274,7 +277,7 @@
         <h3>Notes</h3>
 
         <ul id="notes">
-            <% request.notes.map(function(note){ %>
+            <% request.notes && request.notes.length && request.notes.map(function(note){ %>
                 <li><%- note %></li>
             <% }); %>
 
@@ -291,7 +294,7 @@
             <h3>Linked Requests</h3>
 
             <ul id="linked-requests">
-                <% if (request.linkedRequests){ %>
+                <% if (request.linkedRequests && request.linkedRequests.length){ %>
                     <% request.linkedRequests.map(function(request){ %>
                         <li><%- request.janCode %></li>
                     <% }); %>

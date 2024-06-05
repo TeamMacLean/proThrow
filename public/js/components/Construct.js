@@ -18,7 +18,7 @@ class Construct extends Component {
             className="form-control"
             type="text"
             id="accession"
-            name="accession[]"
+            name="accessions[]"
             defaultValue={self.props.data.accession || ""}
             required
           />
@@ -38,7 +38,7 @@ class Construct extends Component {
             className="form-control"
             type="text"
             id="sequenceInfo"
-            name="sequenceInfo[]"
+            name="sequenceInfos[]"
             defaultValue={self.props.data.sequenceInfo || ""}
             required
           />
@@ -60,7 +60,7 @@ class Construct extends Component {
             className="form-control"
             type="text"
             id="dbEntry"
-            name="dbEntry[]"
+            name="dbEntries[]"
             defaultValue={self.props.data.dbEntry || ""}
             required
           />

@@ -11,6 +11,7 @@ const thinky = require("./lib/thinky");
 const store = new rethinkSession(thinky.r);
 const fs = require("fs-extra");
 const routes = require("./routes");
+const SampleImage = require("./models/sampleImage");
 
 const app = express();
 
@@ -22,8 +23,12 @@ app.set("view engine", "ejs");
 
 app.use(require("less-middleware")(path.join(__dirname, "public")));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // ???
 app.use(cookieParser());
+
+// Serve files from the uploads directory
+app.use("/uploads", express.static(config.supportingImageRoot));
+app.use("/preview", express.static(config.supportingImagePreviewRoot));
 
 app.use(
   session({

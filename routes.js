@@ -33,18 +33,18 @@ function isAdmin(req, res, next) {
 router.route("/").get(index.index);
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (_, file, cb) {
     let targetDir;
     if (file.fieldname.startsWith("preview")) {
       targetDir = config.supportingImagePreviewRoot;
-      console.log("found a preview!");
+      // console.log("found a preview!");
     } /** else if (file.fieldname.startsWith("image")) */ else {
       targetDir = config.supportingImageRoot;
-      console.log("found a root image!");
+      // console.log("found a root image!");
     }
-    cb(null, path.join(__dirname, targetDir));
+    cb(null, targetDir);
   },
-  filename: function (req, file, cb) {
+  filename: function (_, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
