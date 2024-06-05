@@ -31,7 +31,19 @@ function isAdmin(req, res, next) {
 
 router.route("/").get(index.index);
 
-const upload = multer({ limits: { fieldSize: 25 * 1024 * 1024 } });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "uploads")); // Change 'uploads' to your desired directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({
+  limits: { fieldSize: 5 * 1024 * 1024 }, //5MB
+  storage: storage,
+});
 
 router
   .route("/new")
