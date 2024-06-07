@@ -350,7 +350,7 @@ const MyForm = () => {
         console.log("setteim entere", theResponseRequestID);
 
         if (!!theResponseRequestID) {
-          window.location.href = `http://localhost:3000/request/${theResponseRequestID}`;
+          window.location.href = `${config.baseURL}/request/${theResponseRequestID}`;
         } else {
           setIsSubmitting(false);
           setState((prevState) => ({ ...prevState, isSubmitting: false }));
