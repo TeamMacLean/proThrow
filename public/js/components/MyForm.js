@@ -1,8 +1,9 @@
 import "promise-polyfill/src/polyfill";
 import React, { useState, useEffect } from "react";
-
 import dragula from "dragula";
 import "dragula/dist/dragula.css";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 // import { listen } from "delivery/lib/delivery.server"; // Use delivery.client for client-side code
 import $ from "jquery"; // Import jQuery properly
 import "popper.js"; // Import Popper.js properly
@@ -63,15 +64,58 @@ const base64ToBlob = (base64, contentType) => {
 const MyForm = () => {
   const initialState = window.existingRequest
     ? {
-        species: window.existingRequest.species || "",
-        secondSpecies: window.existingRequest.secondSpecies || "",
         samples: window.existingRequest.samples || [],
         supportingImages: window.existingRequest.supportingImages || [],
         constructs: window.existingRequest.constructs || [],
+        species: window.existingRequest.species
+          ? {
+              label: window.existingRequest.species,
+              value: window.existingRequest.species,
+            }
+          : null,
+        secondSpecies: window.existingRequest.secondSpecies
+          ? {
+              label: window.existingRequest.secondSpecies,
+              value: window.existingRequest.secondSpecies,
+            }
+          : null,
+        initialValues: {
+          species: window.existingRequest.species
+            ? {
+                label: window.existingRequest.species,
+                value: window.existingRequest.species,
+              }
+            : null,
+          secondSpecies: window.existingRequest.secondSpecies
+            ? {
+                label: window.existingRequest.secondSpecies,
+                value: window.existingRequest.secondSpecies,
+              }
+            : null,
+        },
+        shouldUseInitial: {
+          species: window.existingRequest.species ? true : false,
+          secondSpecies: window.existingRequest.secondSpecies ? true : false,
+        },
       }
-    : { samples: [], supportingImages: [], constructs: [] };
+    : {
+        samples: [],
+        supportingImages: [],
+        constructs: [],
+        species: null,
+        secondSpecies: null,
+        initialValues: {
+          species: null,
+          secondSpecies: null,
+        },
+        shouldUseInitial: {
+          species: false,
+          secondSpecies: false,
+        },
+      };
 
   const [state, setState] = useState(initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     $("#page-loader").fadeOut("slow", function () {
@@ -120,11 +164,30 @@ const MyForm = () => {
     }));
   };
 
-  const getSpecies = async (input, callback) => {
-    if (!input) {
-      callback([]);
+  const getListOfSpecies = async (input, stateKeyName, callback) => {
+    const useInitial = !!(
+      !input &&
+      state[stateKeyName] &&
+      state.shouldUseInitial[stateKeyName]
+    );
+
+    console.log("useInitial", useInitial);
+
+    if (useInitial) {
+      const useInitialValue = state.initialValues[stateKeyName];
+      callback([
+        { label: useInitialValue.label, value: useInitialValue.value },
+      ]);
       return;
     }
+
+    setState((prevState) => ({
+      ...prevState,
+      shouldUseInitial: {
+        ...prevState.shouldUseInitial,
+        [stateKeyName]: false,
+      },
+    }));
 
     const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?retmode=json&db=taxonomy&term=${encodeURIComponent(
       input
@@ -150,7 +213,14 @@ const MyForm = () => {
         return callback([]);
       }
 
-      return callback([{ label: input, value: input }]);
+      const options = response.data.esearchresult.idlist.map((id) => {
+        return {
+          label: input, // Adjust this as needed to display the correct label
+          value: id, // Use id or any other unique identifier
+        };
+      });
+
+      return callback(options);
     } catch (error) {
       console.error("Error fetching Species");
       return callback([]);
@@ -160,8 +230,19 @@ const MyForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsSubmitting(true);
+    setState((prevState) => ({ ...prevState, isSubmitting: true }));
+    setState({ ...state, isSubmitting: true });
+
     const form = e.target;
     const formData = new FormData(form);
+
+    // change value of species field
+    formData.set("species", state.species ? state.species.label : "");
+    formData.set(
+      "secondSpecies",
+      state.secondSpecies ? state.secondSpecies.label : ""
+    );
 
     let hasFiles = false;
 
@@ -173,7 +254,6 @@ const MyForm = () => {
         // Convert base64 preview to Blob and append to FormData
         const previewBlob = base64ToBlob(supportingImage.preview, "image/jpeg");
         const originalName = supportingImage.file.name;
-        //supportingImage.file.name.replace(/\.[^/.]+$/, "") + "_preview.jpg";
         formData.append(`preview[${index}]`, previewBlob, originalName);
 
         formData.append(
@@ -213,31 +293,70 @@ const MyForm = () => {
       formData.append("requestID", window.existingRequest.id);
     }
 
-    // not needed
-    // const axiosConfig = {};
-    // if (hasFiles) {
-    //   axiosConfig.headers = {
-    //     "Content-Type": "multipart/form-data",
-    //   };
-    // }
-
-    // testing block
-    // let formObject = {};
-    // formData.forEach((value, key) => {
-    //   formObject[key] = value;
-    // });
-    // console.log("formObj", formObject);
+    let theResponseRequestID = null;
 
     try {
       const response = await axios.post("/new", formData, {
-        "Content-Type": "multipart/form-data",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      // console.log("Backend received:", response.data); // TEMP FOR TESTING
+      if (response.status !== 200) {
+        console.error("Error uploading form:", response);
+        Toastify({
+          text: "Error uploading form",
+          duration: 4500,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "red",
+          // onHidden: () =>
+          //   setState((prevState) => ({ ...prevState, isSubmitting: false })),
+        }).showToast();
+        return;
+      } else {
+        theResponseRequestID = response.data.requestID;
 
-      window.location.href = response.data.redirectUrl;
+        console.log("gary", response.data.requestID, theResponseRequestID);
+
+        Toastify({
+          text: `Form ${response.data.janCode} ${
+            response.data.editingForm ? "edited" : "created"
+          } successfully. Now redirecting...`,
+          duration: 4500,
+          gravity: "top",
+          position: "right",
+          style: { background: "green" },
+          // onHidden: () => {
+          //   window.location.href = `http://localhost:3000/request/${response.data.requestID}`;
+          // },
+        }).showToast();
+      }
     } catch (error) {
       console.error("Error uploading form:", error);
+      Toastify({
+        text: "Error submitting request. It may or may not be fully formed. Contact system admin with a timestamp to resolve the issue.",
+        duration: 4500,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "red",
+        // onHidden: () =>
+        //   setState((prevState) => ({ ...prevState, isSubmitting: false })),
+      }).showToast();
+    } finally {
+      console.log("finally entered", theResponseRequestID);
+
+      setTimeout(() => {
+        console.log("setteim entere", theResponseRequestID);
+
+        if (!!theResponseRequestID) {
+          window.location.href = `http://localhost:3000/request/${theResponseRequestID}`;
+        } else {
+          setIsSubmitting(false);
+          setState((prevState) => ({ ...prevState, isSubmitting: false }));
+          setState({ ...state, isSubmitting: false });
+        }
+      }, 4500);
     }
   };
 
@@ -311,7 +430,9 @@ const MyForm = () => {
                         required
                         onBlurResetsInput={false}
                         onSelectResetsInput={false}
-                        loadOptions={getSpecies}
+                        loadOptions={(input, callback) =>
+                          getListOfSpecies(input, "species", callback)
+                        }
                         name="species"
                         isClearable
                         value={state.species}
@@ -330,14 +451,14 @@ const MyForm = () => {
                           title="Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"
                         />
                       </label>
-
                       <AsyncSelect
                         id="secondSpecies"
                         required
-                        simpleValue
                         onBlurResetsInput={false}
                         onSelectResetsInput={false}
-                        loadOptions={getSpecies}
+                        loadOptions={(input, callback) =>
+                          getListOfSpecies(input, "secondSpecies", callback)
+                        }
                         name="secondSpecies"
                         isClearable
                         value={state.secondSpecies}
@@ -909,8 +1030,12 @@ const MyForm = () => {
             </div>
           </div>
 
-          <button className="btn btn-lg btn-success" type="submit">
-            Submit form
+          <button
+            className="btn btn-lg btn-success"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>

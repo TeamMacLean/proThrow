@@ -59,7 +59,11 @@ requests.newPost = async (req, res) => {
 
     let request;
 
-    if (requestID) {
+    const editingForm = !!requestID;
+
+    let newJanCode = "";
+
+    if (editingForm) {
       request = await Request.get(requestID);
       await request.removeChildren();
       Object.assign(request, {
@@ -85,7 +89,7 @@ requests.newPost = async (req, res) => {
       });
       await request.save();
     } else {
-      const newJanCode = await Util.generateJanCode(
+      newJanCode = await Util.generateJanCode(
         req.user.firstName,
         req.user.lastName,
         req.user.username
@@ -160,16 +164,25 @@ requests.newPost = async (req, res) => {
       );
     }
 
+    const oldOrNewRequestID = requestID || request.id;
+    const oldOrNewJanCode =
+      janCode || request.janCode || newJanCode || "probably";
+
     // Send email notification
     if (!requestID) {
+      console.log("send email for new request", oldOrNewRequestID);
       Email.newRequest(request);
     } else {
+      console.log("send email for updated request", oldOrNewRequestID);
       Email.updatedRequest(request);
     }
 
-    console.log(`Redirecting to /user/${username}`);
-
-    res.status(200).json({ redirectUrl: `/user/${username}` });
+    res.status(200).json({
+      requestID: oldOrNewRequestID,
+      janCode: oldOrNewJanCode,
+      editingForm,
+    });
+    //.json({ redirectUrl: `/user/${username}` });
   } catch (err) {
     console.error(err);
     return renderError(err, res);

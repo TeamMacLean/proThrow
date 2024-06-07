@@ -37,6 +37,7 @@
     "socket.io": "^2.3.0",
     "taxlookup": "^2.7.0",
     "thinky": "^2.3.9",
+    "toastify-js": "^1.12.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
