@@ -91,8 +91,12 @@
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
                     <a href="/request/<%- request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>
-                    <a href="/request/<%- request.id %>/delete"
-                       class="btn btn-danger btn-tiny pull-right areyousure">Delete</a>
+                    <a 
+                        href="/request/<%- request.id %>/delete"
+                        class="btn btn-danger btn-tiny pull-right areyousure"
+                    >
+                        Delete
+                    </a>
                 <% } %>
                 <a href="/request/<%- request.id %>/clone" class="btn btn-success btn-tiny">Clone</a>
             </div>
@@ -205,6 +209,7 @@
 
             <div class="tile">
                 <h3>New Constructs for Database</h3>
+                <!-- TODO if/else if constructs.length -->
                 <table class="table">
                     <thead>
                     <tr>
@@ -243,6 +248,14 @@
                     </div>
                 <!-- </div> -->
             <% }); %>
+            <!-- quite a lazy if/else -->
+            <% if(!request.supportingImages || !request.supportingImages.length){ %>
+                <div class="col-md-6">
+                    <hr />
+                    <div>No images uploaded.</div>
+                    <br />
+                </div>
+            <% } %>
         </div>
     </div>
 

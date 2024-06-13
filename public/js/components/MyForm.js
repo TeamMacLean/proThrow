@@ -15,6 +15,7 @@ import Construct from "./Construct";
 import Sample from "./Sample";
 import OptionWithChildAsValue from "./OptionWithChildAsValue";
 import ImageUploadForm from "./ImageUploadForm";
+import UploadedImagesForm from "./UploadedImagesForm";
 // import Util from "lib/util";
 
 const api_key = config.NCBIAPIKey || null;
@@ -62,10 +63,27 @@ const base64ToBlob = (base64, contentType) => {
 };
 
 const MyForm = () => {
+  // console.log(window.existingRequest);
+
+  const hasPreExistingSupportingImages =
+    window &&
+    window.existingRequest &&
+    window.existingRequest.supportingImages &&
+    window.existingRequest.supportingImages.length > 0;
+
+  const preExistingSupportingImagesObjList = hasPreExistingSupportingImages
+    ? window.existingRequest.supportingImages.map((image) => ({
+        ...image,
+        deleteRequest: false,
+        editedDescription: false,
+      }))
+    : [];
+
   const initialState = window.existingRequest
     ? {
         samples: window.existingRequest.samples || [],
-        supportingImages: window.existingRequest.supportingImages || [],
+        preExistingSupportingImages: preExistingSupportingImagesObjList,
+        additionalSupportingImages: [],
         constructs: window.existingRequest.constructs || [],
         species: window.existingRequest.species
           ? {
@@ -100,7 +118,8 @@ const MyForm = () => {
       }
     : {
         samples: [],
-        supportingImages: [],
+        additionalSupportingImages: [],
+        preExistingSupportingImages: [],
         constructs: [],
         species: null,
         secondSpecies: null,
@@ -160,7 +179,14 @@ const MyForm = () => {
   const handleImagesChange = (images) => {
     setState((prevState) => ({
       ...prevState,
-      supportingImages: images,
+      additionalSupportingImages: images,
+    }));
+  };
+
+  const handleUploadedImagesChange = (images) => {
+    setState((prevState) => ({
+      ...prevState,
+      preExistingSupportingImages: images,
     }));
   };
 
@@ -246,7 +272,21 @@ const MyForm = () => {
 
     let hasFiles = false;
 
-    state.supportingImages.forEach((supportingImage, index) => {
+    formData.append(
+      "hasPreExistingSupportingImages",
+      hasPreExistingSupportingImages
+    );
+
+    state.preExistingSupportingImages.forEach(
+      (preExistingSupportingImage, index) => {
+        formData.append(
+          `preExistingSupportingImages[${index}]`,
+          preExistingSupportingImage
+        );
+      }
+    );
+
+    state.additionalSupportingImages.forEach((supportingImage, index) => {
       if (supportingImage.file.name) {
         hasFiles = true;
         formData.append(`image[${index}]`, supportingImage.file);
@@ -272,13 +312,14 @@ const MyForm = () => {
       }
     });
 
-    state.constructs.forEach((construct) => {
-      if (construct.accession) {
-        formData.append(`accessions[]`, construct.accession || "");
-        formData.append(`sequenceInfos[]`, construct.sequenceInfo || "");
-        formData.append(`dbEntries[]`, construct.dbEntry || "");
-      }
-    });
+    // <Construct already doing this
+    // state.constructs.forEach((construct) => {
+    //   if (construct.accession) {
+    //     formData.append(`accessions[]`, construct.accession || "");
+    //     formData.append(`sequenceInfos[]`, construct.sequenceInfo || "");
+    //     formData.append(`dbEntries[]`, construct.dbEntry || "");
+    //   }
+    // });
 
     // Add non-form stuff to formData
     if (window && window.existingRequest && window.existingRequest.janCode) {
@@ -317,8 +358,6 @@ const MyForm = () => {
       } else {
         theResponseRequestID = response.data.requestID;
 
-        console.log("gary", response.data.requestID, theResponseRequestID);
-
         Toastify({
           text: `Form ${response.data.janCode} ${
             response.data.editingForm ? "edited" : "created"
@@ -344,8 +383,6 @@ const MyForm = () => {
         //   setState((prevState) => ({ ...prevState, isSubmitting: false })),
       }).showToast();
     } finally {
-      console.log("finally entered", theResponseRequestID);
-
       setTimeout(() => {
         console.log("setteim entere", theResponseRequestID);
 
@@ -948,26 +985,58 @@ const MyForm = () => {
                   </div>
 
                   <div>
-                    <label>Supporting Images:</label>
-                    {/* <div
-                      style={{
-                        border: "2px dashed #007bff",
-                        padding: "20px",
-                        textAlign: "center",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <i>
-                        Sorry, file upload is temporarily disabled by the system
-                        administrator. It will probably be back before:
-                        Wednesday 6th June 2024. Meanwhile, you can email
-                        supporting images to george.deeks@tsl.ac.uk who will add
-                        them to your form after you have submitted it.
-                      </i>
-                    </div> */}
+                    <h4 className="group-label">Supporting Images</h4>
+                    {
+                      // only show pre-uploaded images if pre-existing request
+                      // used for edit form and clone form
+                      window &&
+                        window.existingRequest &&
+                        window.existingRequest.id &&
+                        // FUTURE FEATURE not here yet: let the user upload old images for cloned form
+                        !window.existingRequest.isClone && (
+                          <div>
+                            <h6 className="group-label">
+                              Previously uploaded images
+                            </h6>
+                            {hasPreExistingSupportingImages ? (
+                              <div>
+                                <label>Pre-uploaded Images:</label>
+                                <UploadedImagesForm
+                                  onUploadedImagesChange={
+                                    handleUploadedImagesChange
+                                  }
+                                  initialUploadedImages={
+                                    state.preExistingSupportingImages
+                                  }
+                                />
+                              </div>
+                            ) : (
+                              <div>No previously uploaded images found.</div>
+                            )}
+                            <br />
+                          </div>
+                        )
+                    }
+                    {window &&
+                      window.existingRequest &&
+                      window.existingRequest.id &&
+                      // FUTURE FEATURE not here yet: let the user upload old images for cloned form
+                      window.existingRequest.isClone &&
+                      hasPreExistingSupportingImages && (
+                        <div>
+                          <i>
+                            Users cannot clone pre-existing images. Please
+                            contact system admin if this is a feature you would
+                            like to see developed.
+                          </i>
+                          <br />
+                          <br />
+                        </div>
+                      )}
+                    <h6 className="group-label">Upload new images</h6>
                     <ImageUploadForm
                       onImagesChange={handleImagesChange}
-                      initialImages={state.supportingImages}
+                      initialImages={state.additionalSupportingImages}
                       supportedFileTypes={supportedFileTypes}
                     />{" "}
                   </div>
