@@ -272,11 +272,11 @@
             </thead>
             <tbody>
             <% request.samples && request.samples.length && request.samples.sort(function (a, b) {
-                return a.position - b.position;
+                return a.sampleNumber - b.sampleNumber;
             }).map(function(sd){ %>
 
                 <tr>
-                    <td><%- sd.sampleNumber %></td>
+                    <td><%- (Number(sd.sampleNumber) + 1) %></td>
                     <td><%- sd.sampleLabel %></td>
                     <td><%- sd.sampleDescription %></td>
                 </tr>
