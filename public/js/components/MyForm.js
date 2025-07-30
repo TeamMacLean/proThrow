@@ -1,5 +1,5 @@
 import "promise-polyfill/src/polyfill";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import dragula from "dragula";
 import "dragula/dist/dragula.css";
 import Toastify from "toastify-js";
@@ -12,7 +12,6 @@ import AsyncSelect from "react-select/async";
 import axios from "axios";
 import config from "./../../../config";
 import Construct from "./Construct";
-import Sample from "./Sample";
 import OptionWithChildAsValue from "./OptionWithChildAsValue";
 import ImageUploadForm from "./ImageUploadForm";
 import UploadedImagesForm from "./UploadedImagesForm";
@@ -63,12 +62,8 @@ const base64ToBlob = (base64, contentType) => {
 };
 
 const MyForm = () => {
-  // console.log(window.existingRequest);
-
   const hasPreExistingSupportingImages =
-    window &&
-    window.existingRequest &&
-    window.existingRequest.supportingImages &&
+    window?.existingRequest?.supportingImages &&
     window.existingRequest.supportingImages.length > 0;
 
   const preExistingSupportingImagesObjList = hasPreExistingSupportingImages
@@ -79,12 +74,38 @@ const MyForm = () => {
       }))
     : [];
 
-  const initialState = window.existingRequest
-    ? {
-        samples: window.existingRequest.samples || [],
-        preExistingSupportingImages: preExistingSupportingImagesObjList,
+  const getInitialState = () => {
+    if (!window.existingRequest) {
+      return {
+        samples: [],
         additionalSupportingImages: [],
-        constructs: window.existingRequest.constructs || [],
+        preExistingSupportingImages: [],
+        constructs: [],
+        species: null,
+        secondSpecies: null,
+        initialValues: { species: null, secondSpecies: null },
+        shouldUseInitial: { species: false, secondSpecies: false },
+      };
+    }
+
+    return {
+      samples: window.existingRequest.samples || [],
+      preExistingSupportingImages: preExistingSupportingImagesObjList,
+      additionalSupportingImages: [],
+      constructs: window.existingRequest.constructs || [],
+      species: window.existingRequest.species
+        ? {
+            label: window.existingRequest.species,
+            value: window.existingRequest.species,
+          }
+        : null,
+      secondSpecies: window.existingRequest.secondSpecies
+        ? {
+            label: window.existingRequest.secondSpecies,
+            value: window.existingRequest.secondSpecies,
+          }
+        : null,
+      initialValues: {
         species: window.existingRequest.species
           ? {
               label: window.existingRequest.species,
@@ -97,50 +118,28 @@ const MyForm = () => {
               value: window.existingRequest.secondSpecies,
             }
           : null,
-        initialValues: {
-          species: window.existingRequest.species
-            ? {
-                label: window.existingRequest.species,
-                value: window.existingRequest.species,
-              }
-            : null,
-          secondSpecies: window.existingRequest.secondSpecies
-            ? {
-                label: window.existingRequest.secondSpecies,
-                value: window.existingRequest.secondSpecies,
-              }
-            : null,
-        },
-        shouldUseInitial: {
-          species: window.existingRequest.species ? true : false,
-          secondSpecies: window.existingRequest.secondSpecies ? true : false,
-        },
-      }
-    : {
-        samples: [],
-        additionalSupportingImages: [],
-        preExistingSupportingImages: [],
-        constructs: [],
-        species: null,
-        secondSpecies: null,
-        initialValues: {
-          species: null,
-          secondSpecies: null,
-        },
-        shouldUseInitial: {
-          species: false,
-          secondSpecies: false,
-        },
-      };
+      },
+      shouldUseInitial: {
+        species: !!window.existingRequest.species,
+        secondSpecies: !!window.existingRequest.secondSpecies,
+      },
+    };
+  };
 
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState(getInitialState());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Effect to handle initial page load and updates to existingRequest
   useEffect(() => {
     $("#page-loader").fadeOut("slow", function () {
       $(this).remove();
     });
-  }, []);
+
+    // If existingRequest becomes available or changes, update the state
+    if (window.existingRequest) {
+      setState(getInitialState());
+    }
+  }, [window.existingRequest]); // Depend on window.existingRequest
 
   const addConstruct = () => {
     const key = guid();
@@ -256,9 +255,11 @@ const MyForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) {
+      return; // Prevent multiple submissions
+    }
+
     setIsSubmitting(true);
-    setState((prevState) => ({ ...prevState, isSubmitting: true }));
-    setState({ ...state, isSubmitting: true });
 
     const form = e.target;
     const formData = new FormData(form);
@@ -312,25 +313,11 @@ const MyForm = () => {
       }
     });
 
-    // <Construct already doing this
-    // state.constructs.forEach((construct) => {
-    //   if (construct.accession) {
-    //     formData.append(`accessions[]`, construct.accession || "");
-    //     formData.append(`sequenceInfos[]`, construct.sequenceInfo || "");
-    //     formData.append(`dbEntries[]`, construct.dbEntry || "");
-    //   }
-    // });
-
     // Add non-form stuff to formData
-    if (window && window.existingRequest && window.existingRequest.janCode) {
+    if (window?.existingRequest?.janCode) {
       formData.append("janCode", window.existingRequest.janCode);
     }
-    if (
-      window &&
-      window.existingRequest &&
-      window.existingRequest.id &&
-      !window.existingRequest.isClone
-    ) {
+    if (window?.existingRequest?.id && !window.existingRequest.isClone) {
       formData.append("requestID", window.existingRequest.id);
     }
 
@@ -351,8 +338,9 @@ const MyForm = () => {
           gravity: "top",
           position: "right",
           backgroundColor: "red",
-          // onHidden: () =>
-          //   setState((prevState) => ({ ...prevState, isSubmitting: false })),
+          onHidden: () => {
+            setIsSubmitting(false);
+          },
         }).showToast();
         return;
       } else {
@@ -366,9 +354,9 @@ const MyForm = () => {
           gravity: "top",
           position: "right",
           style: { background: "green" },
-          // onHidden: () => {
-          //   window.location.href = `http://localhost:3000/request/${response.data.requestID}`;
-          // },
+          onHidden: () => {
+            window.location.href = `${config.baseURL}/request/${theResponseRequestID}`;
+          },
         }).showToast();
       }
     } catch (error) {
@@ -379,21 +367,14 @@ const MyForm = () => {
         gravity: "top",
         position: "right",
         backgroundColor: "red",
-        // onHidden: () =>
-        //   setState((prevState) => ({ ...prevState, isSubmitting: false })),
+        onHidden: () => {
+          setIsSubmitting(false);
+        },
       }).showToast();
     } finally {
-      setTimeout(() => {
-        console.log("setteim entere", theResponseRequestID);
-
-        if (!!theResponseRequestID) {
-          window.location.href = `${config.baseURL}/request/${theResponseRequestID}`;
-        } else {
-          setIsSubmitting(false);
-          setState((prevState) => ({ ...prevState, isSubmitting: false }));
-          setState({ ...state, isSubmitting: false });
-        }
-      }, 4500);
+      // Resetting isSubmitting will be handled by the onHidden callbacks
+      // of the Toastify notifications to ensure it's only reset after user
+      // feedback is complete or redirection occurs.
     }
   };
 
@@ -405,30 +386,22 @@ const MyForm = () => {
             <input
               type="checkbox"
               id="required-readme"
-              defaultChecked={
-                window && window.existingRequest && window.existingRequest.id
-              }
+              defaultChecked={window?.existingRequest?.id}
               required
-              //required COMMENT OUT FOR TESTING
             />{" "}
             <span>I have completed the above</span>
           </label>
 
-          {window &&
-            window.existingRequest &&
-            window.existingRequest.id &&
-            !window.existingRequest.isClone && (
-              <input
-                type="hidden"
-                name="requestID"
-                id="requestID"
-                defaultValue={window.existingRequest.id}
-              />
-            )}
+          {window?.existingRequest?.id && !window.existingRequest.isClone && (
+            <input
+              type="hidden"
+              name="requestID"
+              id="requestID"
+              defaultValue={window.existingRequest.id}
+            />
+          )}
 
-          {window &&
-            window.existingRequest &&
-            window.existingRequest.janCode &&
+          {window?.existingRequest?.janCode &&
             !window.existingRequest.isClone && (
               <div className="form-group">
                 <label>Label</label>
@@ -454,7 +427,7 @@ const MyForm = () => {
 
                     <div className="form-group">
                       <label>
-                        Species{" "}
+                        Species <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -480,7 +453,7 @@ const MyForm = () => {
                     </div>
                     <div className="form-group">
                       <label>
-                        Second Species{" "}
+                        Second Species <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -505,17 +478,15 @@ const MyForm = () => {
                       />
                     </div>
                     <div className="form-group">
-                      <label>Tissue</label>
+                      <label>
+                        Tissue <span className="text-danger">*</span>
+                      </label>
                       <select
                         className="form-control"
                         id="tissue"
                         name="tissue"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.tissue
-                        }
+                        defaultValue={window?.existingRequest?.tissue}
                       >
                         <OptionWithChildAsValue>
                           seedlings
@@ -534,7 +505,9 @@ const MyForm = () => {
                       </select>
                     </div>
                     <div className="form-group">
-                      <label>Tissue age</label>
+                      <label>
+                        Tissue age <span className="text-danger">*</span>
+                      </label>
 
                       <div className="row">
                         <div className="col-md-12">
@@ -544,13 +517,8 @@ const MyForm = () => {
                             id="tissueAgeNum"
                             name="tissueAgeNum"
                             min="0"
-                            defaultValue={
-                              window &&
-                              window.existingRequest &&
-                              window.existingRequest.tissueAgeNum
-                            }
+                            defaultValue={window?.existingRequest?.tissueAgeNum}
                             required
-                            //required COMMENT OUT FOR TESTING
                           />
                         </div>
                         <div className="col-md-12">
@@ -559,9 +527,7 @@ const MyForm = () => {
                             id="tissueAgeType"
                             name="tissueAgeType"
                             defaultValue={
-                              window &&
-                              window.existingRequest &&
-                              window.existingRequest.tissueAgeType
+                              window?.existingRequest?.tissueAgeType
                             }
                             required
                           >
@@ -579,17 +545,15 @@ const MyForm = () => {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label>Growth conditions</label>
+                      <label>
+                        Growth conditions <span className="text-danger">*</span>
+                      </label>
                       <select
                         className="form-control"
                         id="growthConditions"
                         name="growthConditions"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.growthConditions
-                        }
+                        defaultValue={window?.existingRequest?.growthConditions}
                       >
                         <OptionWithChildAsValue>plate</OptionWithChildAsValue>
                         <OptionWithChildAsValue>culture</OptionWithChildAsValue>
@@ -617,7 +581,7 @@ const MyForm = () => {
 
                     <div className="form-group">
                       <label>
-                        Type of analysis{" "}
+                        Type of analysis <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -630,11 +594,7 @@ const MyForm = () => {
                         id="analysisType"
                         name="analysisType"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.analysisType
-                        }
+                        defaultValue={window?.existingRequest?.analysisType}
                       >
                         <OptionWithChildAsValue>
                           Discovery
@@ -650,6 +610,7 @@ const MyForm = () => {
                     <div className="form-group">
                       <label>
                         Secondary analysis{" "}
+                        <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -663,9 +624,7 @@ const MyForm = () => {
                         name="secondaryAnalysisType"
                         required
                         defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.secondaryAnalysisType
+                          window?.existingRequest?.secondaryAnalysisType
                         }
                       >
                         <OptionWithChildAsValue>None</OptionWithChildAsValue>
@@ -682,7 +641,7 @@ const MyForm = () => {
                     </div>
                     <div className="form-group">
                       <label>
-                        Type of PTM{" "}
+                        Type of PTM <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -695,11 +654,7 @@ const MyForm = () => {
                         id="typeOfPTM"
                         name="typeOfPTM"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.typeOfPTM
-                        }
+                        defaultValue={window?.existingRequest?.typeOfPTM}
                       >
                         <OptionWithChildAsValue>None</OptionWithChildAsValue>
                         <OptionWithChildAsValue>
@@ -725,6 +680,7 @@ const MyForm = () => {
                     <div className="form-group">
                       <label>
                         Quantitative analysis required{" "}
+                        <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -737,9 +693,7 @@ const MyForm = () => {
                         id="quantitativeAnalysisRequired"
                         name="quantitativeAnalysisRequired"
                         defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.quantitativeAnalysisRequired
+                          window?.existingRequest?.quantitativeAnalysisRequired
                         }
                         required
                       >
@@ -755,7 +709,7 @@ const MyForm = () => {
                     </div>
                     <div className="form-group">
                       <label>
-                        Type of labeling{" "}
+                        Type of labeling <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -768,11 +722,7 @@ const MyForm = () => {
                         id="typeOfLabeling"
                         name="typeOfLabeling"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.typeOfLabeling
-                        }
+                        defaultValue={window?.existingRequest?.typeOfLabeling}
                       >
                         <OptionWithChildAsValue>None</OptionWithChildAsValue>
                         <OptionWithChildAsValue>
@@ -788,7 +738,7 @@ const MyForm = () => {
                     </div>
                     <div className="form-group">
                       <label>
-                        Label used{" "}
+                        Label used <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -801,11 +751,7 @@ const MyForm = () => {
                         id="labelUsed"
                         name="labelUsed"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.labelUsed
-                        }
+                        defaultValue={window?.existingRequest?.labelUsed}
                       >
                         <OptionWithChildAsValue>None</OptionWithChildAsValue>
                         <OptionWithChildAsValue>TMT0</OptionWithChildAsValue>
@@ -829,6 +775,7 @@ const MyForm = () => {
                     <div className="form-group">
                       <label>
                         Sample preparation{" "}
+                        <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -840,11 +787,7 @@ const MyForm = () => {
                         className="form-control"
                         id="samplePrep"
                         name="samplePrep"
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.samplePrep
-                        }
+                        defaultValue={window?.existingRequest?.samplePrep}
                         required
                       >
                         <OptionWithChildAsValue>
@@ -867,17 +810,15 @@ const MyForm = () => {
                     </div>
 
                     <div className="form-group">
-                      <label>Digestion</label>
+                      <label>
+                        Digestion <span className="text-danger">*</span>
+                      </label>
                       <select
                         className="form-control"
                         id="digestion"
                         name="digestion"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.digestion
-                        }
+                        defaultValue={window?.existingRequest?.digestion}
                       >
                         <OptionWithChildAsValue>in gel</OptionWithChildAsValue>
                         <OptionWithChildAsValue>on bead</OptionWithChildAsValue>
@@ -889,7 +830,7 @@ const MyForm = () => {
 
                     <div className="form-group">
                       <label>
-                        Enzyme{" "}
+                        Enzyme <span className="text-danger">*</span>
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -902,11 +843,7 @@ const MyForm = () => {
                         id="enzyme"
                         name="enzyme"
                         required
-                        defaultValue={
-                          window &&
-                          window.existingRequest &&
-                          window.existingRequest.enzyme
-                        }
+                        defaultValue={window?.existingRequest?.enzyme}
                       >
                         <OptionWithChildAsValue>Trypsin</OptionWithChildAsValue>
                         <OptionWithChildAsValue>AspN</OptionWithChildAsValue>
@@ -942,10 +879,7 @@ const MyForm = () => {
                       id="projectDescription"
                       name="projectDescription"
                       defaultValue={
-                        (window &&
-                          window.existingRequest &&
-                          window.existingRequest.projectDescription) ||
-                        ""
+                        window?.existingRequest?.projectDescription || ""
                       }
                     />
                   </div>
@@ -960,10 +894,7 @@ const MyForm = () => {
                       id="hopedAnalysis"
                       name="hopedAnalysis"
                       defaultValue={
-                        (window &&
-                          window.existingRequest &&
-                          window.existingRequest.hopedAnalysis) ||
-                        ""
+                        window?.existingRequest?.hopedAnalysis || ""
                       }
                     />
                   </div>
@@ -976,51 +907,38 @@ const MyForm = () => {
                       id="bufferComposition"
                       name="bufferComposition"
                       defaultValue={
-                        (window &&
-                          window.existingRequest &&
-                          window.existingRequest.bufferComposition) ||
-                        ""
+                        window?.existingRequest?.bufferComposition || ""
                       }
                     />
                   </div>
 
                   <div>
                     <h4 className="group-label">Supporting Images</h4>
-                    {
-                      // only show pre-uploaded images if pre-existing request
-                      // used for edit form and clone form
-                      window &&
-                        window.existingRequest &&
-                        window.existingRequest.id &&
-                        // FUTURE FEATURE not here yet: let the user upload old images for cloned form
-                        !window.existingRequest.isClone && (
-                          <div>
-                            <h6 className="group-label">
-                              Previously uploaded images
-                            </h6>
-                            {hasPreExistingSupportingImages ? (
-                              <div>
-                                <label>Pre-uploaded Images:</label>
-                                <UploadedImagesForm
-                                  onUploadedImagesChange={
-                                    handleUploadedImagesChange
-                                  }
-                                  initialUploadedImages={
-                                    state.preExistingSupportingImages
-                                  }
-                                />
-                              </div>
-                            ) : (
-                              <div>No previously uploaded images found.</div>
-                            )}
-                            <br />
-                          </div>
-                        )
-                    }
-                    {window &&
-                      window.existingRequest &&
-                      window.existingRequest.id &&
-                      // FUTURE FEATURE not here yet: let the user upload old images for cloned form
+                    {window?.existingRequest?.id &&
+                      !window.existingRequest.isClone && (
+                        <div>
+                          <h6 className="group-label">
+                            Previously uploaded images
+                          </h6>
+                          {hasPreExistingSupportingImages ? (
+                            <div>
+                              <label>Pre-uploaded Images:</label>
+                              <UploadedImagesForm
+                                onUploadedImagesChange={
+                                  handleUploadedImagesChange
+                                }
+                                initialUploadedImages={
+                                  state.preExistingSupportingImages
+                                }
+                              />
+                            </div>
+                          ) : (
+                            <div>No previously uploaded images found.</div>
+                          )}
+                          <br />
+                        </div>
+                      )}
+                    {window?.existingRequest?.id &&
                       window.existingRequest.isClone &&
                       hasPreExistingSupportingImages && (
                         <div>
@@ -1068,33 +986,6 @@ const MyForm = () => {
                     Add Another Construct
                   </div>
                 </fieldset>
-              </div>
-            </div>
-          </div>
-
-          <div className="group">
-            <div className="container">
-              <img src="/img/Guides.png" className="center" />
-
-              <h3 className="group-label">Sample Description</h3>
-
-              <div id="samples">
-                {state.samples.map((sample) => (
-                  <Sample
-                    key={sample.key || sample.id}
-                    data={sample}
-                    removeSample={() => removeSample(sample)}
-                  />
-                ))}
-              </div>
-
-              <label>Drag to reorder items</label>
-
-              <div
-                className="btn btn-outline-primary btn-block"
-                onClick={addSample}
-              >
-                Add Another Sample
               </div>
             </div>
           </div>

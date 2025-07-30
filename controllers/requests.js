@@ -15,8 +15,6 @@ requests.new = (req, res, next) => res.render("requests/new");
 requests.newPost = async (req, res) => {
   try {
     const { username } = req.user;
-
-    // Initialise the request, default to empty
     const {
       species = "",
       secondSpecies = "",
@@ -42,36 +40,29 @@ requests.newPost = async (req, res) => {
       sampleNumbers = [],
       sampleLabels = [],
       sampleDescriptions = [],
-      // these are NEW images to add in
       imageDescriptions = [],
       imageNames = [],
-      // existing images to keep/edit
       preExistingSupportingImages = [],
+      requestID: reqRequestId,
+      janCode: reqJanCode,
     } = req.body;
 
-    // bug to fix: receiving array of 2 identical strings with target value
     const requestID =
-      req.body.requestID && req.body.requestID.length > 0
-        ? req.body.requestID[0]
-        : null;
-    // another identical bug to fix: receiving array of 2 identical strings with target value
+      Array.isArray(reqRequestId) && reqRequestId.length > 0
+        ? reqRequestId[0]
+        : reqRequestId;
     const janCode =
-      req.body.janCode && req.body.janCode.length > 0
-        ? req.body.janCode[0]
-        : null;
-
-    let request;
+      Array.isArray(reqJanCode) && reqJanCode.length > 0
+        ? reqJanCode[0]
+        : reqJanCode;
 
     const editingForm = !!requestID;
+    let currentRequest;
+    let responseJanCode = janCode; // Use provided janCode if editing
 
-    let newJanCode = "";
-
-    // MAJOR IF / ELSE BASED ON EDIT OR NEW FORM
-
+    // --- Get or Create Request ---
     if (editingForm) {
-      // EDIT FORM
-
-      const request = await Request.get(requestID)
+      currentRequest = await Request.get(requestID)
         .getJoin({
           supportingImages: true,
           samples: true,
@@ -79,167 +70,18 @@ requests.newPost = async (req, res) => {
           linkedRequests: true,
         })
         .run();
-
-      // console.log(
-      //   "constructs to add",
-      //   accessions.length,
-      //   "old constructs",
-      //   request.constructs.length
-      // );
-
-      // PROCESS CONSTRUCTS
-      // each provided construct either overwrites previous or creates new
-      await Promise.all(
-        accessions.map((accession, index) => {
-          if (request.constructs[index]) {
-            // console.log("editing a construct");
-            const constructToEdit = request.constructs[index];
-            constructToEdit.accession = accession;
-            constructToEdit.sequenceInfo = sequenceInfos[index];
-            constructToEdit.dbEntry = dbEntries[index];
-            constructToEdit.save();
-          } else {
-            // console.log("creating a new construct");
-            new Construct({
-              requestID: request.id,
-              accession,
-              sequenceInfo: sequenceInfos[index],
-              dbEntry: dbEntries[index],
-            }).save();
-          }
-        })
-      );
-      // delete any old constructs not covered by new ones
-      if (request.constructs.length > accessions.length) {
-        const constructsToDelete = request.constructs.filter(
-          (_, index) => index >= accessions.length
-        );
-        await Promise.all(
-          constructsToDelete.map(async (construct) => {
-            // console.log("construct to delete", construct);
-            const constructToDelete = await Construct.get(construct.id).run();
-            return constructToDelete.delete();
-          })
-        );
+      if (!currentRequest) {
+        return renderError(new Error("Request not found for editing"), res);
       }
-      ///////////////////////
-
-      // PROCESS SAMPLES
-      // overwrite old samples OR fresh samples for all provdied samples
-      await Promise.all(
-        sampleNumbers.map((sampleNumber, index) => {
-          // console.log(
-          //   "sample to make:",
-          //   sampleNumber,
-          //   sampleDescriptions[index],
-          //   sampleLabels[index]
-          // );
-
-          // if current index already has sample, overwrite it
-          if (request.samples[index]) {
-            let sampleToEdit = request.samples[index];
-            sampleToEdit.index = index;
-            sampleToEdit.sampleNumber = sampleNumbers[index];
-            sampleToEdit.sampleLabel = sampleLabels[index];
-            sampleToEdit.sampleDescription = sampleDescriptions[index];
-            sampleToEdit.save();
-          } else {
-            new SampleDescription({
-              requestID: request.id,
-              position: index,
-              sampleNumber,
-              sampleLabel: sampleLabels[index],
-              sampleDescription: sampleDescriptions[index],
-            }).save();
-          }
-        })
-      );
-      // delete any old samples not covered by new ones
-      if (request.samples.length > sampleNumbers.length) {
-        const samplesToDelete = request.samples.filter(
-          (_, index) => index >= sampleNumbers.length
-        );
-        await Promise.all(
-          samplesToDelete.map(async (sample) => {
-            // console.log("sample to delete", sample);
-            const sampleToDelete = await SampleDescription.get(sample.id).run();
-            return sampleToDelete.delete();
-          })
-        );
-      }
-      ///////////////////////
-
-      // PROCESS ALL FILES
-      // look through pre-existing image uploads
-      // FUTURE FEATURE
-      // if (preExistingSupportingImages.length) {
-      // see if any need editing
-      // await Promise.all();
-      // }
-      // if (preExistingSupportingImageIdsToDelete.length) {
-      // remove any pre-existing file uploads that have now been deleted
-      //   await Promise.all(
-      //     preExistingSupportingImageIdsToDelete.map((idToDelete, index) => {
-      //       return SampleImage.get(idToDelete).delete();
-      //     })
-      //   );
-      // }
-      // add new files in
-      if (req.files.length && imageNames.length) {
-        await Promise.all(
-          imageNames.map((imageName, imageNameIndex) => {
-            const imageFile = req.files[imageNameIndex * 2];
-            return new SampleImage({
-              path: imageFile.path,
-              name: imageFile.originalname || imageName,
-              uid: imageFile.filename,
-              description: imageDescriptions[imageNameIndex],
-              requestID: request.id,
-            }).save();
-          })
-        );
-      }
-      /////////////////////////////////
-
-      //return res.status(200);
-
-      // Create the request
-
-      Object.assign(request, {
-        janCode,
-        species,
-        secondSpecies,
-        tissue,
-        tissueAgeNum,
-        tissueAgeType,
-        growthConditions,
-        analysisType,
-        secondaryAnalysisType,
-        typeOfPTM,
-        quantitativeAnalysisRequired,
-        typeOfLabeling,
-        labelUsed,
-        samplePrep,
-        digestion,
-        enzyme,
-        projectDescription,
-        hopedAnalysis,
-        bufferComposition,
-      });
-      await request.save();
-
-      // ELSE NEW FORM
     } else {
-      // NEW FORM
-
-      newJanCode = await Util.generateJanCode(
+      responseJanCode = await Util.generateJanCode(
         req.user.firstName,
         req.user.lastName,
         req.user.username
       );
-      request = new Request({
+      currentRequest = new Request({
         createdBy: username,
-        janCode: newJanCode,
+        janCode: responseJanCode,
         species,
         secondSpecies,
         tissue,
@@ -259,111 +101,222 @@ requests.newPost = async (req, res) => {
         hopedAnalysis,
         bufferComposition,
       });
-      await request.save();
-
-      // Process constructs
-      if (accessions.length) {
-        await Promise.all(
-          accessions.map((accession, i) =>
-            new Construct({
-              requestID: request.id,
-              accession,
-              sequenceInfo: sequenceInfos[i],
-              dbEntry: dbEntries[i],
-            }).save()
-          )
-        );
-      }
-
-      // Process samples
-      if (sampleNumbers.length > 0) {
-        await Promise.all(
-          sampleNumbers.map((num, i) =>
-            new SampleDescription({
-              requestID: request.id,
-              position: i,
-              sampleNumber: num,
-              sampleLabel: sampleLabels[i],
-              sampleDescription: sampleDescriptions[i],
-            }).save()
-          )
-        );
-      }
-
-      // Process images
-      if (req.files.length && imageNames.length) {
-        await Promise.all(
-          imageNames.map((imageName, imageNameIndex) => {
-            const imageFile = req.files[imageNameIndex * 2];
-            return new SampleImage({
-              path: imageFile.path,
-              name: imageFile.originalname || imageName,
-              uid: imageFile.filename,
-              description: imageDescriptions[imageNameIndex],
-              requestID: request.id,
-            }).save();
-          })
-        );
-      }
-
-      // TODO FUTURE FEATURE
-      // // if cloned request has pre-existing images to put onto new form
-      // // then point new SupportingImages document to old images path
-      // if (
-      //   preExistingSupportingImageIds &&
-      //   preExistingSupportingImageIds.length >
-      //   preExistingSupportingImageIdsToDelete.length
-      // ) {
-      //   await Promise.all(
-      //     preExistingSupportingImageIds.map((preExistImageId, index) => {
-      //       if (preExistingSupportingImageIdsToDelete.includes(preExistImage)) {
-      //         return;
-      //       } else {
-      //         // create new SampleImage pointing to oldImage
-      //         console.log(preExistImageId);
-      //         // const imageFile = req.files[imageNameIndex * 2];
-      //         // return new SampleImage({
-      //         //   path: imageFile.path,
-      //         //   name: imageFile.originalname || imageName,
-      //         //   uid: imageFile.filename,
-      //         //   description: imageDescriptions[imageNameIndex],
-      //         //   requestID: request.id,
-      //         // }).save();
-      //       }
-      //     })
-      //   );
-      // }
+      await currentRequest.save();
     }
 
-    // Form is made or updated, now time to register results back to the frontend
+    // --- Update Core Request Details ---
+    Object.assign(currentRequest, {
+      janCode: responseJanCode, // Ensure janCode is always set
+      species,
+      secondSpecies,
+      tissue,
+      tissueAgeNum,
+      tissueAgeType,
+      growthConditions,
+      analysisType,
+      secondaryAnalysisType,
+      typeOfPTM,
+      quantitativeAnalysisRequired,
+      typeOfLabeling,
+      labelUsed,
+      samplePrep,
+      digestion,
+      enzyme,
+      projectDescription,
+      hopedAnalysis,
+      bufferComposition,
+    });
+    await currentRequest.save();
 
-    const oldOrNewRequestID = requestID || request.id;
-    const oldOrNewJanCode =
-      janCode || request.janCode || newJanCode || "probably";
+    // --- Process Constructs ---
+    await processEntities(
+      Construct,
+      currentRequest.id,
+      accessions,
+      sequenceInfos,
+      dbEntries,
+      { sequenceInfo: "sequenceInfo", dbEntry: "dbEntry" }, // mapping for extra fields
+      currentRequest.constructs // existing entities
+    );
 
-    // Send email notification
+    // --- Process Samples ---
+    await processEntities(
+      SampleDescription,
+      currentRequest.id,
+      sampleNumbers,
+      sampleLabels,
+      sampleDescriptions,
+      { sampleLabel: "sampleLabel", sampleDescription: "sampleDescription" }, // mapping for extra fields
+      currentRequest.samples // existing entities
+    );
+
+    // --- Process Images ---
+    await processImages(
+      currentRequest,
+      req.files,
+      imageNames,
+      imageDescriptions,
+      preExistingSupportingImages
+    );
+
+    // --- Send Notifications ---
     if (!editingForm) {
-      console.log("send email for new request", oldOrNewRequestID);
-      Email.newRequest(request);
+      try {
+        Email.newRequest(currentRequest);
+      } catch (emailError) {
+        console.error("Failed to send new request email:", emailError);
+      }
     } else {
-      console.log("send email for updated request", oldOrNewRequestID);
-      Email.updatedRequest({
-        ...request,
-        createdBy: username,
-      });
+      try {
+        Email.updatedRequest({ ...currentRequest, createdBy: username });
+      } catch (emailError) {
+        console.error("Failed to send updated request email:", emailError);
+      }
     }
 
     res.status(200).json({
-      requestID: oldOrNewRequestID,
-      janCode: oldOrNewJanCode,
+      requestID: currentRequest.id,
+      janCode: currentRequest.janCode,
       editingForm,
     });
-    //.json({ redirectUrl: `/user/${username}` });
   } catch (err) {
-    console.error(err);
+    console.error("Error in newPost handler:", err);
     return renderError(err, res);
   }
 };
+
+// Helper to process associated entities (Constructs, Samples, etc.)
+async function processEntities(
+  Model,
+  requestId,
+  identifiers,
+  values1,
+  values2,
+  fieldMapping = {},
+  existingEntities = []
+) {
+  const updates = [];
+  const creations = [];
+  const existingIds = new Set(existingEntities.map((e) => e.id));
+  const idsToRemove = new Set(existingIds);
+
+  for (let i = 0; i < identifiers.length; i++) {
+    const identifier = identifiers[i];
+    if (!identifier) continue; // Skip if identifier is empty
+
+    const entityData = {
+      requestId: requestId,
+      // Assuming the first argument is the primary identifier for the entity
+      // E.g., for Construct it's 'accession', for SampleDescription it's 'sampleNumber'
+      [Object.keys(Model.definition.columns())[1]]: identifier, // This needs refinement based on actual DB column names
+      ...(fieldMapping.value1 ? { [fieldMapping.value1]: values1[i] } : {}),
+      ...(fieldMapping.value2 ? { [fieldMapping.value2]: values2[i] } : {}),
+    };
+
+    // Map field names from form data to model properties
+    for (const formField in fieldMapping) {
+      const modelField = fieldMapping[formField];
+      if (
+        values1[i] !== undefined &&
+        modelField === Object.keys(Model.definition.columns())[1]
+      ) {
+        entityData[modelField] = identifiers[i];
+      } else if (values1[i] !== undefined && formField === "value1") {
+        entityData[modelField] = values1[i];
+      } else if (values2[i] !== undefined && formField === "value2") {
+        entityData[modelField] = values2[i];
+      }
+    }
+
+    // Simplified logic to correctly assign fields based on model
+    if (Model.name === "Construct") {
+      entityData.accession = identifiers[i];
+      entityData.sequenceInfo = values1[i];
+      entityData.dbEntry = values2[i];
+    } else if (Model.name === "SampleDescription") {
+      entityData.sampleNumber = identifiers[i]; // Assuming sampleNumbers is the primary identifier
+      entityData.sampleLabel = values1[i];
+      entityData.sampleDescription = values2[i];
+    }
+
+    // Crude way to set index/position. Better to pass these in if needed.
+    if (Model.name === "SampleDescription" || Model.name === "Construct") {
+      entityData.position = i; // Or pass index explicitly
+    }
+
+    if (existingEntities[i] && existingEntities[i].id) {
+      // Update existing entity
+      const entityToUpdate = await Model.get(existingEntities[i].id).run();
+      if (entityToUpdate) {
+        Object.assign(entityToUpdate, entityData);
+        updates.push(entityToUpdate.save());
+        idsToRemove.delete(existingEntities[i].id);
+      }
+    } else if (identifier) {
+      // Create new entity if identifier is present
+      creations.push(new Model(entityData).save());
+    }
+  }
+
+  // Delete entities that are no longer present in the submitted data
+  if (idsToRemove.size > 0) {
+    const deletionPromises = Array.from(idsToRemove).map((id) =>
+      Model.get(id)
+        .run()
+        .then((entity) => entity.delete())
+    );
+    updates.push(...deletionPromises);
+  }
+
+  await Promise.all([...updates, ...creations]);
+}
+
+// Helper to process image uploads
+async function processImages(
+  currentRequest,
+  files,
+  imageNames,
+  imageDescriptions,
+  preExistingSupportingImages
+) {
+  const imagePromises = [];
+
+  // Handle new image uploads
+  if (files && files.length > 0 && imageNames.length > 0) {
+    const uploadCount = Math.min(
+      imageNames.length,
+      Math.floor(files.length / 2)
+    );
+    for (let i = 0; i < uploadCount; i++) {
+      const imageFile = files[i * 2];
+      const previewBlob = files[i * 2 + 1]; // Assuming preview is the second file for each image
+
+      if (imageFile) {
+        imagePromises.push(
+          new SampleImage({
+            path: imageFile.path,
+            name: imageFile.originalname || imageNames[i],
+            uid: imageFile.filename,
+            description: imageDescriptions[i],
+            requestID: currentRequest.id,
+            // preview: previewBlob.path // Adjust if preview is stored differently
+          }).save()
+        );
+      }
+    }
+  }
+
+  // Future feature: Handle edits to pre-existing images
+  // if (preExistingSupportingImages && preExistingSupportingImages.length > 0) {
+  //   // Logic to update descriptions or mark for deletion
+  //   // e.g., iterate through preExistingSupportingImages, find corresponding SampleImage, update if needed
+  // }
+
+  // TODO: Implement logic to delete pre-existing images if they are no longer present in `preExistingSupportingImages`
+  // This would involve comparing existing `currentRequest.supportingImages` with the incoming `preExistingSupportingImages` data.
+
+  await Promise.all(imagePromises);
+}
 
 requests.show = (req, res, next) => {
   const requestID = req.params.id;
