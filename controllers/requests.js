@@ -786,19 +786,28 @@ requests.show = (req, res, next) => {
       requestData.constructs = requestData.constructs || [];
       requestData.linkedRequests = requestData.linkedRequests || [];
 
-      return SampleDescription.filter({ requestId: requestID }).run();
+      return SampleDescription.run();
+      // return SampleDescription.filter({ requestId: requestID }).run();
     })
     .then((samples) => {
-      // const foundSamples = samples.filter((s) => {
-      //   return s.requestId === requestID;
-      // });
+      // typo hell, i feel like i need both
+      const foundSamples = samples.filter((s) => {
+        return s.requestID === requestID || s.requestId === requestID;
+      });
 
       // Convert to array of objects and sort
-      const sortedSamples = samples
+      const sortedSamples = foundSamples
         .map((sample) => ({ ...sample }))
         .sort((a, b) => a.position - b.position);
 
       requestData.samples = sortedSamples;
+
+      console.log(
+        "samples found for request:",
+        requestData.samples.length,
+        "/",
+        sortedSamples.length
+      );
 
       return res.render("requests/show", {
         request: requestData,
