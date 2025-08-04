@@ -259,7 +259,7 @@
         </div>
     </div>
 
-
+    <% if (request.samples && request.samples.length) { %>
     <div class="tile">
         <h3>Sample Description</h3>
         <table class="table">
@@ -272,11 +272,13 @@
             </thead>
             <tbody>
             <% request.samples && request.samples.length && request.samples.sort(function (a, b) {
-                return a.sampleNumber - b.sampleNumber;
+                // Sort by the 'position' field assigned during processing,
+                // as this reflects the order they were submitted.
+                return a.position - b.position;
             }).map(function(sd){ %>
 
                 <tr>
-                    <td><%- Number(sd.sampleNumber) %></td>
+                    <td><%- sd.sampleNumber %></td>
                     <td><%- sd.sampleLabel %></td>
                     <td><%- sd.sampleDescription %></td>
                 </tr>
@@ -285,6 +287,7 @@
             </tbody>
         </table>
     </div>
+    <% } %>
 
     <div class="tile">
         <h3>Notes</h3>

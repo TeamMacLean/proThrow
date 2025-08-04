@@ -1,18 +1,16 @@
-const thinky = require('../lib/thinky.js');
+const thinky = require("../lib/thinky.js");
 const type = thinky.type;
 
-const SampleDescription = thinky.createModel('SampleDescription', {
-    id: type.string(),
-    requestID: type.string(),
-    position: type.number().required(),
-    sampleNumber: type.string().required(),
-    sampleLabel: type.string().required(),
-    sampleDescription: type.string().required()
-
+const SampleDescription = thinky.createModel("SampleDescription", {
+  id: type.string(),
+  requestID: type.string(),
+  position: type.number(),
+  sampleNumber: type.string().default("N/A"),
+  sampleLabel: type.string().default("N/A"),
+  sampleDescription: type.string().default("N/A"),
 });
 
 module.exports = SampleDescription;
 
-const Request = require('./request');
-SampleDescription.belongsTo(Request, 'request', 'requestID', 'id');
-
+const Request = require("./request");
+SampleDescription.belongsTo(Request, "request", "requestID", "id");
