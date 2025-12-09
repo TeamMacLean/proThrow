@@ -1,0 +1,8 @@
+node_modules
+public/js/*.js
+!public/js/app.jsx
+coverage
+test-results
+playwright-report
+*.min.js
+*.min.css

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
 
 const Util = require("./lib/util");
 const admin = require("./controllers/admin");
@@ -9,16 +8,22 @@ const index = require("./controllers/index");
 const Auth = require("./controllers/auth");
 const Users = require("./controllers/users");
 const Requests = require("./controllers/requests");
-const Tax = require("./lib/taxLookup");
 
-const config = require("./config");
+const config = require("./config.json");
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    req.session.returnTo = req.path;
-    return res.redirect("/signin");
+    // Save the full URL (path + query string) for redirect after login
+    req.session.returnTo = req.originalUrl;
+    // Explicitly save session before redirect to ensure returnTo persists
+    req.session.save((err) => {
+      if (err) {
+        console.error("Error saving session:", err);
+      }
+      return res.redirect("/signin");
+    });
   }
 }
 

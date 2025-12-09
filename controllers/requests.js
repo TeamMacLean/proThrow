@@ -1,6 +1,6 @@
 const Request = require("../models/request");
 const Util = require("../lib/util");
-const config = require("../config");
+const config = require("../config.json");
 const Email = require("../lib/email");
 const SampleDescription = require("../models/sampleDescription");
 const SampleImage = require("../models/sampleImage");
@@ -392,7 +392,152 @@ async function processConstruct(
   console.log(`Finished processing Constructs for request: ${requestId}`);
 }
 
-// --- Image Processing Helper (Minor adjustment for logging clarity) ---
+/**
+ * Converts notes from FormData object format to a clean array.
+ * FormData sends indexed fields like notes[0], notes[1] as objects {0: "...", 1: "..."}.
+ * This function normalizes the input and filters out empty notes.
+ *
+ * @param {Array|Object} notes - Notes as array or object from form data
+ * @returns {Array<string>} Clean array of non-empty note strings
+ */
+function normalizeNotes(notes) {
+  const notesArray = Array.isArray(notes) ? notes : Object.values(notes || {});
+  return notesArray.filter((note) => note && note.trim());
+}
+
+/**
+ * Safely performs a database operation with error handling.
+ * Reduces duplicated try/catch blocks throughout image processing.
+ *
+ * @param {Function} operation - Async function to execute
+ * @param {string} errorMessage - Message to log on failure
+ * @returns {Promise<any>} Result of operation or undefined on error
+ */
+async function safeDbOperation(operation, errorMessage) {
+  try {
+    return await operation();
+  } catch (err) {
+    console.error(errorMessage, err);
+    return undefined;
+  }
+}
+
+/**
+ * Processes pre-existing images for updates and deletions.
+ * Handles images that were already uploaded and are being modified.
+ *
+ * @param {Array} preExistingImages - Array of existing image objects with flags
+ * @param {string} requestId - The request ID for logging
+ */
+async function processExistingImages(preExistingImages, requestId) {
+  for (const existingImage of preExistingImages) {
+    const { id, deleteRequest, editedDescription, description } = existingImage;
+
+    if (deleteRequest) {
+      await safeDbOperation(async () => {
+        const imageToDelete = await SampleImage.get(id).run();
+        if (imageToDelete) {
+          await imageToDelete.delete();
+          console.log(`Deleted SampleImage (${id}) for request ${requestId}.`);
+        }
+      }, `Error deleting SampleImage (${id}) for request ${requestId}:`);
+    } else if (editedDescription) {
+      await safeDbOperation(async () => {
+        const imageToUpdate = await SampleImage.get(id).run();
+        if (imageToUpdate) {
+          imageToUpdate.description = description || "";
+          await imageToUpdate.save();
+          console.log(
+            `Updated description for SampleImage (${id}) for request ${requestId}.`
+          );
+        }
+      }, `Error updating SampleImage (${id}) description for request ${requestId}:`);
+    }
+  }
+}
+
+/**
+ * Creates new SampleImage records from uploaded files.
+ *
+ * @param {Array} files - Uploaded file objects (pairs of image + preview)
+ * @param {Array} imageNames - Names for each image
+ * @param {Array} imageDescriptions - Descriptions for each image
+ * @param {string} requestId - The request ID to associate images with
+ * @returns {Promise<Array>} Array of created SampleImage records
+ */
+async function createNewImages(
+  files,
+  imageNames,
+  imageDescriptions,
+  requestId
+) {
+  if (!files?.length || !imageNames?.length) {
+    if (files?.length) {
+      console.warn(
+        `Image files uploaded for request ${requestId}, but no names/descriptions provided.`
+      );
+    }
+    return [];
+  }
+
+  // Files come in pairs: [image, preview, image, preview, ...]
+  const numImagesToProcess = Math.min(
+    imageNames.length,
+    Math.floor(files.length / 2)
+  );
+
+  const imagePromises = [];
+
+  for (let i = 0; i < numImagesToProcess; i++) {
+    const imageFile = files[i * 2];
+
+    if (!imageFile?.path || !imageNames[i]) {
+      console.warn(
+        `Skipping image at index ${i}: Missing file, path, or name for request ${requestId}.`
+      );
+      continue;
+    }
+
+    const entityData = {
+      path: imageFile.path,
+      name: imageNames[i],
+      uid: imageFile.filename || Util.generateUniqueId(),
+      description: imageDescriptions[i] || "",
+      requestID: requestId,
+    };
+
+    imagePromises.push(
+      new SampleImage(entityData)
+        .save()
+        .then((saved) => {
+          console.log(
+            `Created new SampleImage (${saved.id}) for request ${requestId}.`
+          );
+          return saved;
+        })
+        .catch((err) => {
+          console.error(
+            `Error creating SampleImage for request ${requestId}:`,
+            err
+          );
+          return null;
+        })
+    );
+  }
+
+  return Promise.all(imagePromises);
+}
+
+/**
+ * Main image processing function.
+ * Handles both updates to existing images and creation of new ones.
+ *
+ * @param {Object} currentRequest - The request being edited
+ * @param {Array} files - Uploaded file objects
+ * @param {Array} imageNames - Names for new images
+ * @param {Array} imageDescriptions - Descriptions for new images
+ * @param {Array} preExistingSupportingImages - Existing images with edit flags
+ */
 async function processImages(
   currentRequest,
   files,
@@ -400,187 +545,21 @@ async function processImages(
   imageDescriptions,
   preExistingSupportingImages
 ) {
-  const imagePromises = [];
-  const existingImageIds = new Set(
-    preExistingSupportingImages.map((img) => img.id)
-  );
-  const idsToDelete = new Set(existingImageIds);
+  const requestId = currentRequest.id;
 
-  if (files && files.length > 0 && imageNames && imageNames.length > 0) {
-    const numImagesToProcess = Math.min(
-      imageNames.length,
-      Math.floor(files.length / 2) // Assuming pairs of file/blob
-    );
+  // Process existing images (updates and deletions)
+  await processExistingImages(preExistingSupportingImages, requestId);
 
-    for (let i = 0; i < numImagesToProcess; i++) {
-      const imageFile = files[i * 2]; // The actual image file
-      const previewBlob = files[i * 2 + 1]; // The preview blob, if sent separately
+  // Create new images from uploads
+  await createNewImages(files, imageNames, imageDescriptions, requestId);
 
-      if (imageFile && imageFile.path && imageNames[i]) {
-        const entityData = {
-          path: imageFile.path,
-          name: imageNames[i],
-          uid: imageFile.filename || Util.generateUniqueId(),
-          description: imageDescriptions[i] || "",
-          requestID: currentRequest.id,
-        };
-
-        console.log(
-          `[SampleImage] Processing image data at index ${i}:`,
-          entityData
-        );
-
-        // Check if this image (by name or path/uid) already exists for update
-        const existingImage = preExistingSupportingImages.find(
-          (img) => img.name === imageNames[i] || img.uid === entityData.uid
-        );
-
-        if (existingImage) {
-          idsToDelete.delete(existingImage.id); // Mark as handled
-          try {
-            const imageToUpdate = await SampleImage.get(existingImage.id).run();
-            if (imageToUpdate) {
-              Object.assign(imageToUpdate, entityData);
-              imagePromises.push(
-                imageToUpdate
-                  .save()
-                  .then((saved) => {
-                    console.log(
-                      `Updated SampleImage (${saved.id}) successfully for request ${currentRequest.id}.`
-                    );
-                    return saved;
-                  })
-                  .catch((err) => {
-                    console.error(
-                      `Error updating SampleImage (${existingImage.id}) for request ${currentRequest.id}:`,
-                      err
-                    );
-                    return Promise.resolve();
-                  })
-              );
-            } else {
-              console.warn(
-                `Existing SampleImage (${existingImage.id}) not found for update, attempting creation for request ${currentRequest.id}.`
-              );
-              imagePromises.push(
-                new SampleImage(entityData)
-                  .save()
-                  .then((saved) => {
-                    console.log(
-                      `Created new SampleImage (${saved.id}) as fallback for request ${currentRequest.id}.`
-                    );
-                    return saved;
-                  })
-                  .catch((err) => {
-                    console.error(
-                      `Error creating fallback SampleImage for request ${currentRequest.id}:`,
-                      err
-                    );
-                    return Promise.resolve();
-                  })
-              );
-            }
-          } catch (err) {
-            console.error(
-              `Exception fetching existing SampleImage (${existingImage.id}) for request ${currentRequest.id}:`,
-              err
-            );
-            imagePromises.push(
-              new SampleImage(entityData)
-                .save()
-                .then((saved) => {
-                  console.log(
-                    `Created new SampleImage (${saved.id}) due to fetch error for request ${currentRequest.id}.`
-                  );
-                  return saved;
-                })
-                .catch((err) => {
-                  console.error(
-                    `Error creating fallback SampleImage after fetch error for request ${currentRequest.id}:`,
-                    err
-                  );
-                  return Promise.resolve();
-                })
-            );
-          }
-        } else {
-          // Create new image
-          imagePromises.push(
-            new SampleImage(entityData)
-              .save()
-              .then((saved) => {
-                console.log(
-                  `Created new SampleImage (${saved.id}) successfully for request ${currentRequest.id}.`
-                );
-                return saved;
-              })
-              .catch((err) => {
-                console.error(
-                  `Error creating new SampleImage for request ${currentRequest.id}:`,
-                  err
-                );
-                return Promise.resolve();
-              })
-          );
-        }
-      } else {
-        console.warn(
-          `Skipping image processing at index ${i}: Missing file, path, or name for request ${currentRequest.id}.`
-        );
-      }
-    }
-  } else if (files && files.length > 0) {
-    console.warn(
-      `Image files uploaded for request ${currentRequest.id}, but no names/descriptions provided.`
-    );
-  }
-
-  // Delete old images that were not re-submitted
-  const deleteImagePromises = Array.from(idsToDelete).map((id) =>
-    SampleImage.get(id)
-      .run()
-      .then((entity) => {
-        if (entity) {
-          return entity
-            .delete()
-            .then(() => {
-              console.log(
-                `Deleted old SampleImage (${id}) for request ${currentRequest.id}.`
-              );
-            })
-            .catch((err) => {
-              console.error(
-                `Error deleting old SampleImage (${id}) for request ${currentRequest.id}:`,
-                err
-              );
-              return Promise.resolve();
-            });
-        } else {
-          console.warn(
-            `Old SampleImage (${id}) not found for deletion for request ${currentRequest.id}.`
-          );
-          return Promise.resolve();
-        }
-      })
-      .catch((err) => {
-        console.error(
-          `Exception fetching old SampleImage (${id}) for deletion for request ${currentRequest.id}:`,
-          err
-        );
-        return Promise.resolve();
-      })
-  );
-
-  await Promise.all([...imagePromises, ...deleteImagePromises]);
-  console.log(
-    `Finished processing SampleImages for request: ${currentRequest.id}`
-  );
+  console.log(`Finished processing SampleImages for request: ${requestId}`);
 }
 
 // --- Controller Logic ---
 const requests = {};
 
-requests.new = (req, res, next) => res.render("requests/new");
+requests.new = (req, res, _next) => res.render("requests/new");
 
 requests.newPost = async (req, res) => {
   try {
@@ -613,6 +592,7 @@ requests.newPost = async (req, res) => {
       imageDescriptions = [], // For SampleImages
       imageNames = [], // For SampleImages
       preExistingSupportingImages = [], // Existing images for editing/updating
+      notes = [], // For Notes
       requestID: reqRequestId, // If editing
       janCode: reqJanCode, // If editing
     } = req.body;
@@ -677,9 +657,8 @@ requests.newPost = async (req, res) => {
     }
 
     // --- Update Core Request Details ---
-    // Ensure all relevant fields are updated, even if not changed
     Object.assign(currentRequest, {
-      janCode: responseJanCode, // Update even if editing
+      janCode: responseJanCode,
       species,
       secondSpecies,
       tissue,
@@ -698,6 +677,7 @@ requests.newPost = async (req, res) => {
       projectDescription,
       hopedAnalysis,
       bufferComposition,
+      notes: normalizeNotes(notes),
     });
     await currentRequest.save();
     console.log(`Updated core details for request: ${currentRequest.id}`);
@@ -762,7 +742,7 @@ requests.newPost = async (req, res) => {
   }
 };
 
-requests.show = (req, res, next) => {
+requests.show = (req, res, _next) => {
   const requestID = req.params.id;
   let requestData; // Declare requestData here to be accessible in the next .then
 

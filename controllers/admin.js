@@ -1,42 +1,48 @@
 const Request = require("../models/request");
 const renderError = require("../lib/renderError");
+const config = require("../config.json");
+
 const admin = {};
 
-admin.index = (req, res) => {
-  Request.run()
-    .then((requests) => {
-      const completedRequests = [];
-      const incompleteRequests = [];
-      const discardedRequests = [];
-      const samplesUsedUpRequests = [];
+admin.index = async (req, res) => {
+  try {
+    const requests = await Request.run();
 
-      requests.sort(function (a, b) {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      });
+    const completedRequests = [];
+    const incompleteRequests = [];
+    const discardedRequests = [];
+    const samplesUsedUpRequests = [];
 
-      requests.map((m) => {
-        if (m.status === "complete") {
-          completedRequests.push(m);
-        } else if (m.status === "discarded") {
-          discardedRequests.push(m);
-        } else if (m.status === "samples used up") {
-          samplesUsedUpRequests.push(m);
-        } else {
-          incompleteRequests.push(m);
-        }
-      });
+    // Sort by creation date (newest first)
+    requests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-      return res.render("admin/index", {
-        // requests,
-        completedRequests,
-        incompleteRequests,
-        discardedRequests,
-        samplesUsedUpRequests,
-      });
-    })
-    .catch((err) => {
-      return renderError(err, res);
+    requests.forEach((request) => {
+      switch (request.status) {
+        case "complete":
+          completedRequests.push(request);
+          break;
+        case "discarded":
+          discardedRequests.push(request);
+          break;
+        case "samples used up":
+          samplesUsedUpRequests.push(request);
+          break;
+        default:
+          incompleteRequests.push(request);
+      }
     });
+
+    return res.render("admin/index", {
+      completedRequests,
+      incompleteRequests,
+      discardedRequests,
+      samplesUsedUpRequests,
+      admins: config.admins,
+    });
+  } catch (err) {
+    console.error("Error loading admin dashboard:", err);
+    return renderError(err, res);
+  }
 };
 
 module.exports = admin;

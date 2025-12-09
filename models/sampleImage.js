@@ -1,6 +1,7 @@
 const thinky = require("../lib/thinky.js");
 const type = thinky.type;
-const config = require("../config.js");
+const config = require("../config.json");
+
 const SampleImage = thinky.createModel("SampleImage", {
   id: type.string(),
   uid: type.string().required(), // the full file name including extension
@@ -13,9 +14,14 @@ const SampleImage = thinky.createModel("SampleImage", {
 SampleImage.define("getURL", function () {
   return config.supportingImageRootURL + this.uid;
 });
+
 SampleImage.define("getPreviewURL", function () {
   return config.supportingImagePreviewRootURL + this.uid;
 });
+
+// Create index for faster lookups by requestID
+SampleImage.ensureIndex("requestID");
+
 module.exports = SampleImage;
 
 const Request = require("./request");

@@ -1,81 +1,106 @@
-const config = require("./config");
+const config = require("./config.json");
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const rethinkSession = require("session-rethinkdb")(session);
+const RDBStore = require("express-session-rethinkdb")(session);
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
-const util = require("./lib/util.js");
-const thinky = require("./lib/thinky");
-const store = new rethinkSession(thinky.r);
 const fs = require("fs-extra");
+const util = require("./lib/util.js");
+const r = require("./lib/thinky");
 const routes = require("./routes");
-const SampleImage = require("./models/sampleImage");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
-app.use(bodyParser.json({ limit: "50mb" }));
+// Body parsing middleware
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.json({ limit: "50mb" }));
 
+// View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// LESS middleware for CSS compilation
 app.use(require("less-middleware")(path.join(__dirname, "public")));
 
-app.use(express.static(path.join(__dirname, "public"))); // ???
+// Static files
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
 // Serve files from the uploads directory
 app.use("/uploads", express.static(config.supportingImageRoot));
 app.use("/preview", express.static(config.supportingImagePreviewRoot));
 
-app.use(
-  session({
-    secret: config.secret,
-    resave: false,
-    saveUninitialized: false,
-    store,
-  })
-);
+// Session store - use memory in local dev mode, RethinkDB otherwise
+let sessionConfig = {
+  secret: config.secret,
+  resave: false,
+  saveUninitialized: false,
+};
 
+if (config.devMode && !util.isVpnMode()) {
+  // Use memory store in local dev mode (no RethinkDB needed)
+  console.log("🔧 DEV MODE: Using memory session store");
+} else {
+  // Use RethinkDB session store in VPN/production mode
+  const store = new RDBStore(r, {
+    browserSessionsMaxAge: 60000, // 1 minute for browser sessions
+    table: "session",
+  });
+  sessionConfig.store = store;
+}
+
+app.use(session(sessionConfig));
+
+// Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Make config and user info available to all views
 app.use((req, res, next) => {
-  if (req.user != null) {
-    res.locals.signedInUser = {};
-    res.locals.signedInUser.username = req.user.username;
-    res.locals.signedInUser.name = req.user.name;
-    res.locals.signedInUser.fistName = req.user.firstName;
-    res.locals.signedInUser.lastName = req.user.lastName;
-    res.locals.signedInUser.mail = req.user.mail;
-    res.locals.signedInUser.isAdmin = util.isAdmin(req.user.username);
-    return next(null, req, res);
-  } else {
-    return next();
-  }
-});
+  // Add config values to all views
+  res.locals.devMode = config.devMode;
+  res.locals.vpnMode = util.isVpnMode();
 
-app.use((req, res, next) => {
-  console.log(req.url);
+  if (req.user != null) {
+    res.locals.signedInUser = {
+      username: req.user.username,
+      name: req.user.name,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      mail: req.user.mail,
+      isAdmin: util.isAdmin(req.user.username),
+      iconURL: req.user.iconURL,
+    };
+  }
+
   next();
 });
 
-//ensure essential folders exist
+// Request logging (only in development)
+if (config.devMode) {
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+  });
+}
+
+// Ensure essential folders exist
 fs.ensureDir(config.supportingImageRoot, (err) => {
   if (err) {
-    console.error(err);
+    console.error("Error creating uploads directory:", err);
   }
 });
 fs.ensureDir(config.supportingImagePreviewRoot, (err) => {
   if (err) {
-    console.error(err);
+    console.error("Error creating preview directory:", err);
   }
 });
 
+// Setup passport strategies
 util.setupPassport();
 
+// Routes
 app.use("/", routes);
 
 module.exports = app;

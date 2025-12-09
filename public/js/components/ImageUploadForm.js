@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Dropzone from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 
 const ImageUploadForm = ({
   onImagesChange,
   initialImages,
-  supportedFileTypes, // TODO incorporate
+  supportedFileTypes: _supportedFileTypes, // TODO incorporate
 }) => {
   const [images, setImages] = useState(initialImages);
   const [error, setError] = useState("");

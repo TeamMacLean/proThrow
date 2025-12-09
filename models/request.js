@@ -18,7 +18,7 @@ const Request = thinky.createModel("Request", {
   updatedAt: type.date(),
   notes: type.array().default([]).schema(type.string()),
 
-  //Biological Material
+  // Biological Material
   species: type.string().required(),
   secondSpecies: type.string().required(),
   tissue: type.string().required(),
@@ -26,7 +26,7 @@ const Request = thinky.createModel("Request", {
   tissueAgeType: type.string().required(),
   growthConditions: type.string().required(),
 
-  //Project Summary
+  // Project Summary
   projectDescription: type.string().required(),
   hopedAnalysis: type.string().required(),
   bufferComposition: type.string().required(),
@@ -44,6 +44,9 @@ const Request = thinky.createModel("Request", {
   digestion: type.string().required(),
   enzyme: type.string().required(),
 });
+
+// Index for faster lookups by createdBy (used in user's requests page)
+Request.ensureIndex("createdBy");
 
 Request.statuses = {
   COMPLETE: "complete",
@@ -66,17 +69,16 @@ Request.define("getStatus", function () {
 Request.define("humanDate", function () {
   return moment(this.createdAt).format("YYYY/MM/DD");
 });
+
 Request.define("modifiedHumanDate", function () {
   return moment(this.updatedAt).format("YYYY/MM/DD");
 });
 
 Request.define("getAssignedToName", function () {
-  const self = this;
-
-  if (self.assignedToName) {
-    return self.assignedToName;
+  if (this.assignedToName) {
+    return this.assignedToName;
   } else {
-    return self.assignedTo;
+    return this.assignedTo;
   }
 });
 
@@ -119,8 +121,11 @@ Request.define("removeChildren", function () {
 const SampleDescription = require("./sampleDescription");
 const SampleImage = require("./sampleImage");
 const Construct = require("./construct");
+
 Request.hasMany(SampleDescription, "samples", "id", "requestID");
 Request.hasMany(SampleImage, "supportingImages", "id", "requestID");
 Request.hasMany(Construct, "constructs", "id", "requestID");
 
+// Index for linked requests lookup
+Request.ensureIndex("linkID");
 Request.hasAndBelongsToMany(Request, "linkedRequests", "linkID", "linkID");

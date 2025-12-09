@@ -1,14 +1,48 @@
-ecosystem.config.js
-.idea
+# Dependencies
 node_modules
-public/components
-config.js
+
+# Config (contains sensitive credentials)
+config.json
+
+# Build outputs
 dist
+public/js/app.js
+public/js/main.js
+
+# User uploads (runtime data)
 public/preview
 public/uploads
-npm-debug.log
-install_sharp_macOS.sh
-package-lock.json
-public/js/app.js
+
+# IDE
+.idea
+.vscode
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log
+yarn-error.log
+*.log
+
+# Testing
+coverage
+test-results
+playwright-report
+.playwright
+
+# Lock files (using yarn)
+package-lock.json
+
+# Legacy/deprecated
+ecosystem.config.js
+public/components
+install_sharp_macOS.sh
 mnt_data_prothrow_test
+config.js
+
+# Misc
+*.local
+.env
+.env.*

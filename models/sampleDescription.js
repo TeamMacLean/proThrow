@@ -10,6 +10,9 @@ const SampleDescription = thinky.createModel("SampleDescription", {
   sampleDescription: type.string().default("N/A"),
 });
 
+// Create index for faster lookups by requestID
+SampleDescription.ensureIndex("requestID");
+
 module.exports = SampleDescription;
 
 const Request = require("./request");

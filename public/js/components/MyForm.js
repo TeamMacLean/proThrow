@@ -1,21 +1,17 @@
-import "promise-polyfill/src/polyfill";
 import { useState, useEffect } from "react";
 import dragula from "dragula";
 import "dragula/dist/dragula.css";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-// import { listen } from "delivery/lib/delivery.server"; // Use delivery.client for client-side code
-import $ from "jquery"; // Import jQuery properly
-import "popper.js"; // Import Popper.js properly
-import "bootstrap/js/dist/tooltip"; // Correct Bootstrap tooltip import
+import $ from "jquery";
+import { Tooltip } from "bootstrap";
 import AsyncSelect from "react-select/async";
 import axios from "axios";
-import config from "./../../../config";
+import config from "config";
 import Construct from "./Construct";
 import OptionWithChildAsValue from "./OptionWithChildAsValue";
 import ImageUploadForm from "./ImageUploadForm";
 import UploadedImagesForm from "./UploadedImagesForm";
-// import Util from "lib/util";
 
 const api_key = config.NCBIAPIKey || null;
 
@@ -34,7 +30,7 @@ $(function () {
 });
 
 function initDrag() {
-  const drake = dragula({
+  dragula({
     isContainer: function (el) {
       return el.classList.contains("dragg");
     },
@@ -42,7 +38,13 @@ function initDrag() {
 }
 
 function initToolTips() {
-  $('[data-toggle="tooltip"]').tooltip();
+  // Bootstrap 5 tooltip initialization
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"], [data-toggle="tooltip"]'
+  );
+  tooltipTriggerList.forEach((tooltipTriggerEl) => {
+    new Tooltip(tooltipTriggerEl);
+  });
 }
 
 // Helper function to convert base64 to Blob
@@ -81,6 +83,7 @@ const MyForm = () => {
         additionalSupportingImages: [],
         preExistingSupportingImages: [],
         constructs: [],
+        notes: [],
         species: null,
         secondSpecies: null,
         initialValues: { species: null, secondSpecies: null },
@@ -93,6 +96,7 @@ const MyForm = () => {
       preExistingSupportingImages: preExistingSupportingImagesObjList,
       additionalSupportingImages: [],
       constructs: window.existingRequest.constructs || [],
+      notes: window.existingRequest.notes || [],
       species: window.existingRequest.species
         ? {
             label: window.existingRequest.species,
@@ -158,7 +162,7 @@ const MyForm = () => {
     }));
   };
 
-  const addSample = () => {
+  const _addSample = () => {
     const key = guid();
     setState((prevState) => ({
       ...prevState,
@@ -166,7 +170,7 @@ const MyForm = () => {
     }));
   };
 
-  const removeSample = (sample) => {
+  const _removeSample = (sample) => {
     setState((prevState) => ({
       ...prevState,
       samples: prevState.samples.filter(
@@ -186,6 +190,34 @@ const MyForm = () => {
     setState((prevState) => ({
       ...prevState,
       preExistingSupportingImages: images,
+    }));
+  };
+
+  // --- Notes Management ---
+  // Notes are stored as an array of strings in state.
+  // Empty notes are filtered out on the backend before saving.
+
+  /** Adds a new empty note to the list */
+  const addNote = () => {
+    setState((prevState) => ({
+      ...prevState,
+      notes: [...prevState.notes, ""],
+    }));
+  };
+
+  /** Updates a note at a specific index */
+  const updateNote = (index, value) => {
+    setState((prevState) => ({
+      ...prevState,
+      notes: prevState.notes.map((note, i) => (i === index ? value : note)),
+    }));
+  };
+
+  /** Removes a note at a specific index */
+  const removeNote = (index) => {
+    setState((prevState) => ({
+      ...prevState,
+      notes: prevState.notes.filter((_, i) => i !== index),
     }));
   };
 
@@ -246,7 +278,7 @@ const MyForm = () => {
       });
 
       return callback(options);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error fetching Species");
       return callback([]);
     }
@@ -271,7 +303,7 @@ const MyForm = () => {
       state.secondSpecies ? state.secondSpecies.label : ""
     );
 
-    let hasFiles = false;
+    let _hasFiles = false;
 
     formData.append(
       "hasPreExistingSupportingImages",
@@ -289,7 +321,7 @@ const MyForm = () => {
 
     state.additionalSupportingImages.forEach((supportingImage, index) => {
       if (supportingImage.file.name) {
-        hasFiles = true;
+        _hasFiles = true;
         formData.append(`image[${index}]`, supportingImage.file);
 
         // Convert base64 preview to Blob and append to FormData
@@ -311,6 +343,11 @@ const MyForm = () => {
         formData.append(`sampleDescriptions[]`, sample.description || "");
         formData.append(`sampleLabels[]`, sample.label || "");
       }
+    });
+
+    // Add notes to formData
+    state.notes.forEach((note, index) => {
+      formData.append(`notes[${index}]`, note);
     });
 
     // Add non-form stuff to formData
@@ -378,10 +415,29 @@ const MyForm = () => {
     }
   };
 
+  const isEditing =
+    window?.existingRequest?.id && !window.existingRequest.isClone;
+
+  const handleCancelEdit = () => {
+    if (window.existingRequest?.id) {
+      window.location.href = `/request/${window.existingRequest.id}`;
+    }
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit} id="new-form" encType="multipart/form-data">
         <div className="container">
+          {isEditing && (
+            <button
+              type="button"
+              className="btn btn-danger mb-3"
+              onClick={handleCancelEdit}
+            >
+              Cancel Edit
+            </button>
+          )}
+
           <label>
             <input
               type="checkbox"
@@ -988,15 +1044,71 @@ const MyForm = () => {
                 </fieldset>
               </div>
             </div>
+
+            <div className="group">
+              <div className="container">
+                <fieldset>
+                  <img src="/img/Document.png" className="center" />
+
+                  <h3 className="group-label">Notes</h3>
+
+                  <div id="notes">
+                    {state.notes.map((note, index) => (
+                      <div
+                        key={index}
+                        className="d-flex gap-2 mb-2 align-items-start"
+                      >
+                        <textarea
+                          className="form-control"
+                          rows="2"
+                          value={note}
+                          onChange={(e) => updateNote(index, e.target.value)}
+                          placeholder="Enter note..."
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm"
+                          onClick={() => removeNote(index)}
+                          title="Remove note"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                    {state.notes.length === 0 && (
+                      <p className="text-muted">No notes added yet.</p>
+                    )}
+                  </div>
+
+                  <div
+                    className="btn btn-outline-primary btn-block"
+                    onClick={addNote}
+                  >
+                    Add Note
+                  </div>
+                </fieldset>
+              </div>
+            </div>
           </div>
 
-          <button
-            className="btn btn-lg btn-success"
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
+          <div className="d-flex gap-2 mt-3">
+            {isEditing && (
+              <button
+                type="button"
+                className="btn btn-lg btn-danger"
+                onClick={handleCancelEdit}
+              >
+                Cancel Edit
+              </button>
+            )}
+            <button
+              className="btn btn-lg btn-success"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+          </div>
         </div>
       </form>
     </div>

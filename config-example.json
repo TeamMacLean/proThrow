@@ -1,0 +1,39 @@
+{
+  "devMode": true,
+  "vpnMode": false,
+  "port": "3000",
+  "dbName": "prothrow",
+  "secret": "cats",
+  "baseURL": "http://127.0.0.1:3000",
+  "ldap": {
+    "url": "ldap://dc2.nbi.ac.uk:389",
+    "bindDn": "ldapuser",
+    "bindCredentials": "password",
+    "searchBase": "OU=NBIUsers,dc=nbi,dc=ac,dc=uk",
+    "searchFilter": "(sAMAccountName={{username}})"
+  },
+  "email": {
+    "host": "mail.nbi.ac.uk",
+    "port": "25",
+    "from": "TSL Proteomics <noreply@tsl.ac.uk>",
+    "emailDomain": "@nbi.ac.uk"
+  },
+  "NCBIAPIKey": "",
+  "supportingImageRoot": "./public/uploads/",
+  "supportingImageRootURL": "/uploads/",
+  "supportingImagePreviewRoot": "./public/preview/",
+  "supportingImagePreviewRootURL": "/preview/",
+  "supportedFileTypes": [
+    ".png",
+    ".PNG",
+    ".jpg",
+    ".JPG",
+    ".jpeg",
+    ".JPEG",
+    ".gif",
+    ".GIF"
+  ],
+  "admins": ["deeks"],
+  "emailAdmins": ["deeks"],
+  "initials": []
+}

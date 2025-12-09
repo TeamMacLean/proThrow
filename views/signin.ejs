@@ -1,15 +1,31 @@
-<% include head.ejs %>
+<%- include('head') %>
 
 <div class="container">
-
+    <% if (typeof devMode !== 'undefined' && devMode) { %>
+    <div class="alert alert-warning mt-3" role="alert">
+        <strong>Development Mode</strong>
+        <% if (typeof vpnMode !== 'undefined' && vpnMode) { %>
+        - VPN Mode (LDAP authentication active)
+        <% } else { %>
+        - Local authentication (any password works for admin users)
+        <% if (typeof admins !== 'undefined' && admins && admins.length) { %>
+        <br><small>Allowed users: <%= admins.join(', ') %></small>
+        <% } %>
+        <% } %>
+    </div>
+    <% } %>
 
     <form class="form-signin" method="post" action="/signin">
         <h2 class="form-signin-heading">Please sign in</h2>
+        <% if (typeof devMode !== 'undefined' && devMode && (typeof vpnMode === 'undefined' || !vpnMode)) { %>
+        <span class="font-italic">In dev mode, use an admin username with any password</span>
+        <% } else { %>
         <span class="font-italic">with the same username and password you use to sign in to your work machine</span>
-        <label for="inputEmail" class="sr-only">Username</label>
+        <% } %>
+        <label for="username" class="sr-only">Username</label>
         <input type="text" id="username" name="username" class="form-control" placeholder="Username" required
                autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
+        <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         <div class="checkbox">
             <label>
@@ -18,8 +34,6 @@
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
-
-
 </div>
 
-<% include foot.ejs %>
+<%- include('foot') %>

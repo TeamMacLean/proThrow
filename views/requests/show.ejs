@@ -1,4 +1,4 @@
-<% include ../head.ejs %>
+<%- include('../head') %>
 <link href="/css/print.css" rel="stylesheet">
 
 <div class="container">
@@ -91,7 +91,7 @@
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
                     <a href="/request/<%- request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>
-                    <a 
+                    <a
                         href="/request/<%- request.id %>/delete"
                         class="btn btn-danger btn-tiny pull-right areyousure"
                     >
@@ -336,4 +336,4 @@
     <% } %>
 
 </div>
-<% include ../foot.ejs %>
+<%- include('../foot') %>

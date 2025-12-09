@@ -1,4 +1,4 @@
-<% include ../head.ejs %>
+<%- include('../head') %>
 <div class="container">
   <% if(incompleteRequests || completedRequests || discardedRequests ||
   samplesUsedUpRequests){ %>
@@ -190,4 +190,4 @@
   <h3>No discarded requests</h3>
   <% } %>
 </div>
-<% include ../foot.ejs %>
+<%- include('../foot') %>

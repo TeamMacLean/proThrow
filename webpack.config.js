@@ -1,25 +1,30 @@
 const path = require("path");
 const webpack = require("webpack");
-const config = require("./config.js");
+
+// Read config for build-time values only
+const config = require("./config.json");
 
 module.exports = {
   entry: {
-    app: [path.resolve(path.join(__dirname, "public", "js", "app.jsx"))],
+    app: path.resolve(__dirname, "public", "js", "app.jsx"),
   },
-  watch: true,
-  mode: "development",
   module: {
     rules: [
       {
-        test: /.jsx?$/,
-        loader: "babel-loader",
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        query: {
-          presets: ["es2015", "react"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
+          },
         },
       },
       {
-        test: /\.css$/,
+        test: /\.css$/i,
         use: ["style-loader", "css-loader"],
       },
     ],
@@ -30,15 +35,29 @@ module.exports = {
         supportedFileTypes: JSON.stringify(config.supportedFileTypes.join(",")),
       },
     }),
+    // Provide jQuery globally for Bootstrap
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+    }),
   ],
+  resolve: {
+    extensions: [".js", ".jsx"],
+    fallback: {
+      path: require.resolve("path-browserify"),
+    },
+    alias: {
+      // Alias for config to use a browser-safe version
+      config: path.resolve(__dirname, "public", "js", "config.js"),
+    },
+  },
   output: {
     path: path.join(__dirname, "public", "js"),
     filename: "[name].js",
+    clean: false,
   },
-
-  resolve: {
-    alias: {
-      fs: "browserify-fs",
-    },
+  target: "web",
+  performance: {
+    hints: false,
   },
 };
