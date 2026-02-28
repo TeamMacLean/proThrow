@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
     "email-templates": "^12.0.3",
