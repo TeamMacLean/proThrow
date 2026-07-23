@@ -49,6 +49,7 @@
     <% if(typeof request != 'undefined'){ %>
     window.existingRequest = <%- JSON.stringify(request) %>;
     <% } %>
+    window.isAdmin = <%= locals.signedInUser && locals.signedInUser.isAdmin ? 'true' : 'false' %>;
 </script>
 
 <script src="/js/app.js"></script>

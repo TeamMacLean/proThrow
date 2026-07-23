@@ -456,6 +456,24 @@ const MyForm = () => {
               defaultValue={window.existingRequest.id}
             />
           )}
+          {window?.isAdmin && window?.existingRequest?.id && (
+            <div className="alert alert-warning mb-3">
+              <i className="fas fa-user-shield mr-2"></i>
+              <strong>Admin Mode:</strong> You are editing this request as an administrator.
+              <div className="form-check mt-2">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="silentUpdate"
+                  name="silentUpdate"
+                  value="true"
+                />
+                <label className="form-check-label" htmlFor="silentUpdate">
+                  Silent Update (Do not send email notification to the user)
+                </label>
+              </div>
+            </div>
+          )}
 
           {window?.existingRequest?.janCode &&
             !window.existingRequest.isClone && (

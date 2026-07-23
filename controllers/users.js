@@ -1,5 +1,4 @@
 const Request = require("../models/request");
-const renderError = require("../lib/renderError");
 
 const Users = {};
 
@@ -24,7 +23,8 @@ Users.show = async (req, res) => {
     return res.render("user/show", { requests, username });
   } catch (err) {
     console.error("Error fetching user requests:", err);
-    return renderError(err, res);
+    req.flash("error", "Error fetching user requests.");
+    return res.redirect("/");
   }
 };
 

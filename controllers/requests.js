@@ -5,7 +5,6 @@ const Email = require("../lib/email");
 const SampleDescription = require("../models/sampleDescription");
 const SampleImage = require("../models/sampleImage");
 const Construct = require("../models/construct");
-const renderError = require("../lib/renderError");
 
 /**
  * Processes sample description data for a given request.
@@ -618,8 +617,22 @@ requests.newPost = async (req, res) => {
         .run();
       if (!currentRequest) {
         console.error(`Edit attempt failed: Request ${requestID} not found.`);
-        return renderError(new Error("Request not found for editing"), res);
+        req.flash("error", "Request not found for editing.");
+        return res.redirect("/");
       }
+
+      // SECURITY FIX: Ensure the user actually has permission to submit edits for this form!
+      // Only the creator or an admin should be able to submit edits to a form.
+      if (
+        currentRequest.createdBy !== username &&
+        !Util.isAdmin(username)
+      ) {
+        console.error(
+          `Unauthorized POST edit attempt for request ${requestID} by ${username}`
+        );
+        return res.status(403).json({ error: "You are not authorized to edit this request." });
+      }
+
       console.log(`Editing existing request: ${currentRequest.id}`);
     } else {
       // Generate new JAN code for new requests
@@ -719,12 +732,16 @@ requests.newPost = async (req, res) => {
         console.error("Failed to send new request email:", emailError);
       }
     } else {
-      try {
-        // For updates, ensure createdBy is available in the email context
-        // currentRequest.createdBy is already loaded from the DB
-        Email.updatedRequest({ ...currentRequest, createdBy: username });
-      } catch (emailError) {
-        console.error("Failed to send updated request email:", emailError);
+      const { silentUpdate } = req.body;
+      if (!silentUpdate) {
+        try {
+          // For updates, ensure createdBy is available in the email context
+          Email.updatedRequest({ ...currentRequest, createdBy: currentRequest.createdBy });
+        } catch (emailError) {
+          console.error("Failed to send updated request email:", emailError);
+        }
+      } else {
+        console.log(`Silent update enabled: skipped email notification for request ${currentRequest.id}`);
       }
     }
 
@@ -737,7 +754,7 @@ requests.newPost = async (req, res) => {
   } catch (err) {
     console.error("Error in newPost handler:", err);
     if (!res.headersSent) {
-      return renderError(err, res);
+      return res.status(500).json({ error: err.message || "Internal server error" });
     }
   }
 };
@@ -749,7 +766,7 @@ requests.show = (req, res, _next) => {
   Request.get(requestID)
     .getJoin({
       supportingImages: true,
-      sampleDescriptions: true, // We'll fetch samples separately for debugging
+      samples: true,
       constructs: true,
       linkedRequests: true,
     })
@@ -757,37 +774,19 @@ requests.show = (req, res, _next) => {
     .then((request) => {
       if (!request) {
         console.error(`Request not found for show: ${requestID}`);
-        return renderError(new Error("Request not found."), res);
+        req.flash("error", "Request not found.");
+        return res.redirect("/");
       }
-      requestData = request; // Assign the fetched request
+      requestData = request;
 
       // Ensure related arrays exist
       requestData.supportingImages = requestData.supportingImages || [];
       requestData.constructs = requestData.constructs || [];
       requestData.linkedRequests = requestData.linkedRequests || [];
+      requestData.samples = requestData.samples || [];
 
-      return SampleDescription.run();
-      // return SampleDescription.filter({ requestId: requestID }).run();
-    })
-    .then((samples) => {
-      // typo hell, i feel like i need both
-      const foundSamples = samples.filter((s) => {
-        return s.requestID === requestID || s.requestId === requestID;
-      });
-
-      // Convert to array of objects and sort
-      const sortedSamples = foundSamples
-        .map((sample) => ({ ...sample }))
-        .sort((a, b) => a.position - b.position);
-
-      requestData.samples = sortedSamples;
-
-      console.log(
-        "samples found for request:",
-        requestData.samples.length,
-        "/",
-        sortedSamples.length
-      );
+      // Sort samples
+      requestData.samples.sort((a, b) => a.position - b.position);
 
       return res.render("requests/show", {
         request: requestData,
@@ -796,7 +795,8 @@ requests.show = (req, res, _next) => {
     })
     .catch((err) => {
       console.error(`Error showing request ${requestID}:`, err);
-      return renderError(err, res);
+      req.flash("error", "Error loading request details.");
+      return res.redirect("/");
     });
 };
 
@@ -808,7 +808,8 @@ requests.edit = (req, res) => {
     .then((request) => {
       if (!request) {
         console.error(`Request not found for editing: ${requestID}`);
-        return renderError(new Error("Request not found for editing."), res);
+        req.flash("error", "Request not found for editing.");
+        return res.redirect("/");
       }
 
       // Generate preview URLs for existing images
@@ -831,11 +832,8 @@ requests.edit = (req, res) => {
         console.error(
           `Unauthorized edit attempt for request ${requestID} by ${req.user.username}`
         );
-        return renderError(
-          "You are not authorized to edit this request.",
-          res,
-          403
-        );
+        req.flash("error", "You are not authorized to edit this request.");
+        return res.redirect("/");
       }
 
       // Check if request is already assigned and editable (unless user is admin)
@@ -847,10 +845,8 @@ requests.edit = (req, res) => {
         console.warn(
           `Attempt to edit assigned request ${requestID} by ${req.user.username}`
         );
-        return renderError(
-          "This request has already been assigned for action and cannot be edited.",
-          res
-        );
+        req.flash("error", "This request has already been assigned for action and cannot be edited.");
+        return res.redirect("/");
       }
 
       // Render the form with request data
@@ -858,7 +854,8 @@ requests.edit = (req, res) => {
     })
     .catch((err) => {
       console.error(`Error editing request ${requestID}:`, err);
-      return renderError(err, res);
+      req.flash("error", "Error loading request for editing.");
+      return res.redirect("/");
     });
 };
 
@@ -870,7 +867,8 @@ requests.clone = (req, res) => {
     .then((request) => {
       if (!request) {
         console.error(`Request not found for cloning: ${requestID}`);
-        return renderError(new Error("Request not found for cloning."), res);
+        req.flash("error", "Request not found for cloning.");
+        return res.redirect("/");
       }
 
       // Prepare data for cloning
@@ -911,18 +909,19 @@ requests.clone = (req, res) => {
     })
     .catch((err) => {
       console.error(`Error cloning request ${requestID}:`, err);
-      return renderError(err, res);
+      req.flash("error", "Error loading request for cloning.");
+      return res.redirect("/");
     });
 };
 
 requests.delete = (req, res) => {
   const requestID = req.params.id;
   Request.get(requestID)
-    .run() // First, get the request to ensure it exists
     .then((request) => {
       if (!request) {
         console.error(`Request not found for deletion: ${requestID}`);
-        return renderError(new Error("Request not found for deletion."), res);
+        req.flash("error", "Request not found for deletion.");
+        return res.redirect("/");
       }
 
       // Authorization check: only admin or creator can delete
@@ -933,11 +932,8 @@ requests.delete = (req, res) => {
         console.error(
           `Unauthorized delete attempt for request ${requestID} by ${req.user.username}`
         );
-        return renderError(
-          "You are not authorized to delete this request.",
-          res,
-          403
-        );
+        req.flash("error", "You are not authorized to delete this request.");
+        return res.redirect("/");
       }
 
       // Use the existing `removeChildren` method for cleanup
@@ -945,6 +941,7 @@ requests.delete = (req, res) => {
         .removeChildren() // This method should handle deleting associated SampleDescriptions, Samples, Images etc.
         .then(() => request.delete()) // Then delete the main request
         .then(() => {
+          req.flash("success", "Request successfully deleted.");
           // Redirect to admin page, forcing a cache refresh
           res.redirect(`/admin?t=${new Date().getTime()}`);
         })
@@ -953,12 +950,14 @@ requests.delete = (req, res) => {
             `Error deleting request ${requestID} and its children:`,
             err
           );
-          return renderError(err, res);
+          req.flash("error", "Error deleting request.");
+          return res.redirect("/");
         });
     })
     .catch((err) => {
       console.error(`Error retrieving request ${requestID} for deletion:`, err);
-      return renderError(err, res);
+      req.flash("error", "Error finding request for deletion.");
+      return res.redirect("/");
     });
 };
 

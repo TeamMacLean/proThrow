@@ -2,6 +2,7 @@ const config = require("./config.json");
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const flash = require("express-flash");
 const RDBStore = require("express-session-rethinkdb")(session);
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
@@ -51,6 +52,9 @@ if (config.devMode && !util.isVpnMode()) {
 }
 
 app.use(session(sessionConfig));
+
+// Express-flash for messages
+app.use(flash());
 
 // Passport authentication
 app.use(passport.initialize());

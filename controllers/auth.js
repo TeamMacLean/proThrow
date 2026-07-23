@@ -1,7 +1,6 @@
 const Auth = {};
 const passport = require("passport");
 const crypto = require("crypto");
-const renderError = require("../lib/renderError");
 const config = require("../config.json");
 const Util = require("../lib/util");
 
@@ -43,6 +42,7 @@ Auth.signOut = (req, res, next) => {
     if (err) {
       return next(err);
     }
+    req.flash("success", "You have successfully signed out.");
     res.redirect("/");
   });
 };
@@ -84,11 +84,13 @@ Auth.signInPost = (req, res, next) => {
         message += `: ${info.message}`;
       }
       console.log("Login failed:", message);
-      return renderError(message, res);
+      req.flash("error", message);
+      return res.redirect("/signin");
     }
 
     req.logIn(user, (err) => {
       if (err) {
+        req.flash("error", "An error occurred during sign in.");
         return next(err);
       }
 

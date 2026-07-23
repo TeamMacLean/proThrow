@@ -1,20 +1,18 @@
 const Request = require("../models/request");
-const renderError = require("../lib/renderError");
 const config = require("../config.json");
+const thinky = require("../lib/thinky.js");
+const r = thinky.r;
 
 const admin = {};
 
 admin.index = async (req, res) => {
   try {
-    const requests = await Request.run();
+    const requests = await Request.orderBy({ index: r.desc("createdAt") }).run();
 
     const completedRequests = [];
     const incompleteRequests = [];
     const discardedRequests = [];
     const samplesUsedUpRequests = [];
-
-    // Sort by creation date (newest first)
-    requests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     requests.forEach((request) => {
       switch (request.status) {
@@ -41,7 +39,8 @@ admin.index = async (req, res) => {
     });
   } catch (err) {
     console.error("Error loading admin dashboard:", err);
-    return renderError(err, res);
+    req.flash("error", "Error loading admin dashboard.");
+    return res.redirect("/");
   }
 };
 

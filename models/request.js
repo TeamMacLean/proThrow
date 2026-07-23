@@ -47,6 +47,8 @@ const Request = thinky.createModel("Request", {
 
 // Index for faster lookups by createdBy (used in user's requests page)
 Request.ensureIndex("createdBy");
+// Index for sorting by creation date
+Request.ensureIndex("createdAt");
 
 Request.statuses = {
   COMPLETE: "complete",
