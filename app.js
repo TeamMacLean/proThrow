@@ -44,9 +44,14 @@ if (config.devMode && !util.isVpnMode()) {
   console.log("🔧 DEV MODE: Using memory session store");
 } else {
   // Use RethinkDB session store in VPN/production mode
-  const store = new RDBStore(r, {
-    browserSessionsMaxAge: 60000, // 1 minute for browser sessions
+  const store = new RDBStore({
+    connectOptions: {
+      host: config.dbHost || "localhost",
+      port: config.dbPort || 28015,
+      db: config.dbName || "prothrow",
+    },
     table: "session",
+    sessionTimeout: 86400000, // 1 day
   });
   sessionConfig.store = store;
 }
