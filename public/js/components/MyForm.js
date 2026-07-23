@@ -311,11 +311,15 @@ const MyForm = () => {
     );
 
     state.preExistingSupportingImages.forEach(
-      (preExistingSupportingImage, index) => {
-        formData.append(
-          `preExistingSupportingImages[${index}]`,
-          preExistingSupportingImage
-        );
+      (image, index) => {
+        formData.append(`preExistingSupportingImages[${index}][id]`, image.id);
+        if (image.deleteRequest) {
+          formData.append(`preExistingSupportingImages[${index}][deleteRequest]`, "true");
+        }
+        if (image.editedDescription) {
+          formData.append(`preExistingSupportingImages[${index}][editedDescription]`, "true");
+        }
+        formData.append(`preExistingSupportingImages[${index}][description]`, image.description || "");
       }
     );
 
@@ -392,7 +396,7 @@ const MyForm = () => {
           position: "right",
           style: { background: "green" },
           onHidden: () => {
-            window.location.href = `${config.baseURL}/request/${theResponseRequestID}`;
+            window.location.href = `/request/${theResponseRequestID}`;
           },
         }).showToast();
       }
@@ -517,6 +521,7 @@ const MyForm = () => {
                         loadOptions={(input, callback) =>
                           getListOfSpecies(input, "species", callback)
                         }
+                        defaultOptions={true}
                         name="species"
                         isClearable
                         value={state.species}
@@ -543,6 +548,7 @@ const MyForm = () => {
                         loadOptions={(input, callback) =>
                           getListOfSpecies(input, "secondSpecies", callback)
                         }
+                        defaultOptions={true}
                         name="secondSpecies"
                         isClearable
                         value={state.secondSpecies}
