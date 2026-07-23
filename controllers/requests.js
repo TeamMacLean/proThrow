@@ -429,6 +429,7 @@ async function safeDbOperation(operation, errorMessage) {
  * @param {string} requestId - The request ID for logging
  */
 async function processExistingImages(preExistingImages, requestId) {
+  if (!preExistingImages || !Array.isArray(preExistingImages)) return;
   for (const existingImage of preExistingImages) {
     const { id, deleteRequest, editedDescription, description } = existingImage;
 
