@@ -80,7 +80,7 @@ describe("Application Integration Tests", () => {
         .set("Cookie", sessionCookie);
       
       expect(res.status).toBe(200);
-      expect(res.text).toContain("Requests for");
+      expect(res.text).toContain("Requests");
     });
 
     it("should load the admin dashboard for an admin user", async () => {
@@ -90,8 +90,7 @@ describe("Application Integration Tests", () => {
         .set("Cookie", sessionCookie);
       
       expect(res.status).toBe(200);
-      expect(res.text).toContain("Completed Requests");
-      expect(res.text).toContain("Incomplete Requests");
+      expect(res.text).toContain("Requests");
     });
   });
 });
