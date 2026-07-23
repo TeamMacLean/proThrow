@@ -66,7 +66,7 @@ async function processSampleDescription(
       try {
         const sampleToUpdate = await SampleDescription.get(
           existingSample.id
-        ).run();
+        );
         if (sampleToUpdate) {
           Object.assign(sampleToUpdate, entityData);
           updatePromises.push(
@@ -158,7 +158,6 @@ async function processSampleDescription(
   // Delete samples that were not in the new data
   const deletePromises = Array.from(idsToDelete).map((id) =>
     SampleDescription.get(id)
-      .run()
       .then((entity) => {
         if (entity) {
           return entity
@@ -258,7 +257,7 @@ async function processConstruct(
       try {
         const constructToUpdate = await Construct.get(
           existingConstruct.id
-        ).run();
+        );
         if (constructToUpdate) {
           Object.assign(constructToUpdate, entityData);
           updatePromises.push(
@@ -350,7 +349,6 @@ async function processConstruct(
   // Delete constructs that were not in the new data
   const deletePromises = Array.from(idsToDelete).map((id) =>
     Construct.get(id)
-      .run()
       .then((entity) => {
         if (entity) {
           return entity
@@ -435,7 +433,7 @@ async function processExistingImages(preExistingImages, requestId) {
 
     if (deleteRequest) {
       await safeDbOperation(async () => {
-        const imageToDelete = await SampleImage.get(id).run();
+        const imageToDelete = await SampleImage.get(id);
         if (imageToDelete) {
           await imageToDelete.delete();
           console.log(`Deleted SampleImage (${id}) for request ${requestId}.`);
@@ -443,7 +441,7 @@ async function processExistingImages(preExistingImages, requestId) {
       }, `Error deleting SampleImage (${id}) for request ${requestId}:`);
     } else if (editedDescription) {
       await safeDbOperation(async () => {
-        const imageToUpdate = await SampleImage.get(id).run();
+        const imageToUpdate = await SampleImage.get(id);
         if (imageToUpdate) {
           imageToUpdate.description = description || "";
           await imageToUpdate.save();

@@ -138,6 +138,12 @@ describe("Requests Endpoints Integration Test", () => {
         .field("projectDescription", "Updated project")
         .field("hopedAnalysis", "Test analysis")
         .field("bufferComposition", "Test buffer")
+        .field("sampleNumbers[]", "S1")
+        .field("sampleLabels[]", "Sample 1")
+        .field("sampleDescriptions[]", "Desc 1")
+        .field("accessions[]", "ACC1")
+        .field("sequenceInfos[]", "SEQ1")
+        .field("dbEntries[]", "DB1")
         .expect(200);
 
       expect(response.body.requestID).toBe(testRequestData.requestID);
