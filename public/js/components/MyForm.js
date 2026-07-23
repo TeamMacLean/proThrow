@@ -378,11 +378,9 @@ const MyForm = () => {
           duration: 4500,
           gravity: "top",
           position: "right",
-          backgroundColor: "red",
-          onHidden: () => {
-            setIsSubmitting(false);
-          },
+          style: { background: "red" },
         }).showToast();
+        setIsSubmitting(false);
         return;
       } else {
         theResponseRequestID = response.data.requestID;
@@ -391,14 +389,16 @@ const MyForm = () => {
           text: `Form ${response.data.janCode} ${
             response.data.editingForm ? "edited" : "created"
           } successfully. Now redirecting...`,
-          duration: 4500,
+          duration: 1500,
           gravity: "top",
           position: "right",
           style: { background: "green" },
-          onHidden: () => {
-            window.location.href = `/request/${theResponseRequestID}`;
-          },
         }).showToast();
+
+        // Bulletproof redirect that doesn't rely on Toastify's onHidden event
+        setTimeout(() => {
+          window.location.href = `/request/${theResponseRequestID}`;
+        }, 1500);
       }
     } catch (error) {
       console.error("Error uploading form:", error);
@@ -407,15 +407,12 @@ const MyForm = () => {
         duration: 4500,
         gravity: "top",
         position: "right",
-        backgroundColor: "red",
-        onHidden: () => {
-          setIsSubmitting(false);
-        },
+        style: { background: "red" },
       }).showToast();
+      setIsSubmitting(false);
     } finally {
-      // Resetting isSubmitting will be handled by the onHidden callbacks
-      // of the Toastify notifications to ensure it's only reset after user
-      // feedback is complete or redirection occurs.
+      // If there was an error, isSubmitting is reset in the catch block.
+      // If successful, we leave it true so the user can't double-submit while waiting for the redirect.
     }
   };
 
