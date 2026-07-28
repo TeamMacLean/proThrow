@@ -432,7 +432,7 @@ const MyForm = () => {
           {isEditing && (
             <button
               type="button"
-              className="btn btn-danger mb-3"
+              className="btn btn-danger mb-3 mr-3"
               onClick={handleCancelEdit}
             >
               Cancel Edit
@@ -456,24 +456,6 @@ const MyForm = () => {
               id="requestID"
               defaultValue={window.existingRequest.id}
             />
-          )}
-          {window?.isAdmin && window?.existingRequest?.id && (
-            <div className="alert alert-warning mb-3">
-              <i className="fas fa-user-shield mr-2"></i>
-              <strong>Admin Mode:</strong> You are editing this request as an administrator.
-              <div className="form-check mt-2">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="silentUpdate"
-                  name="silentUpdate"
-                  value="true"
-                />
-                <label className="form-check-label" htmlFor="silentUpdate">
-                  Silent Update (Do not send email notification to the user)
-                </label>
-              </div>
-            </div>
           )}
 
           {window?.existingRequest?.janCode &&
@@ -1112,11 +1094,32 @@ const MyForm = () => {
             </div>
           </div>
 
-          <div className="d-flex gap-2 mt-3">
+          <div className="d-flex mt-3 mb-3">
+            {window?.isAdmin && window?.existingRequest?.id && (
+              <div className="alert alert-warning flex-grow-1 mb-0">
+                <i className="fas fa-user-shield mr-2"></i>
+                <strong>Admin Mode:</strong> You are editing this request as an administrator.
+                <div className="form-check mt-2">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="silentUpdate"
+                    name="silentUpdate"
+                    value="true"
+                  />
+                  <label className="form-check-label" htmlFor="silentUpdate">
+                    Silent Update (Do not send email notification to the user)
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex mt-3">
             {isEditing && (
               <button
                 type="button"
-                className="btn btn-lg btn-danger"
+                className="btn btn-lg btn-danger mr-2"
                 onClick={handleCancelEdit}
               >
                 Cancel Edit
