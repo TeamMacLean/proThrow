@@ -148,10 +148,19 @@ describe("Requests Endpoints Integration Test", () => {
 
       expect(response.body.requestID).toBe(testRequestData.requestID);
       
-      // Verify the update in the DB
-      const updatedReq = await Request.get(testRequestData.requestID);
+      // Verify the update in the DB, including relations
+      const updatedReq = await Request.get(testRequestData.requestID).getJoin({ samples: true, constructs: true }).run();
       expect(updatedReq.species).toBe("Mouse");
       expect(updatedReq.projectDescription).toBe("Updated project");
+      
+      // Ensure arrays were saved correctly with right keys
+      expect(updatedReq.samples.length).toBeGreaterThan(0);
+      expect(updatedReq.samples[0].sampleNumber).toBe("S1");
+      expect(updatedReq.samples[0].requestID).toBe(testRequestData.requestID);
+      
+      expect(updatedReq.constructs.length).toBeGreaterThan(0);
+      expect(updatedReq.constructs[0].accession).toBe("ACC1");
+      expect(updatedReq.constructs[0].requestID).toBe(testRequestData.requestID);
     });
   });
 

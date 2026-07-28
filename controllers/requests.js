@@ -42,7 +42,7 @@ async function processSampleDescription(
     }
 
     const entityData = {
-      requestId: requestId,
+      requestID: requestId,
       position: i, // Position based on array index
       sampleNumber: identifier,
       sampleLabel: sampleLabels[i] !== undefined ? sampleLabels[i] : null,
@@ -57,7 +57,7 @@ async function processSampleDescription(
 
     // Find existing sample by its number and/or position, or use provided existingSamples data
     const existingSample = existingSamples.find(
-      (s) => s.sampleNumber === identifier && s.requestId === requestId
+      (s) => s.sampleNumber === identifier && s.requestID === requestId
     );
 
     if (existingSample) {
@@ -234,7 +234,7 @@ async function processConstruct(
     }
 
     const entityData = {
-      requestId: requestId,
+      requestID: requestId,
       position: i, // Position based on array index
       accession: identifier,
       sequenceInfo: sequenceInfos[i] !== undefined ? sequenceInfos[i] : null,
@@ -248,7 +248,7 @@ async function processConstruct(
 
     // Find existing construct by accession
     const existingConstruct = existingConstructs.find(
-      (c) => c.accession === identifier && c.requestId === requestId
+      (c) => c.accession === identifier && c.requestID === requestId
     );
 
     if (existingConstruct) {
