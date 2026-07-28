@@ -511,7 +511,7 @@ const MyForm = () => {
                     </div>
                     <div className="form-group">
                       <label>
-                        Second Species <span className="text-danger">*</span>
+                        Second Species
                         <span
                           data-icon="&#x74;"
                           className="tip far fa-question-circle"
@@ -521,7 +521,6 @@ const MyForm = () => {
                       </label>
                       <AsyncSelect
                         id="secondSpecies"
-                        required
                         onBlurResetsInput={false}
                         onSelectResetsInput={false}
                         loadOptions={(input, callback) =>
