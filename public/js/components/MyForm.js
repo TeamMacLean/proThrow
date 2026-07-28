@@ -934,12 +934,18 @@ const MyForm = () => {
                     <label>Project description</label>
                     <textarea
                       className="form-control"
-                      type="text"
                       id="projectDescription"
                       name="projectDescription"
                       defaultValue={
                         window?.existingRequest?.projectDescription || ""
                       }
+                      ref={(el) => {
+                        if (el && el.value) {
+                          el.style.height = "auto";
+                          el.style.height = el.scrollHeight + 2 + "px";
+                        }
+                      }}
+                      style={{ overflow: "hidden", minHeight: "50px" }}
                     />
                   </div>
 
@@ -949,12 +955,18 @@ const MyForm = () => {
                     </label>
                     <textarea
                       className="form-control"
-                      type="text"
                       id="hopedAnalysis"
                       name="hopedAnalysis"
                       defaultValue={
                         window?.existingRequest?.hopedAnalysis || ""
                       }
+                      ref={(el) => {
+                        if (el && el.value) {
+                          el.style.height = "auto";
+                          el.style.height = el.scrollHeight + 2 + "px";
+                        }
+                      }}
+                      style={{ overflow: "hidden", minHeight: "50px" }}
                     />
                   </div>
 
@@ -1051,26 +1063,30 @@ const MyForm = () => {
             <div className="group">
               <div className="container">
                 <fieldset>
-                  <img src="/img/Document.png" className="center" />
-
                   <h3 className="group-label">Notes</h3>
 
                   <div id="notes">
                     {state.notes.map((note, index) => (
                       <div
                         key={index}
-                        className="d-flex gap-2 mb-2 align-items-start"
+                        className="d-flex mb-2 align-items-start"
                       >
                         <textarea
                           className="form-control"
-                          rows="2"
                           value={note}
                           onChange={(e) => updateNote(index, e.target.value)}
                           placeholder="Enter note..."
+                          ref={(el) => {
+                            if (el) {
+                              el.style.height = "auto";
+                              el.style.height = el.scrollHeight + "px";
+                            }
+                          }}
+                          style={{ overflow: "hidden", minHeight: "50px" }}
                         />
                         <button
                           type="button"
-                          className="btn btn-danger btn-sm"
+                          className="btn btn-danger btn-sm ml-2"
                           onClick={() => removeNote(index)}
                           title="Remove note"
                         >
