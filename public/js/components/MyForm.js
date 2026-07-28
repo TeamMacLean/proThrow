@@ -670,14 +670,26 @@ const MyForm = () => {
             </button>
           )}
 
+          {/* Pre-ticked when editing: the submitter already confirmed this when
+              the request was created, so an admin correcting a typo should not
+              have to re-confirm it. A clone is a genuinely new submission of new
+              material, so that still needs its own confirmation. */}
           <label>
             <input
               type="checkbox"
               id="required-readme"
-              defaultChecked={existingRequest?.id}
+              defaultChecked={isEditing}
               required
             />{" "}
-            <span>I have completed the above</span>
+            <span>
+              I have completed the above
+              {isEditing && (
+                <em className="text-muted">
+                  {" "}
+                  &mdash; confirmed when this request was submitted
+                </em>
+              )}
+            </span>
           </label>
 
           {isEditing && (

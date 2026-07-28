@@ -47,8 +47,11 @@
 
 <script>
     <% if(typeof request != 'undefined'){ %>
-    // toSafeJSON escapes "<" so that a field containing "</script>" cannot
-    // close this tag and execute whatever follows it.
+    // toSafeJSON escapes "<" so that a stored field cannot close this script
+    // element and execute whatever follows it. Note that the escaping applies
+    // to the data only: never write a literal closing script tag in this block,
+    // not even inside a comment, because the HTML parser ends the element at
+    // the first one it sees and everything below it stops running.
     window.existingRequest = <%- toSafeJSON(request) %>;
     <% } %>
     window.isAdmin = <%= locals.signedInUser && locals.signedInUser.isAdmin ? 'true' : 'false' %>;

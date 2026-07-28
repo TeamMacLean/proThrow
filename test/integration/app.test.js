@@ -1,18 +1,13 @@
 const request = require("supertest");
 const thinky = require("../../lib/thinky");
+const { checkDatabaseAvailable } = require("../helpers/database");
 
 let app;
 let r;
 let rethinkAvailable = false;
 
 async function checkRethinkDB() {
-  if (!r) return false;
-  try {
-    await r.tableList().run();
-    return true;
-  } catch (_e) {
-    return false;
-  }
+  return checkDatabaseAvailable(r);
 }
 
 beforeAll(async () => {

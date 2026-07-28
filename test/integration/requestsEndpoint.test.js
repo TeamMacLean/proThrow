@@ -7,6 +7,7 @@ const Request = require("../../models/request");
 const SampleDescription = require("../../models/sampleDescription");
 const SampleImage = require("../../models/sampleImage");
 const Construct = require("../../models/construct");
+const { checkDatabaseAvailable } = require("../helpers/database");
 
 /** Smallest valid PNG, so multer's image checks see a real file. */
 const PNG_1X1 = Buffer.from(
@@ -70,13 +71,7 @@ const withFields = (req, fields) => {
 };
 
 async function checkRethinkDB() {
-  if (!r) return false;
-  try {
-    await r.tableList().run();
-    return true;
-  } catch (_e) {
-    return false;
-  }
+  return checkDatabaseAvailable(r);
 }
 
 async function loginAs(username) {
@@ -855,9 +850,33 @@ describe("Requests Endpoints Integration Test", () => {
       expect(res.text).toContain(testRequestData.janCode);
     });
 
-    // Regression: window.existingRequest is emitted inside a <script> tag, and
-    // JSON.stringify does not escape "<", so a field containing "</script>"
-    // used to break out of the tag entirely.
+    // Regression: asserting the JSON merely appears in the HTML is not enough.
+    // A stray closing script tag earlier in the same block - it was once in a
+    // code comment - ends the element, so the browser treats the assignment as
+    // plain text and window.existingRequest is never set. The edit form then
+    // silently loads completely empty.
+    it("should assign window.existingRequest inside a script element that is still open", async () => {
+      if (!rethinkAvailable) return;
+
+      const res = await request(app)
+        .get(`/request/${testRequestData.requestID}/edit`)
+        .set("Cookie", sessionCookie)
+        .expect(200);
+
+      const assignmentAt = res.text.indexOf("window.existingRequest =");
+      expect(assignmentAt).toBeGreaterThan(-1);
+
+      const openedAt = res.text.lastIndexOf("<script", assignmentAt);
+      expect(openedAt).toBeGreaterThan(-1);
+
+      // Nothing between the opening tag and the assignment may close the element.
+      const preamble = res.text.slice(openedAt, assignmentAt);
+      expect(preamble).not.toMatch(/<\/script/i);
+    });
+
+    // Regression: window.existingRequest is emitted inside a script element, and
+    // JSON.stringify does not escape "<", so a stored field could once break
+    // out of the tag entirely.
     it("should not let a field close the injected script tag", async () => {
       if (!rethinkAvailable) return;
 

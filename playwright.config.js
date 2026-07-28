@@ -19,7 +19,9 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: "yarn dev",
+    // nodemon is useful locally, but in CI it only adds restart noise and the
+    // watcher never has anything to react to.
+    command: process.env.CI ? "yarn start" : "yarn dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

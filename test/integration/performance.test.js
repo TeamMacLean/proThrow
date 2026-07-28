@@ -3,6 +3,8 @@
  * These tests ensure that database queries complete within acceptable time limits
  */
 
+const { checkDatabaseAvailable } = require("../helpers/database");
+
 const REQUEST_LOAD_TIMEOUT_MS = 1000; // 1 second max
 
 let thinky;
@@ -20,37 +22,36 @@ try {
 
 // Helper to check RethinkDB availability
 async function checkRethinkDB() {
-  if (!r) return false;
-  try {
-    await r.tableList().run();
-    return true;
-  } catch (_e) {
-    return false;
-  }
+  return checkDatabaseAvailable(r);
 }
 
+// The connection pool is shared by every suite in this file, so it is opened
+// once and drained once here. Each describe block used to drain it in its own
+// afterAll, which meant the first block to finish closed the pool and every
+// later block saw the database as unavailable and skipped itself - silently, so
+// the index checks below had not actually run in a long time.
+let rethinkAvailable = false;
+
+beforeAll(async () => {
+  rethinkAvailable = await checkRethinkDB();
+  console.log(
+    rethinkAvailable
+      ? "RethinkDB connected - running performance tests"
+      : "RethinkDB not available - skipping performance tests"
+  );
+}, 10000);
+
+afterAll(async () => {
+  if (rethinkAvailable && r && r.getPoolMaster) {
+    try {
+      await r.getPoolMaster().drain();
+    } catch (_e) {
+      // Ignore errors during cleanup
+    }
+  }
+});
+
 describe("Request loading performance", () => {
-  let rethinkAvailable = false;
-
-  beforeAll(async () => {
-    rethinkAvailable = await checkRethinkDB();
-    if (rethinkAvailable) {
-      console.log("RethinkDB connected - running performance tests");
-    } else {
-      console.log("RethinkDB not available - skipping performance tests");
-    }
-  }, 10000);
-
-  afterAll(async () => {
-    if (rethinkAvailable && r && r.getPoolMaster) {
-      try {
-        await r.getPoolMaster().drain();
-      } catch (_e) {
-        // Ignore errors during cleanup
-      }
-    }
-  });
-
   it("should load a request with joins in under 1 second", async () => {
     if (!rethinkAvailable) {
       console.log("Skipping: RethinkDB not available");
@@ -184,22 +185,8 @@ describe("Request loading performance", () => {
 });
 
 describe("Index usage verification", () => {
-  let rethinkAvailable = false;
-
-  beforeAll(async () => {
-    rethinkAvailable = await checkRethinkDB();
-  }, 10000);
-
-  afterAll(async () => {
-    if (rethinkAvailable && r && r.getPoolMaster) {
-      try {
-        await r.getPoolMaster().drain();
-      } catch (_e) {
-        // Ignore
-      }
-    }
-  });
-
+  // Uses the file-level connection: opening or draining a second one here is
+  // what previously stopped these tests running at all.
   it("should have index on SampleDescription.requestID", async () => {
     if (!rethinkAvailable) return;
     const indexes = await r.table("SampleDescription").indexList().run();

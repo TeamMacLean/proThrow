@@ -1,0 +1,153 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same branch makes the previous run redundant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # config.json holds credentials and is gitignored, so CI supplies the
+      # example. It sets devMode, which keeps auth on the local strategy and
+      # makes the mailer log instead of opening an SMTP connection.
+      - name: Create config
+        run: cp config-example.json config.json
+
+      - run: yarn lint
+
+      - run: yarn typecheck
+
+  test:
+    name: Unit and integration tests
+    runs-on: ubuntu-latest
+
+    services:
+      rethinkdb:
+        image: rethinkdb:2.4
+        ports:
+          - 28015:28015
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Create config
+        run: cp config-example.json config.json
+
+      # The RethinkDB image has no healthcheck, so the port is polled directly.
+      # Without this the first test can race the database's startup.
+      - name: Wait for RethinkDB
+        run: |
+          for i in $(seq 1 30); do
+            if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/28015' 2>/dev/null; then
+              echo "RethinkDB is accepting connections"
+              exit 0
+            fi
+            echo "waiting for RethinkDB ($i/30)"
+            sleep 2
+          done
+          echo "RethinkDB did not become available in time"
+          exit 1
+
+      - run: yarn test
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+
+    services:
+      rethinkdb:
+        image: rethinkdb:2.4
+        ports:
+          - 28015:28015
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Create config
+        run: cp config-example.json config.json
+
+      # `yarn install` does not fetch browsers; without this step the e2e suite
+      # cannot run at all, which is how it sat unrunnable for a long time.
+      - name: Resolve Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      # System dependencies are not cached with the browser binary, so they are
+      # installed even on a cache hit.
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # The e2e tests drive the compiled bundle, so a stale public/js/app.js
+      # would mean testing the previous commit's front-end.
+      - name: Build front-end bundle
+        run: yarn build
+
+      - name: Wait for RethinkDB
+        run: |
+          for i in $(seq 1 30); do
+            if timeout 2 bash -c 'echo > /dev/tcp/127.0.0.1/28015' 2>/dev/null; then
+              echo "RethinkDB is accepting connections"
+              exit 0
+            fi
+            echo "waiting for RethinkDB ($i/30)"
+            sleep 2
+          done
+          echo "RethinkDB did not become available in time"
+          exit 1
+
+      - run: yarn test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
