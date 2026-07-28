@@ -625,13 +625,28 @@ const MyForm = () => {
   /**
    * Render a labelled select backed by the shared option list.
    *
+   * `defaultsToNone` marks a select whose first option is "None" and which is
+   * therefore already answered when the form loads. Those stay `required` so a
+   * value is always submitted, but they carry no asterisk: the asterisk means
+   * "we need something from you", and telling a scientist a pre-answered field
+   * is outstanding just sends them hunting for a value they do not have.
+   *
    * @param {object} props
+   * @param {string} props.field - key into FORM_OPTIONS
+   * @param {string} props.label
+   * @param {string} [props.tooltip]
+   * @param {boolean} [props.defaultsToNone]
    * @returns {JSX.Element}
    */
-  const renderSelect = ({ field, label, tooltip }) => (
+  const renderSelect = ({ field, label, tooltip, defaultsToNone = false }) => (
     <div className="form-group">
       <label htmlFor={field}>
-        {label} <span className="text-danger">*</span>
+        {label}
+        {defaultsToNone ? (
+          <span className="text-muted small"> (leave as None if unsure)</span>
+        ) : (
+          <span className="text-danger"> *</span>
+        )}
         {tooltip && (
           <span
             data-icon="&#x74;"
@@ -692,6 +707,14 @@ const MyForm = () => {
             </span>
           </label>
 
+          {/* Now that the asterisk is only on fields that genuinely need an
+              answer, the convention is worth stating rather than leaving the
+              reader to infer it. */}
+          <p className="text-muted small mt-2 mb-3">
+            Fields marked <span className="text-danger">*</span> are required.
+            Everything else can be left as it is if it does not apply.
+          </p>
+
           {isEditing && (
             <>
               <input
@@ -712,7 +735,11 @@ const MyForm = () => {
 
           {existingRequest?.janCode && !existingRequest.isClone && (
             <div className="form-group">
-              <label htmlFor="janCode">Label</label>
+              {/* Pre-filled, but an admin can edit it and the server rejects an
+                  empty or malformed code, so it needs the marker too. */}
+              <label htmlFor="janCode">
+                Label <span className="text-danger">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -860,29 +887,34 @@ const MyForm = () => {
                     })}
                     {renderSelect({
                       field: "secondaryAnalysisType",
+                      defaultsToNone: true,
                       label: "Secondary analysis",
                       tooltip:
                         "Select only if you want multiple types of analysis done on the same sample, e.g. discovery and targeted",
                     })}
                     {renderSelect({
                       field: "typeOfPTM",
+                      defaultsToNone: true,
                       label: "Type of PTM",
                       tooltip: "Select the type of PTM you are interested in",
                     })}
                     {renderSelect({
                       field: "quantitativeAnalysisRequired",
+                      defaultsToNone: true,
                       label: "Quantitative analysis required",
                       tooltip:
                         "Select the type of quantitative analysis if you have discussed with the Proteomics team. Otherwise leave this in the default option ",
                     })}
                     {renderSelect({
                       field: "typeOfLabeling",
+                      defaultsToNone: true,
                       label: "Type of labeling",
                       tooltip:
                         "Select the type of labeling if you have discussed with the proteomics team. Otherwise leave this in the default option ",
                     })}
                     {renderSelect({
                       field: "labelUsed",
+                      defaultsToNone: true,
                       label: "Label used",
                       tooltip:
                         "Select the type of label if you have discussed with the proteomics team. Otherwise leave this in the default option",
@@ -1057,6 +1089,13 @@ const MyForm = () => {
                     <p className="text-muted">No samples added yet.</p>
                   )}
 
+                  {/* Every input in a row is required, and per-field asterisks
+                      on a repeating row would be noise, so it is said once. */}
+                  <p className="text-muted small mb-1">
+                    Samples are optional, but every field of a sample you add is
+                    required.
+                  </p>
+
                   <label>Drag to reorder items</label>
 
                   <button
@@ -1080,6 +1119,11 @@ const MyForm = () => {
                   {/* Paired with this section for the same reason as
                       samplesSubmitted above. */}
                   <input type="hidden" name="constructsSubmitted" value="true" />
+
+                  <p className="text-muted small mb-2">
+                    Constructs are optional, but every field of a construct you
+                    add is required.
+                  </p>
 
                   <div id="constructs">
                     {state.constructs.map((construct) => (
@@ -1143,7 +1187,7 @@ const MyForm = () => {
 
                   <button
                     type="button"
-                    className="btn btn-outline-primary btn-block mt-3"
+                    className="btn btn-outline-primary btn-block mt-4"
                     onClick={addNote}
                   >
                     Add Note
