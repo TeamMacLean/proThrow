@@ -43,4 +43,50 @@ describe("Util", () => {
       expect(["local", "ldapauth"]).toContain(strategy);
     });
   });
+
+  describe("toSafeJSON", () => {
+    it("round-trips ordinary values", () => {
+      expect(JSON.parse(Util.toSafeJSON({ a: 1, b: "two" }))).toEqual({
+        a: 1,
+        b: "two",
+      });
+    });
+
+    // The output is emitted between <script> tags, where an unescaped "<"
+    // lets a stored value close the tag and start executing.
+    it("escapes angle brackets so a value cannot close the script tag", () => {
+      const output = Util.toSafeJSON({
+        note: "</script><script>alert(1)</script>",
+      });
+      expect(output).not.toContain("</script>");
+      expect(output).toContain("\\u003c");
+      expect(JSON.parse(output).note).toBe(
+        "</script><script>alert(1)</script>"
+      );
+    });
+
+    it("escapes the unicode line and paragraph separators", () => {
+      const lineSeparator = String.fromCharCode(0x2028);
+      const paragraphSeparator = String.fromCharCode(0x2029);
+      const output = Util.toSafeJSON({
+        note: `a${lineSeparator}b${paragraphSeparator}c`,
+      });
+
+      expect(output).not.toContain(lineSeparator);
+      expect(output).not.toContain(paragraphSeparator);
+      expect(JSON.parse(output).note).toBe(
+        `a${lineSeparator}b${paragraphSeparator}c`
+      );
+    });
+  });
+
+  describe("generateUniqueId", () => {
+    it("returns a distinct id each call", () => {
+      const first = Util.generateUniqueId();
+      const second = Util.generateUniqueId();
+      expect(typeof first).toBe("string");
+      expect(first.length).toBeGreaterThan(0);
+      expect(first).not.toBe(second);
+    });
+  });
 });

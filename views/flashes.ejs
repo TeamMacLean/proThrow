@@ -3,7 +3,7 @@
         <% if(locals.messages.success){ %>
             <% locals.messages.success.forEach(function(success){ %>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle mr-2"></i> <%- success %>
+                    <i class="fas fa-check-circle mr-2"></i> <%= success %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -14,7 +14,7 @@
         <% if(locals.messages.success_messages){ %>
             <% locals.messages.success_messages.forEach(function(success){ %>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle mr-2"></i> <%- success %>
+                    <i class="fas fa-check-circle mr-2"></i> <%= success %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -25,7 +25,7 @@
         <% if(locals.messages.info){ %>
             <% locals.messages.info.forEach(function(info){ %>
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="fas fa-info-circle mr-2"></i> <%- info %>
+                    <i class="fas fa-info-circle mr-2"></i> <%= info %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -36,7 +36,7 @@
         <% if(locals.messages.info_messages){ %>
             <% locals.messages.info_messages.forEach(function(info){ %>
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="fas fa-info-circle mr-2"></i> <%- info %>
+                    <i class="fas fa-info-circle mr-2"></i> <%= info %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -47,7 +47,7 @@
         <% if(locals.messages.error){ %>
             <% locals.messages.error.forEach(function(error){ %>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle mr-2"></i> <%- error %>
+                    <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -58,7 +58,7 @@
         <% if(locals.messages.error_messages){ %>
             <% locals.messages.error_messages.forEach(function(error){ %>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle mr-2"></i> <%- error %>
+                    <i class="fas fa-exclamation-circle mr-2"></i> <%= error %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -69,7 +69,7 @@
         <% if(locals.messages.warning){ %>
             <% locals.messages.warning.forEach(function(warning){ %>
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> <%- warning %>
+                    <i class="fas fa-exclamation-triangle mr-2"></i> <%= warning %>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

@@ -1,12 +1,18 @@
 # Dependencies
 node_modules
 
+# AI
+.claude
+
 # Config (contains sensitive credentials)
 config.json
 
 # Build outputs
 dist
 public/js/app.js
+public/js/app.js.LICENSE.txt
+# main.js was a stale webpack build of main.src.js; nothing loads it any more
+# (foot.ejs serves main.src.js directly), so it is no longer generated.
 public/js/main.js
 
 # User uploads (runtime data)

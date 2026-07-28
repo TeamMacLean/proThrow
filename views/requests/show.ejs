@@ -3,11 +3,11 @@
 
 <div class="container">
 
-    <h1 class="center"><%- request.janCode %></h1>
+    <h1 class="center"><%= request.janCode %></h1>
 
-    <h2><%- request.yanCode %></h2>
-    <span>Created by: <a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></span>
-    <input type="hidden" id="id" name="id" value="<%- request.id %>">
+    <h2><%= request.yanCode %></h2>
+    <span>Created by: <a href="/user/<%= request.createdBy %>"><%= request.getCreatedByName() %></a></span>
+    <input type="hidden" id="id" name="id" value="<%= request.id %>">
 
     <div class="row hidden-print">
         <div class="col-sm-12 print-wide">
@@ -19,15 +19,15 @@
                         <select class="form-control" id="assign-select">
                             <option value="unassigned">unassigned</option>
                             <% admins && admins.map(function(admin){ %>
-                                <option value="<%- admin %>" <% if(admin == request.assignedTo){ %>selected
+                                <option value="<%= admin %>" <% if(admin == request.assignedTo){ %>selected
                                         <% } %>
-                                ><%- admin %></option>
+                                ><%= admin %></option>
                             <% }) %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="completion-selection">Set status:</label>
-                        <select class="form-control" id="completion-selection" value="<%- request.status %>">
+                        <select class="form-control" id="completion-selection" value="<%= request.status %>">
                             <option
                             <% if (request.status == 'incomplete') { %>
                                 selected
@@ -90,15 +90,23 @@
                 <% } %>
 
                 <% if(!request.assignedTo || locals.signedInUser.isAdmin){ %>
-                    <a href="/request/<%- request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>
-                    <a
-                        href="/request/<%- request.id %>/delete"
-                        class="btn btn-danger btn-tiny pull-right areyousure"
+                    <a href="/request/<%= request.id %>/edit" class="btn btn-primary btn-tiny">Edit</a>
+                    <!-- Deletion is a POST so that it cannot be triggered by
+                         following a link. -->
+                    <form
+                        action="/request/<%= request.id %>/delete"
+                        method="POST"
+                        class="d-inline pull-right"
                     >
-                        Delete
-                    </a>
+                        <button
+                            type="submit"
+                            class="btn btn-danger btn-tiny areyousure"
+                        >
+                            Delete
+                        </button>
+                    </form>
                 <% } %>
-                <a href="/request/<%- request.id %>/clone" class="btn btn-success btn-tiny">Clone</a>
+                <a href="/request/<%= request.id %>/clone" class="btn btn-success btn-tiny">Clone</a>
             </div>
         </div>
     </div>
@@ -111,23 +119,23 @@
                     <tbody>
                     <tr>
                         <th scope="row">Species</th>
-                        <td><%- request.species %></td>
+                        <td><%= request.species %></td>
                     </tr>
                     <tr>
                         <th scope="row">Second Species</th>
-                        <td><%- request.secondSpecies %></td>
+                        <td><%= request.secondSpecies %></td>
                     </tr>
                     <tr>
                         <th scope="row">Tissue</th>
-                        <td><%- request.tissue %></td>
+                        <td><%= request.tissue %></td>
                     </tr>
                     <tr>
                         <th scope="row">Age</th>
-                        <td><%- request.tissueAgeNum %> <%- request.tissueAgeType %></td>
+                        <td><%= request.tissueAgeNum %> <%= request.tissueAgeType %></td>
                     </tr>
                     <tr>
                         <th scope="row">Growth Conditions</th>
-                        <td><%- request.growthConditions %></td>
+                        <td><%= request.growthConditions %></td>
                     </tr>
                     </tbody>
                 </table>
@@ -139,27 +147,27 @@
                     <tbody>
                     <tr>
                         <th scope="row">Type of Analysis</th>
-                        <td><%- request.analysisType %></td>
+                        <td><%= request.analysisType %></td>
                     </tr>
                     <tr>
                         <th scope="row">Secondary Type of Analysis</th>
-                        <td><%- request.secondaryAnalysisType %></td>
+                        <td><%= request.secondaryAnalysisType %></td>
                     </tr>
                     <tr>
                         <th scope="row">Type of PTM</th>
-                        <td><%- request.typeOfPTM %></td>
+                        <td><%= request.typeOfPTM %></td>
                     </tr>
                     <tr>
                         <th scope="row">Quantitative Analysis Required</th>
-                        <td><%- request.quantitativeAnalysisRequired %></td>
+                        <td><%= request.quantitativeAnalysisRequired %></td>
                     </tr>
                     <tr>
                         <th scope="row">Type of Labeling</th>
-                        <td><%- request.typeOfLabeling %></td>
+                        <td><%= request.typeOfLabeling %></td>
                     </tr>
                     <tr>
                         <th scope="row">Label Used</th>
-                        <td><%- request.labelUsed %></td>
+                        <td><%= request.labelUsed %></td>
                     </tr>
                     </tbody>
                 </table>
@@ -171,15 +179,15 @@
                     <tbody>
                     <tr>
                         <th scope="row">Project Description</th>
-                        <td><%- request.projectDescription %></td>
+                        <td><%= request.projectDescription %></td>
                     </tr>
                     <tr>
                         <th scope="row">Hoped Analysis</th>
-                        <td><%- request.hopedAnalysis %></td>
+                        <td><%= request.hopedAnalysis %></td>
                     </tr>
                     <tr>
                         <th scope="row">Buffer Composition</th>
-                        <td><%- request.bufferComposition %></td>
+                        <td><%= request.bufferComposition %></td>
                     </tr>
                     </tbody>
                 </table>
@@ -191,15 +199,15 @@
                     <tbody>
                     <tr>
                         <th scope="row">Sample Prep</th>
-                        <td><%- request.samplePrep %></td>
+                        <td><%= request.samplePrep %></td>
                     </tr>
                     <tr>
                         <th scope="row">Digestion</th>
-                        <td><%- request.digestion %></td>
+                        <td><%= request.digestion %></td>
                     </tr>
                     <tr>
                         <th scope="row">Enzyme</th>
-                        <td><%- request.enzyme %></td>
+                        <td><%= request.enzyme %></td>
                     </tr>
                     </tbody>
                 </table>
@@ -220,9 +228,9 @@
 
                     <% request.constructs && request.constructs.length && request.constructs.map(function(construct){ %>
                         <tr>
-                            <td><%- construct.accession %></td>
-                            <td><%- construct.sequenceInfo %></td>
-                            <td><%- construct.dbEntry %></td>
+                            <td><%= construct.accession %></td>
+                            <td><%= construct.sequenceInfo %></td>
+                            <td><%= construct.dbEntry %></td>
                         </tr>
                     <% }); %>
 
@@ -240,8 +248,8 @@
                 <!-- <div class="row"> -->
                     <div class="col-md-6">
                         <hr />
-                        <label><%- img.description || 'No description provided' %></label>
-                        <img class="preview-img" src="<%- img.getURL() %>">
+                        <label><%= img.description || 'No description provided' %></label>
+                        <img class="preview-img" src="<%= img.getURL() %>">
                         <br />
                     </div>
                 <!-- </div> -->
@@ -276,9 +284,9 @@
             }).map(function(sd){ %>
 
                 <tr>
-                    <td><%- sd.sampleNumber %></td>
-                    <td><%- sd.sampleLabel %></td>
-                    <td><%- sd.sampleDescription %></td>
+                    <td><%= sd.sampleNumber %></td>
+                    <td><%= sd.sampleLabel %></td>
+                    <td><%= sd.sampleDescription %></td>
                 </tr>
 
             <% }); %>
@@ -295,7 +303,7 @@
 
         <ul id="notes">
             <% request.notes && request.notes.length && request.notes.map(function(note){ %>
-                <li><%- note %></li>
+                <li><%= note %></li>
             <% }); %>
 
         </ul>
@@ -313,7 +321,7 @@
             <ul id="linked-requests">
                 <% if (request.linkedRequests && request.linkedRequests.length){ %>
                     <% request.linkedRequests.map(function(request){ %>
-                        <li><%- request.janCode %></li>
+                        <li><%= request.janCode %></li>
                     <% }); %>
                 <% } else { %>
                     <p>None</p>

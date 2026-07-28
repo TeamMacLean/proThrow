@@ -29,24 +29,24 @@
       <% incompleteRequests.map(function (request) { %>
       <tr>
         <th scope="row">
-          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
-            ><%- request.janCode %></a
+          <a style="text-transform: uppercase" href="/request/<%= request.id %>"
+            ><%= request.janCode %></a
           >
         </th>
-        <td><%- request.humanDate() %></td>
-        <td><%- request.modifiedHumanDate() %></td>
+        <td><%= request.humanDate() %></td>
+        <td><%= request.modifiedHumanDate() %></td>
         <td>
-          <a href="/user/<%- request.createdBy %>"
-            ><%- request.getCreatedByName() %></a
+          <a href="/user/<%= request.createdBy %>"
+            ><%= request.getCreatedByName() %></a
           >
         </td>
         <td>
-          <a href="/user/<%- request.assignedTo %>"
-            ><%- request.assignedTo || 'unassigned' %>
+          <a href="/user/<%= request.assignedTo %>"
+            ><%= request.assignedTo || 'unassigned' %>
           </a>
         </td>
-        <td><%- request.status %></td>
-        <td class="displayNone"><%- request.projectDescription %></td>
+        <td><%= request.status %></td>
+        <td class="displayNone"><%= request.projectDescription %></td>
       </tr>
       <% }); %>
     </tbody>
@@ -75,24 +75,24 @@
       <% completedRequests.map(function (request) { %>
       <tr>
         <th scope="row">
-          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
-            ><%- request.janCode %></a
+          <a style="text-transform: uppercase" href="/request/<%= request.id %>"
+            ><%= request.janCode %></a
           >
         </th>
-        <td><%- request.humanDate() %></td>
-        <td><%- request.modifiedHumanDate() %></td>
+        <td><%= request.humanDate() %></td>
+        <td><%= request.modifiedHumanDate() %></td>
         <td>
-          <a href="/user/<%- request.createdBy %>"
-            ><%- request.getCreatedByName() %></a
+          <a href="/user/<%= request.createdBy %>"
+            ><%= request.getCreatedByName() %></a
           >
         </td>
         <td>
-          <a href="/user/<%- request.assignedTo %>"
-            ><%- request.getAssignedToName() || 'unassigned' %>
+          <a href="/user/<%= request.assignedTo %>"
+            ><%= request.getAssignedToName() || 'unassigned' %>
           </a>
         </td>
-        <td><%- request.status %></td>
-        <td class="displayNone"><%- request.projectDescription %></td>
+        <td><%= request.status %></td>
+        <td class="displayNone"><%= request.projectDescription %></td>
       </tr>
       <% }); %>
     </tbody>
@@ -120,24 +120,24 @@
       <% samplesUsedUpRequests.map(function (request) { %>
       <tr>
         <th scope="row">
-          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
-            ><%- request.janCode %></a
+          <a style="text-transform: uppercase" href="/request/<%= request.id %>"
+            ><%= request.janCode %></a
           >
         </th>
-        <td><%- request.humanDate() %></td>
-        <td><%- request.modifiedHumanDate() %></td>
+        <td><%= request.humanDate() %></td>
+        <td><%= request.modifiedHumanDate() %></td>
         <td>
-          <a href="/user/<%- request.createdBy %>"
-            ><%- request.getCreatedByName() %></a
+          <a href="/user/<%= request.createdBy %>"
+            ><%= request.getCreatedByName() %></a
           >
         </td>
         <td>
-          <a href="/user/<%- request.assignedTo %>"
-            ><%- request.getAssignedToName() || 'unassigned' %>
+          <a href="/user/<%= request.assignedTo %>"
+            ><%= request.getAssignedToName() || 'unassigned' %>
           </a>
         </td>
-        <td><%- request.status %></td>
-        <td class="displayNone"><%- request.projectDescription %></td>
+        <td><%= request.status %></td>
+        <td class="displayNone"><%= request.projectDescription %></td>
       </tr>
       <% }); %>
     </tbody>
@@ -164,24 +164,24 @@
       <% discardedRequests.map(function (request) { %>
       <tr>
         <th scope="row">
-          <a style="text-transform: uppercase" href="/request/<%- request.id %>"
-            ><%- request.janCode %></a
+          <a style="text-transform: uppercase" href="/request/<%= request.id %>"
+            ><%= request.janCode %></a
           >
         </th>
-        <td><%- request.humanDate() %></td>
-        <td><%- request.modifiedHumanDate() %></td>
+        <td><%= request.humanDate() %></td>
+        <td><%= request.modifiedHumanDate() %></td>
         <td>
-          <a href="/user/<%- request.createdBy %>"
-            ><%- request.getCreatedByName() %></a
+          <a href="/user/<%= request.createdBy %>"
+            ><%= request.getCreatedByName() %></a
           >
         </td>
         <td>
-          <a href="/user/<%- request.assignedTo %>"
-            ><%- request.getAssignedToName() || 'unassigned' %></a
+          <a href="/user/<%= request.assignedTo %>"
+            ><%= request.getAssignedToName() || 'unassigned' %></a
           >
         </td>
-        <td><%- request.status %></td>
-        <td class="displayNone"><%- request.projectDescription %></td>
+        <td><%= request.status %></td>
+        <td class="displayNone"><%= request.projectDescription %></td>
       </tr>
       <% }); %>
     </tbody>

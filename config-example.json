@@ -1,6 +1,7 @@
 {
   "devMode": true,
   "vpnMode": false,
+  "secureCookies": false,
   "port": "3000",
   "dbName": "prothrow",
   "secret": "cats",

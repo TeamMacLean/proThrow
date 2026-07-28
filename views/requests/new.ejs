@@ -47,7 +47,9 @@
 
 <script>
     <% if(typeof request != 'undefined'){ %>
-    window.existingRequest = <%- JSON.stringify(request) %>;
+    // toSafeJSON escapes "<" so that a field containing "</script>" cannot
+    // close this tag and execute whatever follows it.
+    window.existingRequest = <%- toSafeJSON(request) %>;
     <% } %>
     window.isAdmin = <%= locals.signedInUser && locals.signedInUser.isAdmin ? 'true' : 'false' %>;
 </script>

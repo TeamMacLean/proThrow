@@ -1,59 +1,117 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Dropzone from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 
+const MAX_FILES = 5;
+const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+// If a resize never calls back (a corrupt file that never fires onload), give
+// up rather than leaving the submit button disabled forever.
+const RESIZE_TIMEOUT_MS = 15000;
+
+/**
+ * Drag-and-drop upload for new supporting images.
+ *
+ * @param {object} props
+ * @param {Function} props.onImagesChange - called with the current image list
+ * @param {Function} [props.onPendingCountChange] - called with the number of
+ *   images still being resized, so the parent can block submission until the
+ *   previews exist. Submitting mid-resize used to drop the image silently.
+ * @param {Array} [props.initialImages]
+ * @param {string[]} [props.supportedFileTypes]
+ */
 const ImageUploadForm = ({
   onImagesChange,
-  initialImages,
-  supportedFileTypes: _supportedFileTypes, // TODO incorporate
+  onPendingCountChange,
+  initialImages = [],
+  supportedFileTypes = [],
 }) => {
   const [images, setImages] = useState(initialImages);
+  const [pendingCount, setPendingCount] = useState(0);
   const [error, setError] = useState("");
 
+  // Held in refs so the effects below do not depend on the parent's callback
+  // identity: a parent that recreates these on every render would otherwise
+  // drive an endless render loop through this component's effects.
+  const onImagesChangeRef = useRef(onImagesChange);
+  const onPendingCountChangeRef = useRef(onPendingCountChange);
   useEffect(() => {
-    onImagesChange(images);
+    onImagesChangeRef.current = onImagesChange;
+    onPendingCountChangeRef.current = onPendingCountChange;
+  });
+
+  useEffect(() => {
+    onImagesChangeRef.current?.(images);
   }, [images]);
+
+  useEffect(() => {
+    onPendingCountChangeRef.current?.(pendingCount);
+  }, [pendingCount]);
+
+  const acceptedExtensions = supportedFileTypes.length
+    ? supportedFileTypes.join(" ")
+    : ".png .jpg .jpeg .gif";
 
   const handleDrop = (acceptedFiles, rejectedFiles) => {
     if (rejectedFiles && rejectedFiles.length > 0) {
       setError(
-        "Some files were rejected. Only .png .PNG .jpg .JPG .jpeg .JPEG .gif .GIF files are accepted. 2MB is the maximum allowed file size. No more than 5 files are allowed."
+        `Some files were rejected. Only ${acceptedExtensions} files are accepted. 2MB is the maximum allowed file size. No more than ${MAX_FILES} files are allowed.`
       );
       return;
     }
 
-    if (
-      (images ? images.length : 0) +
-        (acceptedFiles ? acceptedFiles.length : 0) >
-      5
-    ) {
-      setError("You can only upload up to 5 files.");
+    if (images.length + (acceptedFiles ? acceptedFiles.length : 0) > MAX_FILES) {
+      setError(`You can only upload up to ${MAX_FILES} files.`);
       return;
     }
 
-    setError(""); // Clear any previous errors
+    setError("");
 
     acceptedFiles.forEach((file) => {
-      if (file.size > maxSizeBytes) {
+      if (file.size > MAX_SIZE_BYTES) {
         setError(`File ${file.name} exceeds the 2MB size limit.`);
         return;
       }
 
-      Resizer.imageFileResizer(
-        file,
-        300,
-        300,
-        "JPEG",
-        100,
-        0,
-        (uri) => {
-          setImages((prevImages) => [
-            ...prevImages,
-            { file, preview: uri, description: "" },
-          ]);
-        },
-        "base64"
-      );
+      setPendingCount((count) => count + 1);
+
+      let settled = false;
+      const settle = () => {
+        if (settled) return false;
+        settled = true;
+        clearTimeout(timeoutId);
+        setPendingCount((count) => Math.max(0, count - 1));
+        return true;
+      };
+
+      const timeoutId = setTimeout(() => {
+        if (settle()) {
+          setError(`Could not generate a preview for ${file.name}.`);
+        }
+      }, RESIZE_TIMEOUT_MS);
+
+      try {
+        Resizer.imageFileResizer(
+          file,
+          300,
+          300,
+          "JPEG",
+          100,
+          0,
+          (uri) => {
+            if (!settle()) return;
+            setImages((prevImages) => [
+              ...prevImages,
+              { file, preview: uri, description: "" },
+            ]);
+          },
+          "base64"
+        );
+      } catch (err) {
+        console.error("Image resize failed:", err);
+        if (settle()) {
+          setError(`Could not generate a preview for ${file.name}.`);
+        }
+      }
     });
   };
 
@@ -88,8 +146,6 @@ const ImageUploadForm = ({
     marginTop: "5px",
   };
 
-  const maxSizeBytes = 2 * 1024 * 1024; // 2MB
-
   return (
     <div>
       <Dropzone
@@ -100,24 +156,22 @@ const ImageUploadForm = ({
           "image/gif": [".gif", ".GIF"],
         }}
         multiple
-        maxFiles={5}
-        maxSize={maxSizeBytes}
+        maxFiles={MAX_FILES}
+        maxSize={MAX_SIZE_BYTES}
       >
-        {({ getRootProps, getInputProps, rejectedFiles }) => (
+        {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()} style={dropzoneStyle}>
             <input {...getInputProps()} />
             <p>Drag 'n' drop some files here, or click to select files</p>
-            {rejectedFiles && rejectedFiles.length > 0 && (
-              <p className="text-danger">
-                Some files were rejected. Only .png .PNG .jpg .JPG .jpeg .JPEG
-                .gif .GIF files are accepted. 2MB is the maximum allowed file
-                size. No more than 5 files are allowed.
-              </p>
-            )}
           </div>
         )}
       </Dropzone>
       {error && <p className="text-danger">{error}</p>}
+      {pendingCount > 0 && (
+        <p className="text-muted">
+          Preparing {pendingCount} image{pendingCount === 1 ? "" : "s"}...
+        </p>
+      )}
       <div>
         {images.map((image, index) => (
           <div key={index} style={imageContainerStyle}>
@@ -128,7 +182,10 @@ const ImageUploadForm = ({
               className="img-thumbnail"
             />
             <div style={{ flexGrow: 1 }}>
+              {/* Without an explicit type this defaults to submit and posts the
+                  whole form when the admin only wanted to drop an image. */}
               <button
+                type="button"
                 className="btn btn-outline-danger btn-sm"
                 onClick={() => removeImage(index)}
               >

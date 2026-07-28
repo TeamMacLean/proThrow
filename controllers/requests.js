@@ -5,553 +5,415 @@ const Email = require("../lib/email");
 const SampleDescription = require("../models/sampleDescription");
 const SampleImage = require("../models/sampleImage");
 const Construct = require("../models/construct");
+const { FIELD_MAX_LENGTHS } = require("../lib/formOptions");
+const {
+  firstScalar,
+  toStringArray,
+  toObjectArray,
+  validateRequestFields,
+  validateJanCode,
+  validateConstructArrays,
+  validateSampleArrays,
+} = require("../lib/validation");
+
+/** Maximum number of notes accepted on a single request. */
+const MAX_NOTES = 100;
 
 /**
- * Processes sample description data for a given request.
- * @param {object} sampleData - Object containing arrays of sampleNumbers, sampleLabels, sampleDescriptions.
- * @param {string} requestId - The ID of the request these samples belong to.
- * @param {Array} existingSamples - Array of existing SampleDescription entities associated with the request.
+ * Interpret a multipart form value as a boolean.
+ *
+ * Checkboxes and hidden flags arrive as the strings "true"/"1"/"on", or are
+ * absent entirely when unchecked.
+ *
+ * @param {*} value
+ * @returns {boolean}
  */
-async function processSampleDescription(
-  sampleData,
-  requestId,
-  existingSamples = []
-) {
-  const { sampleNumbers, sampleLabels, sampleDescriptions } = sampleData;
-  const creationPromises = [];
-  const updatePromises = [];
-  const existingSampleIds = new Set(existingSamples.map((s) => s.id));
-  const idsToDelete = new Set(existingSampleIds);
-
-  console.log(
-    `Processing ${sampleNumbers.length} sample descriptions for request: ${requestId}`
-  );
-  console.log("Sample Data to Process:", {
-    sampleNumbers: sampleNumbers,
-    sampleLabels: sampleLabels,
-    sampleDescriptions: sampleDescriptions,
-  });
-
-  for (let i = 0; i < sampleNumbers.length; i++) {
-    const identifier = sampleNumbers[i];
-    if (!identifier) {
-      console.log(
-        `Skipping empty sample number at index ${i} for request ${requestId}.`
-      );
-      continue;
-    }
-
-    const entityData = {
-      requestID: requestId,
-      position: i, // Position based on array index
-      sampleNumber: identifier,
-      sampleLabel: sampleLabels[i] !== undefined ? sampleLabels[i] : null,
-      sampleDescription:
-        sampleDescriptions[i] !== undefined ? sampleDescriptions[i] : null,
-    };
-
-    console.log(
-      `[SampleDescription] Processing entity data at index ${i}:`,
-      entityData
-    );
-
-    // Find existing sample by its number and/or position, or use provided existingSamples data
-    const existingSample = existingSamples.find(
-      (s) => s.sampleNumber === identifier && s.requestID === requestId
-    );
-
-    if (existingSample) {
-      idsToDelete.delete(existingSample.id); // Mark as handled, not to be deleted
-      // Update existing sample
-      try {
-        const sampleToUpdate = await SampleDescription.get(
-          existingSample.id
-        );
-        if (sampleToUpdate) {
-          Object.assign(sampleToUpdate, entityData);
-          updatePromises.push(
-            sampleToUpdate
-              .save()
-              .then((saved) => {
-                console.log(
-                  `Updated SampleDescription (${saved.id}) successfully for request ${requestId}.`
-                );
-                return saved;
-              })
-              .catch((err) => {
-                console.error(
-                  `Error updating SampleDescription (${existingSample.id}) for request ${requestId}:`,
-                  err
-                );
-                return Promise.resolve(); // Continue processing
-              })
-          );
-        } else {
-          // Fallback to create if get fails but was thought to exist
-          console.warn(
-            `Existing SampleDescription (${existingSample.id}) not found for update, attempting creation for request ${requestId}.`
-          );
-          creationPromises.push(
-            new SampleDescription(entityData)
-              .save()
-              .then((saved) => {
-                console.log(
-                  `Created new SampleDescription (${saved.id}) as fallback for request ${requestId}.`
-                );
-                return saved;
-              })
-              .catch((err) => {
-                console.error(
-                  `Error creating fallback SampleDescription for request ${requestId}:`,
-                  err
-                );
-                return Promise.resolve();
-              })
-          );
-        }
-      } catch (err) {
-        console.error(
-          `Exception fetching existing SampleDescription (${existingSample.id}) for request ${requestId}:`,
-          err
-        );
-        // Fallback to create if fetch fails
-        creationPromises.push(
-          new SampleDescription(entityData)
-            .save()
-            .then((saved) => {
-              console.log(
-                `Created new SampleDescription (${saved.id}) due to fetch error for request ${requestId}.`
-              );
-              return saved;
-            })
-            .catch((err) => {
-              console.error(
-                `Error creating fallback SampleDescription after fetch error for request ${requestId}:`,
-                err
-              );
-              return Promise.resolve();
-            })
-        );
-      }
-    } else if (identifier) {
-      // Create new sample description
-      creationPromises.push(
-        new SampleDescription(entityData)
-          .save()
-          .then((saved) => {
-            console.log(
-              `Created new SampleDescription (${saved.id}) successfully for request ${requestId}.`
-            );
-            return saved;
-          })
-          .catch((err) => {
-            console.error(
-              `Error creating new SampleDescription for request ${requestId}:`,
-              err
-            );
-            return Promise.resolve(); // Continue processing
-          })
-      );
-    }
-  }
-
-  // Delete samples that were not in the new data
-  const deletePromises = Array.from(idsToDelete).map((id) =>
-    SampleDescription.get(id)
-      .then((entity) => {
-        if (entity) {
-          return entity
-            .delete()
-            .then(() => {
-              console.log(
-                `Deleted old SampleDescription (${id}) for request ${requestId}.`
-              );
-            })
-            .catch((err) => {
-              console.error(
-                `Error deleting old SampleDescription (${id}) for request ${requestId}:`,
-                err
-              );
-              return Promise.resolve();
-            });
-        } else {
-          console.warn(
-            `Old SampleDescription (${id}) not found for deletion for request ${requestId}.`
-          );
-          return Promise.resolve();
-        }
-      })
-      .catch((err) => {
-        console.error(
-          `Exception fetching old SampleDescription (${id}) for deletion for request ${requestId}:`,
-          err
-        );
-        return Promise.resolve();
-      })
-  );
-
-  await Promise.all([
-    ...creationPromises,
-    ...updatePromises,
-    ...deletePromises,
-  ]);
-  console.log(
-    `Finished processing SampleDescriptions for request: ${requestId}`
-  );
+function isTruthyFlag(value) {
+  const scalar = firstScalar(value).toLowerCase();
+  return scalar === "true" || scalar === "1" || scalar === "on";
 }
 
 /**
- * Processes construct data for a given request.
- * @param {Array} accessions - Array of construct identifiers (e.g., accession numbers).
- * @param {Array} sequenceInfos - Array of sequence information strings.
- * @param {Array} dbEntries - Array of database entry strings.
- * @param {string} requestId - The ID of the request these constructs belong to.
- * @param {Array} existingConstructs - Array of existing Construct entities associated with the request.
- */
-async function processConstruct(
-  accessions = [],
-  sequenceInfos = [],
-  dbEntries = [],
-  requestId,
-  existingConstructs = []
-) {
-  const creationPromises = [];
-  const updatePromises = [];
-  const existingConstructIds = new Set(existingConstructs.map((c) => c.id));
-  const idsToDelete = new Set(existingConstructIds);
-
-  console.log(
-    `Processing ${accessions.length} constructs for request: ${requestId}`
-  );
-
-  for (let i = 0; i < accessions.length; i++) {
-    const identifier = accessions[i];
-    if (!identifier) {
-      console.log(
-        `Skipping empty accession at index ${i} for request ${requestId}.`
-      );
-      continue;
-    }
-
-    const entityData = {
-      requestID: requestId,
-      position: i, // Position based on array index
-      accession: identifier,
-      sequenceInfo: sequenceInfos[i] !== undefined ? sequenceInfos[i] : null,
-      dbEntry: dbEntries[i] !== undefined ? dbEntries[i] : null,
-    };
-
-    console.log(
-      `[Construct] Processing entity data at index ${i}:`,
-      entityData
-    );
-
-    // Find existing construct by accession
-    const existingConstruct = existingConstructs.find(
-      (c) => c.accession === identifier && c.requestID === requestId
-    );
-
-    if (existingConstruct) {
-      idsToDelete.delete(existingConstruct.id); // Mark as handled
-      // Update existing construct
-      try {
-        const constructToUpdate = await Construct.get(
-          existingConstruct.id
-        );
-        if (constructToUpdate) {
-          Object.assign(constructToUpdate, entityData);
-          updatePromises.push(
-            constructToUpdate
-              .save()
-              .then((saved) => {
-                console.log(
-                  `Updated Construct (${saved.id}) successfully for request ${requestId}.`
-                );
-                return saved;
-              })
-              .catch((err) => {
-                console.error(
-                  `Error updating Construct (${existingConstruct.id}) for request ${requestId}:`,
-                  err
-                );
-                return Promise.resolve();
-              })
-          );
-        } else {
-          // Fallback to create if get fails
-          console.warn(
-            `Existing Construct (${existingConstruct.id}) not found for update, attempting creation for request ${requestId}.`
-          );
-          creationPromises.push(
-            new Construct(entityData)
-              .save()
-              .then((saved) => {
-                console.log(
-                  `Created new Construct (${saved.id}) as fallback for request ${requestId}.`
-                );
-                return saved;
-              })
-              .catch((err) => {
-                console.error(
-                  `Error creating fallback Construct for request ${requestId}:`,
-                  err
-                );
-                return Promise.resolve();
-              })
-          );
-        }
-      } catch (err) {
-        console.error(
-          `Exception fetching existing Construct (${existingConstruct.id}) for request ${requestId}:`,
-          err
-        );
-        // Fallback to create if fetch fails
-        creationPromises.push(
-          new Construct(entityData)
-            .save()
-            .then((saved) => {
-              console.log(
-                `Created new Construct (${saved.id}) due to fetch error for request ${requestId}.`
-              );
-              return saved;
-            })
-            .catch((err) => {
-              console.error(
-                `Error creating fallback Construct after fetch error for request ${requestId}:`,
-                err
-              );
-              return Promise.resolve();
-            })
-        );
-      }
-    } else if (identifier) {
-      // Create new construct
-      creationPromises.push(
-        new Construct(entityData)
-          .save()
-          .then((saved) => {
-            console.log(
-              `Created new Construct (${saved.id}) successfully for request ${requestId}.`
-            );
-            return saved;
-          })
-          .catch((err) => {
-            console.error(
-              `Error creating new Construct for request ${requestId}:`,
-              err
-            );
-            return Promise.resolve(); // Continue processing
-          })
-      );
-    }
-  }
-
-  // Delete constructs that were not in the new data
-  const deletePromises = Array.from(idsToDelete).map((id) =>
-    Construct.get(id)
-      .then((entity) => {
-        if (entity) {
-          return entity
-            .delete()
-            .then(() => {
-              console.log(
-                `Deleted old Construct (${id}) for request ${requestId}.`
-              );
-            })
-            .catch((err) => {
-              console.error(
-                `Error deleting old Construct (${id}) for request ${requestId}:`,
-                err
-              );
-              return Promise.resolve();
-            });
-        } else {
-          console.warn(
-            `Old Construct (${id}) not found for deletion for request ${requestId}.`
-          );
-          return Promise.resolve();
-        }
-      })
-      .catch((err) => {
-        console.error(
-          `Exception fetching old Construct (${id}) for deletion for request ${requestId}:`,
-          err
-        );
-        return Promise.resolve();
-      })
-  );
-
-  await Promise.all([
-    ...creationPromises,
-    ...updatePromises,
-    ...deletePromises,
-  ]);
-  console.log(`Finished processing Constructs for request: ${requestId}`);
-}
-
-/**
- * Converts notes from FormData object format to a clean array.
- * FormData sends indexed fields like notes[0], notes[1] as objects {0: "...", 1: "..."}.
- * This function normalizes the input and filters out empty notes.
+ * Converts notes from form data into a clean array of strings.
+ *
+ * Notes arrive as indexed fields (notes[0], notes[1]) which multer's
+ * append-field turns into an array, but a crafted payload can nest objects
+ * under those keys instead, so entries that are not strings are discarded
+ * rather than being allowed to reach `.trim()`.
  *
  * @param {Array|Object} notes - Notes as array or object from form data
  * @returns {Array<string>} Clean array of non-empty note strings
  */
 function normalizeNotes(notes) {
   const notesArray = Array.isArray(notes) ? notes : Object.values(notes || {});
-  return notesArray.filter((note) => note && note.trim());
+  return notesArray
+    .filter((note) => typeof note === "string" && note.trim())
+    .map((note) => note.slice(0, FIELD_MAX_LENGTHS.note))
+    .slice(0, MAX_NOTES);
 }
 
 /**
- * Safely performs a database operation with error handling.
- * Reduces duplicated try/catch blocks throughout image processing.
+ * Processes sample description data for a given request.
  *
- * @param {Function} operation - Async function to execute
- * @param {string} errorMessage - Message to log on failure
- * @returns {Promise<any>} Result of operation or undefined on error
+ * @param {object} sampleData - Arrays of sampleNumbers, sampleLabels, sampleDescriptions.
+ * @param {string} requestId - The ID of the request these samples belong to.
+ * @param {Array} existingSamples - Existing SampleDescription entities for the request.
+ * @param {boolean} allowDeletions - Whether samples absent from the payload may be deleted.
+ * @returns {Promise<string[]>} Messages describing any rows that could not be written.
  */
-async function safeDbOperation(operation, errorMessage) {
-  try {
-    return await operation();
-  } catch (err) {
-    console.error(errorMessage, err);
-    return undefined;
+async function processSampleDescription(
+  sampleData,
+  requestId,
+  existingSamples = [],
+  allowDeletions = false
+) {
+  const { sampleNumbers, sampleLabels, sampleDescriptions } = sampleData;
+  const errors = [];
+  const idsToDelete = new Set(existingSamples.map((s) => s.id));
+
+  // Rows are reused by position, not by matching on the sample number. Matching
+  // on the number meant two samples sharing one number both resolved to the
+  // same stored row: the first was overwritten by the second, and the row that
+  // never got matched was then deleted as an orphan. Position also lets an
+  // admin correct a sample number in place instead of the row being deleted and
+  // recreated under a new id.
+  const reusable = [...existingSamples].sort(
+    (a, b) => (a.position ?? 0) - (b.position ?? 0)
+  );
+
+  for (let i = 0; i < sampleNumbers.length; i++) {
+    const identifier = sampleNumbers[i];
+    if (!identifier) continue;
+
+    const entityData = {
+      requestID: requestId,
+      position: i,
+      sampleNumber: identifier,
+      sampleLabel: sampleLabels[i] !== undefined ? sampleLabels[i] : "",
+      sampleDescription:
+        sampleDescriptions[i] !== undefined ? sampleDescriptions[i] : "",
+    };
+
+    const existingSample = reusable.shift();
+
+    try {
+      if (existingSample) {
+        idsToDelete.delete(existingSample.id);
+        Object.assign(existingSample, entityData);
+        await existingSample.save();
+      } else {
+        await new SampleDescription(entityData).save();
+      }
+    } catch (err) {
+      console.error(
+        `Error saving SampleDescription "${identifier}" for request ${requestId}:`,
+        err
+      );
+      errors.push(`Sample "${identifier}" could not be saved.`);
+    }
   }
+
+  // Only remove rows the submitter actually had the opportunity to delete. When
+  // the payload carries no samples section at all, leaving the existing rows
+  // alone is the safe interpretation.
+  if (!allowDeletions) {
+    if (idsToDelete.size) {
+      console.warn(
+        `Skipping deletion of ${idsToDelete.size} sample(s) for request ${requestId}: payload did not include the samples section.`
+      );
+    }
+    return errors;
+  }
+
+  for (const id of idsToDelete) {
+    try {
+      const entity = await SampleDescription.get(id);
+      if (entity) await entity.delete();
+    } catch (err) {
+      console.error(
+        `Error deleting SampleDescription (${id}) for request ${requestId}:`,
+        err
+      );
+      errors.push("An old sample row could not be removed.");
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Processes construct data for a given request.
+ *
+ * @param {string[]} accessions - Construct identifiers (accession numbers).
+ * @param {string[]} sequenceInfos - Sequence information strings.
+ * @param {string[]} dbEntries - Database entry strings.
+ * @param {string} requestId - The ID of the request these constructs belong to.
+ * @param {Array} existingConstructs - Existing Construct entities for the request.
+ * @param {boolean} allowDeletions - Whether constructs absent from the payload may be deleted.
+ * @returns {Promise<string[]>} Messages describing any rows that could not be written.
+ */
+async function processConstruct(
+  accessions = [],
+  sequenceInfos = [],
+  dbEntries = [],
+  requestId,
+  existingConstructs = [],
+  allowDeletions = false
+) {
+  const errors = [];
+  const idsToDelete = new Set(existingConstructs.map((c) => c.id));
+
+  // Reused by position for the same reason as samples: two constructs can
+  // legitimately share an accession (the same parent gene with different tags,
+  // which is exactly what the form's own help text describes), and matching on
+  // the accession made the second silently overwrite the first and then delete
+  // the leftover row.
+  const reusable = [...existingConstructs].sort(
+    (a, b) => (a.position ?? 0) - (b.position ?? 0)
+  );
+
+  for (let i = 0; i < accessions.length; i++) {
+    const identifier = accessions[i];
+    if (!identifier) continue;
+
+    // sequenceInfo and dbEntry are required by the model, so a missing value
+    // would throw on save. Defaulting to an empty string keeps the construct.
+    const entityData = {
+      requestID: requestId,
+      position: i,
+      accession: identifier,
+      sequenceInfo: sequenceInfos[i] !== undefined ? sequenceInfos[i] : "",
+      dbEntry: dbEntries[i] !== undefined ? dbEntries[i] : "",
+    };
+
+    const existingConstruct = reusable.shift();
+
+    try {
+      if (existingConstruct) {
+        idsToDelete.delete(existingConstruct.id);
+        Object.assign(existingConstruct, entityData);
+        await existingConstruct.save();
+      } else {
+        await new Construct(entityData).save();
+      }
+    } catch (err) {
+      console.error(
+        `Error saving Construct "${identifier}" for request ${requestId}:`,
+        err
+      );
+      errors.push(`Construct "${identifier}" could not be saved.`);
+    }
+  }
+
+  if (!allowDeletions) {
+    if (idsToDelete.size) {
+      console.warn(
+        `Skipping deletion of ${idsToDelete.size} construct(s) for request ${requestId}: payload did not include the constructs section.`
+      );
+    }
+    return errors;
+  }
+
+  for (const id of idsToDelete) {
+    try {
+      const entity = await Construct.get(id);
+      if (entity) await entity.delete();
+    } catch (err) {
+      console.error(
+        `Error deleting Construct (${id}) for request ${requestId}:`,
+        err
+      );
+      errors.push("An old construct row could not be removed.");
+    }
+  }
+
+  return errors;
 }
 
 /**
  * Processes pre-existing images for updates and deletions.
- * Handles images that were already uploaded and are being modified.
  *
- * @param {Array} preExistingImages - Array of existing image objects with flags
- * @param {string} requestId - The request ID for logging
+ * @param {Array} preExistingImages - Existing image objects carrying edit flags.
+ * @param {string} requestId - The request ID, used for logging.
+ * @param {Array} ownedImages - Images actually belonging to this request.
+ * @returns {Promise<string[]>} Messages describing any rows that could not be written.
  */
-async function processExistingImages(preExistingImages, requestId) {
-  if (!preExistingImages || !Array.isArray(preExistingImages)) return;
-  for (const existingImage of preExistingImages) {
-    const { id, deleteRequest, editedDescription, description } = existingImage;
+async function processExistingImages(
+  preExistingImages,
+  requestId,
+  ownedImages = []
+) {
+  const errors = [];
+  if (!Array.isArray(preExistingImages) || !preExistingImages.length) {
+    return errors;
+  }
 
-    if (deleteRequest) {
-      await safeDbOperation(async () => {
+  // The image IDs come from the browser, so they are only acted on when they
+  // belong to the request being edited. Otherwise one request's payload could
+  // delete another request's images.
+  const ownedIds = new Set(ownedImages.map((image) => image.id));
+
+  for (const existingImage of preExistingImages) {
+    const id = firstScalar(existingImage.id);
+    if (!id) continue;
+
+    if (!ownedIds.has(id)) {
+      console.warn(
+        `Ignoring image ${id} in payload for request ${requestId}: not one of its images.`
+      );
+      continue;
+    }
+
+    const deleteRequest = isTruthyFlag(existingImage.deleteRequest);
+    const editedDescription = isTruthyFlag(existingImage.editedDescription);
+
+    try {
+      if (deleteRequest) {
         const imageToDelete = await SampleImage.get(id);
         if (imageToDelete) {
+          // Files first: if the row went away and the unlink then failed, the
+          // orphaned file would be unreachable and impossible to find later.
+          await imageToDelete.removeFiles();
           await imageToDelete.delete();
-          console.log(`Deleted SampleImage (${id}) for request ${requestId}.`);
         }
-      }, `Error deleting SampleImage (${id}) for request ${requestId}:`);
-    } else if (editedDescription) {
-      await safeDbOperation(async () => {
+      } else if (editedDescription) {
         const imageToUpdate = await SampleImage.get(id);
         if (imageToUpdate) {
-          imageToUpdate.description = description || "";
+          imageToUpdate.description = firstScalar(
+            existingImage.description
+          ).slice(0, FIELD_MAX_LENGTHS.imageDescription);
           await imageToUpdate.save();
-          console.log(
-            `Updated description for SampleImage (${id}) for request ${requestId}.`
-          );
         }
-      }, `Error updating SampleImage (${id}) description for request ${requestId}:`);
+      }
+    } catch (err) {
+      console.error(
+        `Error updating SampleImage (${id}) for request ${requestId}:`,
+        err
+      );
+      errors.push("An existing image could not be updated.");
     }
   }
+
+  return errors;
+}
+
+/**
+ * Group uploaded files into image/preview pairs using their field names.
+ *
+ * The form appends each image as `image[N]` and its generated thumbnail as
+ * `preview[N]`. Pairing on those indices rather than on position in req.files
+ * means a reordered or partial upload can never attach a description to the
+ * wrong image.
+ *
+ * @param {Array} files - req.files as populated by multer
+ * @returns {Map<number, {image?: object, preview?: object}>}
+ */
+function pairUploadedFiles(files) {
+  const pairs = new Map();
+  if (!Array.isArray(files)) return pairs;
+
+  for (const file of files) {
+    const match = /^(image|preview)\[(\d+)\]$/.exec(file.fieldname || "");
+    if (!match) continue;
+
+    const [, kind, rawIndex] = match;
+    const index = parseInt(rawIndex, 10);
+    if (!pairs.has(index)) pairs.set(index, {});
+    pairs.get(index)[kind] = file;
+  }
+
+  return pairs;
 }
 
 /**
  * Creates new SampleImage records from uploaded files.
  *
- * @param {Array} files - Uploaded file objects (pairs of image + preview)
- * @param {Array} imageNames - Names for each image
- * @param {Array} imageDescriptions - Descriptions for each image
+ * @param {Array} files - Uploaded file objects from multer
+ * @param {string[]} imageNames - Names for each image, indexed by field number
+ * @param {string[]} imageDescriptions - Descriptions for each image
  * @param {string} requestId - The request ID to associate images with
- * @returns {Promise<Array>} Array of created SampleImage records
+ * @returns {Promise<string[]>} Messages describing any rows that could not be written.
  */
-async function createNewImages(
-  files,
-  imageNames,
-  imageDescriptions,
-  requestId
-) {
-  if (!files?.length || !imageNames?.length) {
-    if (files?.length) {
+async function createNewImages(files, imageNames, imageDescriptions, requestId) {
+  const errors = [];
+  const pairs = pairUploadedFiles(files);
+  if (!pairs.size) return errors;
+
+  for (const [index, pair] of [...pairs.entries()].sort((a, b) => a[0] - b[0])) {
+    const imageFile = pair.image;
+    if (!imageFile?.path) {
       console.warn(
-        `Image files uploaded for request ${requestId}, but no names/descriptions provided.`
-      );
-    }
-    return [];
-  }
-
-  // Files come in pairs: [image, preview, image, preview, ...]
-  const numImagesToProcess = Math.min(
-    imageNames.length,
-    Math.floor(files.length / 2)
-  );
-
-  const imagePromises = [];
-
-  for (let i = 0; i < numImagesToProcess; i++) {
-    const imageFile = files[i * 2];
-
-    if (!imageFile?.path || !imageNames[i]) {
-      console.warn(
-        `Skipping image at index ${i}: Missing file, path, or name for request ${requestId}.`
+        `Skipping upload ${index} for request ${requestId}: no stored image file.`
       );
       continue;
     }
 
+    const name =
+      (imageNames[index] || imageFile.originalname || "").slice(
+        0,
+        FIELD_MAX_LENGTHS.imageName
+      ) || "image";
+
     const entityData = {
       path: imageFile.path,
-      name: imageNames[i],
+      name,
       uid: imageFile.filename || Util.generateUniqueId(),
-      description: imageDescriptions[i] || "",
+      // Recording the preview's own filename removes the old assumption that it
+      // could be derived from the image's.
+      previewUid: pair.preview?.filename || "",
+      description: (imageDescriptions[index] || "").slice(
+        0,
+        FIELD_MAX_LENGTHS.imageDescription
+      ),
       requestID: requestId,
     };
 
-    imagePromises.push(
-      new SampleImage(entityData)
-        .save()
-        .then((saved) => {
-          console.log(
-            `Created new SampleImage (${saved.id}) for request ${requestId}.`
-          );
-          return saved;
-        })
-        .catch((err) => {
-          console.error(
-            `Error creating SampleImage for request ${requestId}:`,
-            err
-          );
-          return null;
-        })
-    );
+    try {
+      await new SampleImage(entityData).save();
+    } catch (err) {
+      console.error(
+        `Error creating SampleImage for request ${requestId}:`,
+        err
+      );
+      errors.push(`Image "${name}" could not be saved.`);
+    }
   }
 
-  return Promise.all(imagePromises);
+  return errors;
 }
 
 /**
- * Main image processing function.
  * Handles both updates to existing images and creation of new ones.
  *
- * @param {Object} currentRequest - The request being edited
+ * @param {string} requestId - The request being edited
  * @param {Array} files - Uploaded file objects
- * @param {Array} imageNames - Names for new images
- * @param {Array} imageDescriptions - Descriptions for new images
+ * @param {string[]} imageNames - Names for new images
+ * @param {string[]} imageDescriptions - Descriptions for new images
  * @param {Array} preExistingSupportingImages - Existing images with edit flags
+ * @param {Array} ownedImages - Images actually belonging to this request
+ * @returns {Promise<string[]>} Messages describing any rows that could not be written.
  */
 async function processImages(
-  currentRequest,
+  requestId,
   files,
   imageNames,
   imageDescriptions,
-  preExistingSupportingImages
+  preExistingSupportingImages,
+  ownedImages = []
 ) {
-  const requestId = currentRequest.id;
+  const existingErrors = await processExistingImages(
+    preExistingSupportingImages,
+    requestId,
+    ownedImages
+  );
+  const createErrors = await createNewImages(
+    files,
+    imageNames,
+    imageDescriptions,
+    requestId
+  );
 
-  // Process existing images (updates and deletions)
-  await processExistingImages(preExistingSupportingImages, requestId);
-
-  // Create new images from uploads
-  await createNewImages(files, imageNames, imageDescriptions, requestId);
-
-  console.log(`Finished processing SampleImages for request: ${requestId}`);
+  return [...existingErrors, ...createErrors];
 }
 
 // --- Controller Logic ---
@@ -562,79 +424,133 @@ requests.new = (req, res, _next) => res.render("requests/new");
 requests.newPost = async (req, res) => {
   try {
     const { username } = req.user;
-    const {
-      species = "",
-      secondSpecies = "",
-      tissue = "",
-      tissueAgeNum = "",
-      tissueAgeType = "",
-      growthConditions = "",
-      analysisType = "",
-      secondaryAnalysisType = "",
-      typeOfPTM = "",
-      quantitativeAnalysisRequired = "",
-      typeOfLabeling = "",
-      labelUsed = "",
-      samplePrep = "",
-      digestion = "",
-      enzyme = "",
-      projectDescription = "",
-      hopedAnalysis = "",
-      bufferComposition = "",
-      accessions = [], // For Constructs
-      sequenceInfos = [], // For Constructs
-      dbEntries = [], // For Constructs
-      sampleNumbers = [], // For SampleDescriptions
-      sampleLabels = [], // For SampleDescriptions
-      sampleDescriptions = [], // For SampleDescriptions
-      imageDescriptions = [], // For SampleImages
-      imageNames = [], // For SampleImages
-      preExistingSupportingImages = [], // Existing images for editing/updating
-      notes = [], // For Notes
-      requestID: reqRequestId, // If editing
-      janCode: reqJanCode, // If editing
-    } = req.body;
+    const body = req.body || {};
 
-    const requestID = Array.isArray(reqRequestId)
-      ? reqRequestId[0]
-      : reqRequestId;
-    const janCode = Array.isArray(reqJanCode) ? reqJanCode[0] : reqJanCode;
-
+    const requestID = firstScalar(body.requestID);
+    const janCodeInput = firstScalar(body.janCode).trim();
     const editingForm = !!requestID;
-    let currentRequest;
-    let responseJanCode = janCode; // Use provided janCode if editing
 
-    // --- Get or Create Request ---
+    let currentRequest = null;
+
+    // --- Load the request being edited, and check authorisation up front ---
     if (editingForm) {
       currentRequest = await Request.get(requestID)
         .getJoin({
-          supportingImages: true, // Fetch related data for updates/deletions
+          supportingImages: true,
           samples: true,
           constructs: true,
-          linkedRequests: true, // Keep if still needed, otherwise remove
+          linkedRequests: true,
         })
         .run();
+
       if (!currentRequest) {
-        console.error(`Edit attempt failed: Request ${requestID} not found.`);
-        req.flash("error", "Request not found for editing.");
-        return res.redirect("/");
+        return res.status(404).json({ error: "Request not found for editing." });
       }
 
-      // SECURITY FIX: Ensure the user actually has permission to submit edits for this form!
-      // Only the creator or an admin should be able to submit edits to a form.
-      if (
-        currentRequest.createdBy !== username &&
-        !Util.isAdmin(username)
-      ) {
+      // Only the creator or an admin may submit edits for this form.
+      if (currentRequest.createdBy !== username && !Util.isAdmin(username)) {
         console.error(
           `Unauthorized POST edit attempt for request ${requestID} by ${username}`
         );
-        return res.status(403).json({ error: "You are not authorized to edit this request." });
+        return res
+          .status(403)
+          .json({ error: "You are not authorized to edit this request." });
       }
 
-      console.log(`Editing existing request: ${currentRequest.id}`);
+      // Optimistic concurrency: if the form was loaded before someone else
+      // saved, refuse rather than silently overwriting their work. Only
+      // enforced when the client actually sent the timestamp it loaded.
+      const submittedUpdatedAt = firstScalar(body.updatedAt);
+      const submittedTime = Date.parse(submittedUpdatedAt);
+      if (submittedUpdatedAt && currentRequest.updatedAt && !isNaN(submittedTime)) {
+        const storedTime = new Date(currentRequest.updatedAt).getTime();
+        if (submittedTime !== storedTime) {
+          return res.status(409).json({
+            error:
+              "This request was changed by someone else while you were editing. Reload the page to see the current version before saving again.",
+          });
+        }
+      }
+    }
+
+    // --- Validate everything before it reaches the ORM ---
+    const { errors: fieldErrors, values } = validateRequestFields(body, {
+      isEdit: editingForm,
+      existing: currentRequest,
+    });
+    const errors = [...fieldErrors];
+
+    if (editingForm) {
+      const janCodeError = validateJanCode(janCodeInput);
+      if (janCodeError) errors.push(janCodeError);
+    }
+
+    const accessions = toStringArray(body.accessions);
+    const sequenceInfos = toStringArray(body.sequenceInfos);
+    const dbEntries = toStringArray(body.dbEntries);
+    errors.push(
+      ...validateConstructArrays(accessions, sequenceInfos, dbEntries)
+    );
+
+    const sampleNumbers = toStringArray(body.sampleNumbers);
+    const sampleLabels = toStringArray(body.sampleLabels);
+    const sampleDescriptions = toStringArray(body.sampleDescriptions);
+    errors.push(
+      ...validateSampleArrays(sampleNumbers, sampleLabels, sampleDescriptions)
+    );
+
+    if (errors.length) {
+      return res.status(400).json({ error: errors[0], errors });
+    }
+
+    // --- Guard the JAN code against collisions on edit ---
+    let responseJanCode = janCodeInput;
+    if (editingForm && janCodeInput !== currentRequest.janCode) {
+      const clash = await Request.filter({ janCode: janCodeInput }).run();
+      if (clash.some((existing) => existing.id !== currentRequest.id)) {
+        return res.status(400).json({
+          error: `The label "${janCodeInput}" is already in use by another request.`,
+        });
+      }
+    }
+
+    const coreFields = {
+      species: values.species,
+      secondSpecies: values.secondSpecies,
+      speciesTaxId: values.speciesTaxId,
+      secondSpeciesTaxId: values.secondSpeciesTaxId,
+      tissue: values.tissue,
+      tissueAgeNum: values.tissueAgeNum,
+      tissueAgeType: values.tissueAgeType,
+      growthConditions: values.growthConditions,
+      analysisType: values.analysisType,
+      secondaryAnalysisType: values.secondaryAnalysisType,
+      typeOfPTM: values.typeOfPTM,
+      quantitativeAnalysisRequired: values.quantitativeAnalysisRequired,
+      typeOfLabeling: values.typeOfLabeling,
+      labelUsed: values.labelUsed,
+      samplePrep: values.samplePrep,
+      digestion: values.digestion,
+      enzyme: values.enzyme,
+      projectDescription: values.projectDescription,
+      hopedAnalysis: values.hopedAnalysis,
+      bufferComposition: values.bufferComposition,
+      notes: normalizeNotes(body.notes),
+    };
+
+    // Captured before saving: the joined relations are read off the in-memory
+    // document, and relying on them surviving a save() would make child updates
+    // depend on ORM internals.
+    const existingImages = currentRequest?.supportingImages || [];
+    const existingSamples = currentRequest?.samples || [];
+    const existingConstructs = currentRequest?.constructs || [];
+
+    // --- Create or update the request itself (a single write either way) ---
+    if (editingForm) {
+      Object.assign(currentRequest, coreFields, { janCode: responseJanCode });
+      await currentRequest.save();
+      console.log(`Updated request: ${currentRequest.id}`);
     } else {
-      // Generate new JAN code for new requests
       responseJanCode = await Util.generateJanCode(
         req.user.firstName,
         req.user.lastName,
@@ -642,25 +558,11 @@ requests.newPost = async (req, res) => {
       );
       currentRequest = new Request({
         createdBy: username,
+        // Stored up front when we already know it, so the lazy LDAP lookup in
+        // getCreatedByName rarely has to run at all.
+        createdByName: req.user.name || "",
         janCode: responseJanCode,
-        species,
-        secondSpecies,
-        tissue,
-        tissueAgeNum,
-        tissueAgeType,
-        growthConditions,
-        analysisType,
-        secondaryAnalysisType,
-        typeOfPTM,
-        quantitativeAnalysisRequired,
-        typeOfLabeling,
-        labelUsed,
-        samplePrep,
-        digestion,
-        enzyme,
-        projectDescription,
-        hopedAnalysis,
-        bufferComposition,
+        ...coreFields,
       });
       await currentRequest.save();
       console.log(
@@ -668,99 +570,93 @@ requests.newPost = async (req, res) => {
       );
     }
 
-    // --- Update Core Request Details ---
-    Object.assign(currentRequest, {
-      janCode: responseJanCode,
-      species,
-      secondSpecies,
-      tissue,
-      tissueAgeNum,
-      tissueAgeType,
-      growthConditions,
-      analysisType,
-      secondaryAnalysisType,
-      typeOfPTM,
-      quantitativeAnalysisRequired,
-      typeOfLabeling,
-      labelUsed,
-      samplePrep,
-      digestion,
-      enzyme,
-      projectDescription,
-      hopedAnalysis,
-      bufferComposition,
-      notes: normalizeNotes(notes),
-    });
-    await currentRequest.save();
-    console.log(`Updated core details for request: ${currentRequest.id}`);
+    // Deletions of child rows only happen when the payload explicitly says it
+    // carried that section. An absent section means "no information", not
+    // "delete everything" - the distinction that previously wiped every sample
+    // row on each edit.
+    const samplesSubmitted = isTruthyFlag(body.samplesSubmitted);
+    const constructsSubmitted = isTruthyFlag(body.constructsSubmitted);
 
-    // --- Process Constructs ---
-    const constructData = { accessions, sequenceInfos, dbEntries };
-    await processConstruct(
-      constructData.accessions,
-      constructData.sequenceInfos,
-      constructData.dbEntries,
-      currentRequest.id,
-      currentRequest.constructs // Pass existing constructs for update/delete logic
+    const warnings = [];
+
+    warnings.push(
+      ...(await processConstruct(
+        accessions,
+        sequenceInfos,
+        dbEntries,
+        currentRequest.id,
+        existingConstructs,
+        constructsSubmitted
+      ))
     );
 
-    // --- Process Samples ---
-    const sampleData = { sampleNumbers, sampleLabels, sampleDescriptions };
-    await processSampleDescription(
-      sampleData,
-      currentRequest.id,
-      currentRequest.samples // Pass existing samples
+    warnings.push(
+      ...(await processSampleDescription(
+        { sampleNumbers, sampleLabels, sampleDescriptions },
+        currentRequest.id,
+        existingSamples,
+        samplesSubmitted
+      ))
     );
 
-    // --- Process Images ---
-    // Note: 'files' here refers to req.files from Multer or similar
-    await processImages(
-      currentRequest,
-      req.files, // Assuming req.files is populated by middleware
-      imageNames,
-      imageDescriptions,
-      preExistingSupportingImages // Pass existing images
+    warnings.push(
+      ...(await processImages(
+        currentRequest.id,
+        req.files,
+        toStringArray(body.imageNames),
+        toStringArray(body.imageDescriptions),
+        toObjectArray(body.preExistingSupportingImages),
+        existingImages
+      ))
     );
 
     // --- Send Notifications ---
     if (!editingForm) {
       try {
-        // Use the newly created currentRequest object
         Email.newRequest(currentRequest);
       } catch (emailError) {
         console.error("Failed to send new request email:", emailError);
       }
     } else {
-      const { silentUpdate } = req.body;
+      // The silent-update checkbox is only rendered for admins, but the flag
+      // arrives from the browser so the permission has to be checked here too.
+      const silentUpdate =
+        isTruthyFlag(body.silentUpdate) && Util.isAdmin(username);
       if (!silentUpdate) {
         try {
-          // For updates, ensure createdBy is available in the email context
-          Email.updatedRequest({ ...currentRequest, createdBy: currentRequest.createdBy });
+          // Passed as the document rather than a spread copy: spreading drops
+          // the thinky prototype, and the email template calls methods on it.
+          Email.updatedRequest(currentRequest);
         } catch (emailError) {
           console.error("Failed to send updated request email:", emailError);
         }
       } else {
-        console.log(`Silent update enabled: skipped email notification for request ${currentRequest.id}`);
+        console.log(
+          `Silent update enabled: skipped email notification for request ${currentRequest.id}`
+        );
       }
     }
 
-    // Success response
-    res.status(200).json({
+    return res.status(200).json({
       requestID: currentRequest.id,
       janCode: currentRequest.janCode,
       editingForm,
+      // Child rows are written after the request itself, so a partial failure
+      // has to be reported rather than hidden behind a success toast.
+      warnings,
     });
   } catch (err) {
     console.error("Error in newPost handler:", err);
     if (!res.headersSent) {
-      return res.status(500).json({ error: err.message || "Internal server error" });
+      return res
+        .status(500)
+        .json({ error: err.message || "Internal server error" });
     }
   }
 };
 
 requests.show = (req, res, _next) => {
   const requestID = req.params.id;
-  let requestData; // Declare requestData here to be accessible in the next .then
 
   Request.get(requestID)
     .getJoin({
@@ -776,19 +672,16 @@ requests.show = (req, res, _next) => {
         req.flash("error", "Request not found.");
         return res.redirect("/");
       }
-      requestData = request;
 
-      // Ensure related arrays exist
-      requestData.supportingImages = requestData.supportingImages || [];
-      requestData.constructs = requestData.constructs || [];
-      requestData.linkedRequests = requestData.linkedRequests || [];
-      requestData.samples = requestData.samples || [];
-
-      // Sort samples
-      requestData.samples.sort((a, b) => a.position - b.position);
+      request.supportingImages = request.supportingImages || [];
+      request.constructs = request.constructs || [];
+      request.linkedRequests = request.linkedRequests || [];
+      request.samples = (request.samples || []).sort(
+        (a, b) => a.position - b.position
+      );
 
       return res.render("requests/show", {
-        request: requestData,
+        request,
         admins: config.admins,
       });
     })
@@ -813,15 +706,14 @@ requests.edit = (req, res) => {
 
       // Generate preview URLs for existing images
       request.supportingImages = (request.supportingImages || []).map((ri) => {
-        ri.url = ri.getPreviewURL ? ri.getPreviewURL() : "#"; // Safely access getPreviewURL
+        ri.url = ri.getPreviewURL ? ri.getPreviewURL() : "#";
         return ri;
       });
 
-      // Sort samples by position
       request.samples = (request.samples || []).sort(
         (a, b) => a.position - b.position
       );
-      request.constructs = request.constructs || []; // Ensure constructs array exists
+      request.constructs = request.constructs || [];
 
       // Permission check: ensure user is creator or admin
       if (
@@ -844,11 +736,13 @@ requests.edit = (req, res) => {
         console.warn(
           `Attempt to edit assigned request ${requestID} by ${req.user.username}`
         );
-        req.flash("error", "This request has already been assigned for action and cannot be edited.");
+        req.flash(
+          "error",
+          "This request has already been assigned for action and cannot be edited."
+        );
         return res.redirect("/");
       }
 
-      // Render the form with request data
       return res.render("requests/new", { request });
     })
     .catch((err) => {
@@ -870,29 +764,29 @@ requests.clone = (req, res) => {
         return res.redirect("/");
       }
 
-      // Prepare data for cloning
       const clonedRequestData = { ...request };
-      clonedRequestData.id = undefined; // Clear the ID for a new record
-      clonedRequestData.janCode = undefined; // A new janCode will be generated on save
+      clonedRequestData.id = undefined;
+      clonedRequestData.janCode = undefined;
       clonedRequestData.createdAt = undefined;
       clonedRequestData.updatedAt = undefined;
-      clonedRequestData.createdBy = req.user.username; // Set creator to current user
-      clonedRequestData.isClone = true; // Flag for the view to indicate it's a clone
+      clonedRequestData.createdBy = req.user.username;
+      clonedRequestData.isClone = true;
 
-      // Process nested models for cloning, clearing their IDs and requestID
       clonedRequestData.supportingImages = (request.supportingImages || []).map(
         (img) => ({
           ...img,
           id: undefined,
-          requestID: undefined, // Will be set when saving the new request
-          url: img.getPreviewURL ? img.getPreviewURL() : "#", // Keep preview URL logic
+          requestID: undefined,
+          url: img.getPreviewURL ? img.getPreviewURL() : "#",
         })
       );
-      clonedRequestData.samples = (request.samples || []).map((sample) => ({
-        ...sample,
-        id: undefined,
-        requestID: undefined,
-      }));
+      clonedRequestData.samples = (request.samples || [])
+        .sort((a, b) => a.position - b.position)
+        .map((sample) => ({
+          ...sample,
+          id: undefined,
+          requestID: undefined,
+        }));
       clonedRequestData.constructs = (request.constructs || []).map(
         (construct) => ({
           ...construct,
@@ -923,7 +817,6 @@ requests.delete = (req, res) => {
         return res.redirect("/");
       }
 
-      // Authorization check: only admin or creator can delete
       if (
         request.createdBy !== req.user.username &&
         !Util.isAdmin(req.user.username)
@@ -935,13 +828,11 @@ requests.delete = (req, res) => {
         return res.redirect("/");
       }
 
-      // Use the existing `removeChildren` method for cleanup
       request
-        .removeChildren() // This method should handle deleting associated SampleDescriptions, Samples, Images etc.
-        .then(() => request.delete()) // Then delete the main request
+        .removeChildren()
+        .then(() => request.delete())
         .then(() => {
           req.flash("success", "Request successfully deleted.");
-          // Redirect to admin page, forcing a cache refresh
           res.redirect(`/admin?t=${new Date().getTime()}`);
         })
         .catch((err) => {
@@ -961,3 +852,16 @@ requests.delete = (req, res) => {
 };
 
 module.exports = requests;
+
+// Exported for unit testing. These used to be re-implemented inside the test
+// file, which meant the tests passed regardless of what the controller did.
+module.exports._internal = {
+  normalizeNotes,
+  isTruthyFlag,
+  pairUploadedFiles,
+  processSampleDescription,
+  processConstruct,
+  processExistingImages,
+  createNewImages,
+  MAX_NOTES,
+};

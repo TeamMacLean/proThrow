@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /**
  * Component for managing previously uploaded images in the edit form.
@@ -9,18 +9,26 @@ import { useState, useEffect } from "react";
  */
 const UploadedImagesForm = ({
   onUploadedImagesChange,
-  initialUploadedImages,
+  initialUploadedImages = [],
 }) => {
   const [images, setImages] = useState(initialUploadedImages);
 
-  // Notify parent component when images change
+  // The parent's callback is read through a ref rather than being listed as an
+  // effect dependency. Listing it meant that any parent which recreated the
+  // function each render - as this one did - fired the effect, set state in the
+  // parent, re-rendered, and looped until React aborted with "Maximum update
+  // depth exceeded" on every edit page that had images.
+  const onChangeRef = useRef(onUploadedImagesChange);
   useEffect(() => {
-    onUploadedImagesChange(images);
-  }, [images, onUploadedImagesChange]);
+    onChangeRef.current = onUploadedImagesChange;
+  });
+
+  useEffect(() => {
+    onChangeRef.current?.(images);
+  }, [images]);
 
   /**
    * Generic helper to update a single image's properties by index.
-   * Reduces code duplication between description and delete handlers.
    */
   const updateImageAtIndex = (index, updates) => {
     setImages((prevImages) =>
@@ -42,13 +50,13 @@ const UploadedImagesForm = ({
     );
   };
 
-  /**
-   * Generates preview URL for each image based on its uid.
-   * Memoized to avoid recalculating on every render.
-   */
   const imagesWithPreviews = images.map((image) => ({
     ...image,
-    preview: `/uploads/${image.uid}`,
+    // Records saved before previewUid existed have no reliable preview file, so
+    // fall back to the full-size upload rather than a broken image.
+    preview: image.previewUid
+      ? `/preview/${image.previewUid}`
+      : `/uploads/${image.uid}`,
   }));
 
   if (!imagesWithPreviews.length) {
@@ -72,7 +80,6 @@ const UploadedImagesForm = ({
 
 /**
  * Individual image card component for editing.
- * Separated for better readability and potential reuse.
  */
 const ImageEditCard = ({
   image,
@@ -106,10 +113,11 @@ const ImageEditCard = ({
       />
       <div style={{ flexGrow: 1 }}>
         <div className="form-group mb-2">
-          <label className="form-label small text-muted">Description</label>
+          <label className="small text-muted">Description</label>
           <input
             type="text"
             className="form-control"
+            maxLength="100"
             value={image.description || ""}
             onChange={(e) => onDescriptionChange(index, e.target.value)}
             placeholder="Enter image description"
@@ -124,9 +132,7 @@ const ImageEditCard = ({
           {image.deleteRequest ? "Undo Remove" : "Remove Image"}
         </button>
         {image.deleteRequest && (
-          <span className="text-danger ms-2 small">
-            Will be deleted on save
-          </span>
+          <span className="text-danger ml-2 small">Will be deleted on save</span>
         )}
       </div>
     </div>

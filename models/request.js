@@ -20,7 +20,12 @@ const Request = thinky.createModel("Request", {
 
   // Biological Material
   species: type.string().required(),
-  secondSpecies: type.string().required(),
+  // Optional by design: most submissions involve a single species, so this is
+  // stored as an empty string rather than being required.
+  secondSpecies: type.string().default(""),
+  // NCBI taxonomy IDs backing the species names, when the lookup resolved one.
+  speciesTaxId: type.string().default(""),
+  secondSpeciesTaxId: type.string().default(""),
   tissue: type.string().required(),
   tissueAgeNum: type.string().required(),
   tissueAgeType: type.string().required(),
@@ -94,7 +99,16 @@ Request.define("getCreatedByName", function () {
         if (users.length >= 1) {
           const user = users[0];
           self.createdByName = user.name;
-          self.save();
+          // Written with a raw update rather than save(): save() runs the
+          // pre-save hook, which bumps updatedAt. Caching a display name is not
+          // a content change, and treating it as one made the request look
+          // freshly modified in the admin table and - worse - tripped the edit
+          // form's concurrency check, 409-ing users who had changed nothing.
+          return r
+            .table("Request")
+            .get(self.id)
+            .update({ createdByName: user.name })
+            .run();
         }
       })
       .catch((err) => {
@@ -110,8 +124,14 @@ Request.define("getCreatedByName", function () {
   }
 });
 
-Request.define("removeChildren", function () {
+Request.define("removeChildren", async function () {
   const requestID = this.id;
+
+  // The image rows are read before the bulk delete so their files can be
+  // unlinked; a filter().delete() runs in the database and cannot clean up
+  // anything on disk.
+  const images = await SampleImage.filter({ requestID: requestID }).run();
+  await SampleImage.removeFilesFor(images);
 
   return Promise.all([
     Construct.filter({ requestID: requestID }).delete().execute(),

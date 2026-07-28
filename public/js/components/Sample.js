@@ -1,10 +1,20 @@
 import { Component } from "react";
 
+/**
+ * One row of the Sample Description section.
+ *
+ * The inputs are uncontrolled and named with the `[]` suffix so that the
+ * browser's own FormData collects them in DOM order, which is what makes
+ * drag-to-reorder produce the right positions on the server.
+ */
 class Sample extends Component {
   render() {
-    var self = this;
+    const { data, onChange, removeSample } = this.props;
+
     return (
-      <div className="dragg">
+      // data-sample-key lets the drag handler map the reordered DOM back onto
+      // the samples in React state.
+      <div className="dragg" data-sample-key={data.key}>
         <div className="draggInner">
           <div className="row">
             <div className="col-md-10 fix-10">
@@ -17,9 +27,9 @@ class Sample extends Component {
                       type="number"
                       min="0"
                       max="150"
-                      id="sampleNumber"
                       name="sampleNumbers[]"
-                      defaultValue={self.props.data.sampleNumber || ""}
+                      defaultValue={data.sampleNumber || ""}
+                      onChange={onChange}
                       required
                     />
                   </div>
@@ -30,9 +40,10 @@ class Sample extends Component {
                     <input
                       className="form-control"
                       type="text"
-                      id="sampleLabel"
+                      maxLength="500"
                       name="sampleLabels[]"
-                      defaultValue={self.props.data.sampleLabel || ""}
+                      defaultValue={data.sampleLabel || ""}
+                      onChange={onChange}
                       required
                     />
                   </div>
@@ -43,9 +54,10 @@ class Sample extends Component {
                     <input
                       className="form-control"
                       type="text"
-                      id="sampleDescription"
+                      maxLength="2000"
                       name="sampleDescriptions[]"
-                      defaultValue={self.props.data.sampleDescription || ""}
+                      defaultValue={data.sampleDescription || ""}
+                      onChange={onChange}
                       required
                     />
                   </div>
@@ -53,12 +65,14 @@ class Sample extends Component {
               </div>
             </div>
             <div className="col-md-2 fix-2">
-              <div
-                className="removeSample"
-                onClick={this.props.removeSample.bind(null, this)}
+              <button
+                type="button"
+                className="btn btn-link removeSample"
+                onClick={removeSample}
+                title="Remove sample"
               >
                 <i className="far fa-trash-alt"></i>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -66,4 +80,5 @@ class Sample extends Component {
     );
   }
 }
+
 export default Sample;

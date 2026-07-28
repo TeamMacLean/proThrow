@@ -19,16 +19,16 @@
         <% requests.map(function (request) { %>
         <tr>
             <th scope="row"><a style="text-transform: uppercase;"
-                               href="/request/<%- request.id %>"><%- request.janCode %></a></th>
-            <td><%- request.humanDate() %></td>
-            <td><a href="/user/<%- request.createdBy %>"><%- request.getCreatedByName() %></a></td>
+                               href="/request/<%= request.id %>"><%= request.janCode %></a></th>
+            <td><%= request.humanDate() %></td>
+            <td><a href="/user/<%= request.createdBy %>"><%= request.getCreatedByName() %></a></td>
             <td>
-                <a href="/user/<%- request.assignedTo %>"><%- request.assignedTo || 'unassigned' %> </a>
+                <a href="/user/<%= request.assignedTo %>"><%= request.assignedTo || 'unassigned' %> </a>
             </td>
-            <td><%- request.status %></td>
+            <td><%= request.status %></td>
             <td>
-                <a href="/request/<%- request.id %>/edit" class="btn btn-tiny btn-primary">Edit</a>
-                <a href="/request/<%- request.id %>/clone" class="btn btn-tiny btn-success">Clone</a>
+                <a href="/request/<%= request.id %>/edit" class="btn btn-tiny btn-primary">Edit</a>
+                <a href="/request/<%= request.id %>/clone" class="btn btn-tiny btn-success">Clone</a>
             </td>
         </tr>
         <% }); %>

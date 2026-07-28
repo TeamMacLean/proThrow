@@ -78,7 +78,9 @@ $(function () {
 
 
     socket.on('noteAdded', function (obj) {
-        $('#notes').append('<li>' + obj.note + '</li>');
+        // .text() rather than string concatenation: the note is user-supplied
+        // and would otherwise be parsed as HTML.
+        $('#notes').append($('<li>').text(obj.note));
         $('#new-note').val('');
     })
 

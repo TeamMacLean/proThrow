@@ -1,8 +1,16 @@
 import { Component } from "react";
 
+/**
+ * One construct in the "New Constructs for Database" section.
+ *
+ * The three inputs are position-matched on the server, so they must always be
+ * rendered together: hiding one would shift every later construct's data onto
+ * the wrong row.
+ */
 class Construct extends Component {
   render() {
-    var self = this;
+    const { data, onChange, removeConstruct } = this.props;
+
     return (
       <div>
         <div className="form-group">
@@ -17,9 +25,10 @@ class Construct extends Component {
           <input
             className="form-control"
             type="text"
-            id="accession"
+            maxLength="500"
             name="accessions[]"
-            defaultValue={self.props.data.accession || ""}
+            defaultValue={data.accession || ""}
+            onChange={onChange}
             required
           />
         </div>
@@ -36,10 +45,10 @@ class Construct extends Component {
           </label>
           <textarea
             className="form-control"
-            type="text"
-            id="sequenceInfo"
+            maxLength="20000"
             name="sequenceInfos[]"
-            defaultValue={self.props.data.sequenceInfo || ""}
+            defaultValue={data.sequenceInfo || ""}
+            onChange={onChange}
             required
           />
         </div>
@@ -59,18 +68,21 @@ class Construct extends Component {
           <input
             className="form-control"
             type="text"
-            id="dbEntry"
+            maxLength="500"
             name="dbEntries[]"
-            defaultValue={self.props.data.dbEntry || ""}
+            defaultValue={data.dbEntry || ""}
+            onChange={onChange}
             required
           />
         </div>
-        <div
-          className="removeSample"
-          onClick={this.props.removeConstruct.bind(null, this)}
+        <button
+          type="button"
+          className="btn btn-link removeSample"
+          onClick={removeConstruct}
+          title="Remove construct"
         >
           <i className="far fa-trash-alt"></i>
-        </div>
+        </button>
         <hr />
       </div>
     );

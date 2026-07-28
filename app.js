@@ -8,14 +8,16 @@ const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const fs = require("fs-extra");
 const util = require("./lib/util.js");
-const r = require("./lib/thinky");
+// Required for its side effect: this initialises the shared thinky connection.
+const _r = require("./lib/thinky");
 const routes = require("./routes");
 
 const app = express();
 
-// Body parsing middleware
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-app.use(express.json({ limit: "50mb" }));
+// Body parsing middleware. The submission form posts multipart/form-data and is
+// handled by multer, so these limits only need to cover ordinary form posts.
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+app.use(express.json({ limit: "1mb" }));
 
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -37,6 +39,16 @@ let sessionConfig = {
   secret: config.secret,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    // Blocks the session cookie from riding along on cross-site requests, which
+    // is what stops a third-party page from acting as the signed-in user.
+    sameSite: "lax",
+    // Opt-in rather than derived from devMode: if the deployment is served over
+    // plain HTTP, setting this would silently break every login.
+    secure: config.secureCookies === true,
+    maxAge: 86400000, // 1 day
+  },
 };
 
 if (config.devMode && !util.isVpnMode()) {
@@ -70,6 +82,8 @@ app.use((req, res, next) => {
   // Add config values to all views
   res.locals.devMode = config.devMode;
   res.locals.vpnMode = util.isVpnMode();
+  // Used by views that embed server state in an inline <script> tag.
+  res.locals.toSafeJSON = util.toSafeJSON;
 
   if (req.user != null) {
     res.locals.signedInUser = {
