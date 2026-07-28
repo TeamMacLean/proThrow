@@ -52,7 +52,7 @@
     window.isAdmin = <%= locals.signedInUser && locals.signedInUser.isAdmin ? 'true' : 'false' %>;
 </script>
 
-<script src="/js/app.js"></script>
+<script src="/js/app.js?v=<%= new Date().getTime() %>"></script>
 
 
 <%- include('../foot') %>
