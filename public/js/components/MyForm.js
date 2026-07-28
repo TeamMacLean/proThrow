@@ -1084,7 +1084,7 @@ const MyForm = () => {
                   </div>
 
                   <div
-                    className="btn btn-outline-primary btn-block"
+                    className="btn btn-outline-primary btn-block mt-3"
                     onClick={addNote}
                   >
                     Add Note
