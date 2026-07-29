@@ -27,64 +27,16 @@
                     </div>
                     <div class="form-group">
                         <label for="completion-selection">Set status:</label>
-                        <select class="form-control" id="completion-selection" value="<%= request.status %>">
-                            <option
-                            <% if (request.status == 'incomplete') { %>
-                                selected
-                                    <% } %>
-                            >incomplete
-                            </option>
-
-                            <option
-                            <% if (request.status == 'samples received') { %>
-                                selected
-                                    <% } %>
-                            >samples received
-                            </option>
-                            <option
-                            <% if (request.status == 'samples digested') { %>
-                                selected
-                                    <% } %>
-                            >samples digested
-                            </option>
-                            <option
-                            <% if (request.status == 'samples queued') { %>
-                                selected
-                                    <% } %>
-                            >samples queued
-                            </option>
-                            <option
-                            <% if (request.status == 'analysis in progress ') { %>
-                                selected
-                                    <% } %>
-                            >analysis in progress
-                            </option>
-                            <option
-                            <% if (request.status == 'Data analysed') { %>
-                                selected
-                                    <% } %>
-                            >data analysed
-                            </option>
-
-
-                            <option
-                            <% if (request.status == 'samples used up') { %>
-                                selected
-                                    <% } %>
-                            >samples used up
-                            </option>
-                            <option
-                            <% if (request.status == 'discarded') { %>
-                                selected
-                                    <% } %>
-                            >discarded
-                            </option>
-                            <option
-                            <% if (request.status == 'complete')  { %>
-                                selected
-                                    <% } %>
-                            >complete
-                            </option>
+                        <!-- Rendered from the shared list in lib/formOptions.js.
+                             Each option used to be written out by hand with its
+                             own comparison, and two of them did not match the
+                             values they were compared against ("analysis in
+                             progress " had a trailing space, "Data analysed" a
+                             capital D), so those never showed as selected. -->
+                        <select class="form-control" id="completion-selection">
+                            <% statuses.forEach(function (status) { %>
+                                <option value="<%= status %>" <%= request.status === status ? 'selected' : '' %>><%= status %></option>
+                            <% }); %>
                         </select>
                     </div>
                 <% } %>

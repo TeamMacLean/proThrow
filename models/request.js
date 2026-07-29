@@ -3,6 +3,7 @@ const type = thinky.type;
 const r = thinky.r;
 const moment = require("moment");
 const ldap = require("../lib/ldap");
+const { REQUEST_STATUSES } = require("../lib/formOptions");
 
 const Request = thinky.createModel("Request", {
   id: type.string(),
@@ -58,9 +59,12 @@ Request.ensureIndex("createdAt");
 Request.statuses = {
   COMPLETE: "complete",
   INCOMPLETE: "incomplete",
-  USEDUP: "used up",
+  USEDUP: "samples used up",
   DISCARDED: "discarded",
 };
+
+/** Every status the admin dropdown offers, and the only ones accepted. */
+Request.allStatuses = REQUEST_STATUSES;
 
 Request.pre("save", function (next) {
   this.updatedAt = new Date();
@@ -89,10 +93,20 @@ Request.define("getAssignedToName", function () {
   }
 });
 
+/** Usernames with a directory lookup already running, to avoid a stampede. */
+const lookupsInFlight = new Set();
+
 Request.define("getCreatedByName", function () {
   const self = this;
 
   function getItForNextTime() {
+    // Guarded per process: this is called once per row of the admin dashboard,
+    // and each call opened its own LDAP connection and bound with the service
+    // credentials. One page load therefore issued N concurrent binds and N
+    // database writes.
+    if (lookupsInFlight.has(self.createdBy)) return;
+    lookupsInFlight.add(self.createdBy);
+
     ldap
       .getNameFromUsername(self.createdBy)
       .then((users) => {
@@ -110,10 +124,21 @@ Request.define("getCreatedByName", function () {
             .update({ createdByName: user.name })
             .run();
         }
+
+        // The directory has no record of this username - someone who has left.
+        // Caching the username itself stops the lookup being reissued on every
+        // future admin page load, for ever.
+        self.createdByName = self.createdBy;
+        return r
+          .table("Request")
+          .get(self.id)
+          .update({ createdByName: self.createdBy })
+          .run();
       })
       .catch((err) => {
         return console.error(err);
-      });
+      })
+      .finally(() => lookupsInFlight.delete(self.createdBy));
   }
 
   if (self.createdByName) {
@@ -124,13 +149,53 @@ Request.define("getCreatedByName", function () {
   }
 });
 
+/**
+ * Append a note atomically.
+ *
+ * `save()` writes the whole document, so two people adding a note at the same
+ * time both read the same array, push one entry and write it back - and the
+ * second write silently discards the first note. This pushes the append down
+ * into the database instead, where it is a single atomic update.
+ *
+ * @param {string} id
+ * @param {string} note
+ * @returns {Promise<string[]>} the full note list after the append
+ */
+Request.appendNote = async function (id, note) {
+  const result = await r
+    .table("Request")
+    .get(id)
+    .update(
+      (row) => ({
+        notes: row("notes").default([]).append(note),
+        updatedAt: new Date(),
+      }),
+      { returnChanges: true }
+    )
+    .run();
+
+  if (result.errors) {
+    throw new Error(result.first_error || "Could not append the note.");
+  }
+  if (result.skipped) {
+    throw new Error("That request no longer exists.");
+  }
+
+  const changed = result.changes && result.changes[0];
+  return (changed && changed.new_val && changed.new_val.notes) || [];
+};
+
 Request.define("removeChildren", async function () {
   const requestID = this.id;
 
   // The image rows are read before the bulk delete so their files can be
   // unlinked; a filter().delete() runs in the database and cannot clean up
   // anything on disk.
-  const images = await SampleImage.filter({ requestID: requestID }).run();
+  // getAll uses the requestID index; filter() does not, so this was three full
+  // table scans on every delete even though all three indexes exist.
+  const images = await (
+    await SampleImage.getAll(requestID, { index: "requestID" })
+  ).run();
   await SampleImage.removeFilesFor(images);
 
   return Promise.all([

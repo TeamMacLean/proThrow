@@ -1,0 +1,15 @@
+<%#
+  The assignee cell for the admin dashboard.
+
+  Shared by all four tables because they had drifted: one printed the raw
+  username while the others printed the display name, so the same person looked
+  like two different people depending on which table you were reading.
+
+  An unassigned row is plain text rather than a link. It used to render
+  <a href="/user/"> or <a href="/user/unassigned">, both of which are dead ends.
+%>
+<% if (request.assignedTo && request.assignedTo !== 'unassigned') { %>
+  <a href="/user/<%= request.assignedTo %>"><%= request.getAssignedToName() %></a>
+<% } else { %>
+  <span class="text-muted">unassigned</span>
+<% } %>

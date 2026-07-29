@@ -941,12 +941,14 @@ describe("Requests Endpoints Integration Test", () => {
       if (!rethinkAvailable) return;
       const nonAdminCookie = await loginAs("regular_user");
 
+      // Denials used to answer HTTP 200, so any client reading the status
+      // treated a refusal as success.
       const res = await request(app)
         .post(`/request/${testRequestData.requestID}/delete`)
         .set("Cookie", nonAdminCookie)
-        .expect(200);
+        .expect(403);
 
-      expect(res.text).toContain("your not an admin!");
+      expect(res.text).toContain("not a proteomics administrator");
     });
 
     // Regression: deletion used to be a GET, so any link an admin followed

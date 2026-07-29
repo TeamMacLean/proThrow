@@ -26,13 +26,7 @@ app.set("view engine", "ejs");
 // LESS middleware for CSS compilation
 app.use(require("less-middleware")(path.join(__dirname, "public")));
 
-// Static files
-app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
-
-// Serve files from the uploads directory
-app.use("/uploads", express.static(config.supportingImageRoot));
-app.use("/preview", express.static(config.supportingImagePreviewRoot));
 
 // Session store - use memory in local dev mode, RethinkDB otherwise
 let sessionConfig = {
@@ -68,7 +62,42 @@ if (config.devMode && !util.isVpnMode()) {
   sessionConfig.store = store;
 }
 
-app.use(session(sessionConfig));
+// Kept in a variable so socket.io can reuse the very same middleware instance.
+// Without it a websocket connection has no idea who is on the other end, and
+// every socket handler had to trust whatever the client claimed.
+const sessionMiddleware = session(sessionConfig);
+
+// --- Uploaded files ---------------------------------------------------------
+// The upload directories sit inside `public`, so the general static mount below
+// would serve them - and that mount ran before any session middleware, which
+// meant every uploaded gel image was readable by anyone holding the URL, signed
+// in or not, indefinitely. Including people who had since left the group.
+//
+// Session and passport are attached for these two prefixes only, so ordinary
+// CSS and JS requests still skip the session store rather than costing a
+// database lookup each.
+const requireSignedIn = (req, res, next) => {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  return res.status(403).send("Sign in to view this file.");
+};
+
+const uploadAuth = [
+  sessionMiddleware,
+  passport.initialize(),
+  passport.session(),
+  requireSignedIn,
+];
+
+// Mounted before the general static handler below, so these paths are served
+// here - behind the check - rather than anonymously out of `public`.
+app.use("/uploads", ...uploadAuth, express.static(config.supportingImageRoot));
+app.use(
+  "/preview",
+  ...uploadAuth,
+  express.static(config.supportingImagePreviewRoot)
+);
+
+app.use(sessionMiddleware);
 
 // Express-flash for messages
 app.use(flash());
@@ -76,6 +105,10 @@ app.use(flash());
 // Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
+
+// General assets only: /uploads and /preview are already handled above, behind
+// authentication, and requests to them cannot reach here without passing it.
+app.use(express.static(path.join(__dirname, "public")));
 
 // Make config and user info available to all views
 app.use((req, res, next) => {
@@ -127,3 +160,7 @@ util.setupPassport();
 app.use("/", routes);
 
 module.exports = app;
+// Shared with socket.io in server.js so websocket connections are authenticated
+// by the same session and passport instances as ordinary requests.
+module.exports.sessionMiddleware = sessionMiddleware;
+module.exports.passport = passport;

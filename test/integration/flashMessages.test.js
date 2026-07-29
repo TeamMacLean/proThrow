@@ -69,9 +69,10 @@ describe("Flash Messages Integration Test", () => {
   describe("Logout Flash Message", () => {
     it("should display 'You have successfully signed out.' flash message on homepage after signing out", async () => {
       if (!rethinkAvailable) return;
-      // Step 1: Hit the signout endpoint
+      // Step 1: Hit the signout endpoint. A POST, so that following a link
+      // cannot sign somebody out.
       const signoutRes = await request(app)
-        .get("/signout")
+        .post("/signout")
         .set("Cookie", sessionCookie)
         .expect(302)
         .expect("Location", "/");

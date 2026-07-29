@@ -1,26 +1,22 @@
 const config = require("./config.json");
 const app = require("./app");
 const http = require("http");
-const { Server } = require("socket.io");
 const thinky = require("./lib/thinky");
+const { attachSockets } = require("./lib/socketServer");
+const { assertConfigSafe } = require("./lib/configCheck");
 
-const socketUploader = require("./lib/socketUpload");
-const socketSearch = require("./lib/socketSearch");
-const socketRequest = require("./lib/socketRequest");
+// Before anything else: several config settings fail open and fail silently.
+assertConfigSafe();
+
+// Backstop. Node terminates the process on an unhandled rejection, so a single
+// forgotten `await` on a notification could take the whole app down. Anything
+// that reaches here is a bug worth the loud log, but it should not be fatal.
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled promise rejection:", reason);
+});
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: config.devMode ? "*" : config.baseURL,
-    methods: ["GET", "POST"],
-  },
-});
-
-io.on("connection", (socket) => {
-  socketUploader(socket);
-  socketSearch(socket);
-  socketRequest(socket);
-});
+attachSockets(server, app);
 
 // Serve only once the database, tables and indexes are in place. Against an
 // empty database the bootstrap is asynchronous, so accepting requests

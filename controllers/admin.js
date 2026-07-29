@@ -5,9 +5,20 @@ const r = thinky.r;
 
 const admin = {};
 
+/**
+ * Most requests to pull into the dashboard.
+ *
+ * The query had no limit, so it loaded and rendered every request ever
+ * submitted on each page view - fine at a few hundred rows, progressively
+ * slower for ever after. Newest first, so the cap drops the oldest.
+ */
+const DASHBOARD_LIMIT = 500;
+
 admin.index = async (req, res) => {
   try {
-    const requests = await Request.orderBy({ index: r.desc("createdAt") }).run();
+    const requests = await Request.orderBy({ index: r.desc("createdAt") })
+      .limit(DASHBOARD_LIMIT)
+      .run();
 
     const completedRequests = [];
     const incompleteRequests = [];

@@ -30,7 +30,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "audit:data": "node scripts/audit-data.js",
+    "repair:data": "node scripts/repair-data.js"
   },
   "dependencies": {
     "@babel/core": "^7.26.0",
@@ -93,6 +95,7 @@
     "jsdom": "^26",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
+    "socket.io-client": "^4.8.3",
     "supertest": "^7.0.0",
     "typescript": "^5.7.2"
   }

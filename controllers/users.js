@@ -1,10 +1,22 @@
 const Request = require("../models/request");
+const Util = require("../lib/util");
 
 const Users = {};
 
 Users.show = async (req, res) => {
   try {
     const username = req.params.username;
+
+    // Anyone could previously list anyone else's submissions, which also handed
+    // them the request ids needed to open each one.
+    if (username !== req.user.username && !Util.isAdmin(req.user.username)) {
+      console.error(
+        `Unauthorized listing of ${username}'s requests by ${req.user.username}`
+      );
+      req.flash("error", "You are not authorized to view those requests.");
+      return res.redirect("/");
+    }
+
     // Use getAll with index for faster lookups
     const result = await Request.getAll(username, { index: "createdBy" });
     const requests = await result.run();

@@ -9,9 +9,16 @@
 
 <body>
 <img class="center" src="<%- baseURL %>/logo.png" style="max-width: 80px; margin-bottom:20px;">
+<% if (locals.vpnModeHeader) { %>
+<p class="center" style="background:#fff3cd; padding:8px;"><%= locals.vpnModeHeader %></p>
+<% } %>
 <h1 class="center">A request has been modified</h1>
 <h2 class="center"><%= locals.request.janCode %></h2>
-<p class="center">This request is now marked as <span class="font-weight-bold">"<%= locals.request.status %>"</span></p>
+<%# `reason` says what actually changed. This mail is sent for edits, notes and
+    assignments alike, and it used to announce a status change every time - so
+    adding a note told the submitter their status had changed when it had not. %>
+<p class="center"><%= locals.reason || 'The request details were updated.' %></p>
+<p class="center">Current status: <span class="font-weight-bold">"<%= locals.request.status %>"</span></p>
 <a class="center" href="<%- baseURL %>/request/<%= locals.request.id %>">View request on site</a>
 </body>
 

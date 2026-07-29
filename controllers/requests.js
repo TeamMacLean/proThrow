@@ -611,11 +611,17 @@ requests.newPost = async (req, res) => {
     );
 
     // --- Send Notifications ---
+    // Awaited, not fired and forgotten. These are async functions, so the
+    // synchronous try/catch that used to wrap them could never have caught
+    // anything - the rejection escaped as an unhandled promise rejection, which
+    // on current Node terminates the process. A failure here is also reported
+    // rather than only logged: the request saved, but nobody was told about it.
     if (!editingForm) {
       try {
-        Email.newRequest(currentRequest);
+        await Email.newRequest(currentRequest);
       } catch (emailError) {
         console.error("Failed to send new request email:", emailError);
+        warnings.push("The request was saved but the team could not be emailed.");
       }
     } else {
       // The silent-update checkbox is only rendered for admins, but the flag
@@ -626,13 +632,16 @@ requests.newPost = async (req, res) => {
         try {
           // Passed as the document rather than a spread copy: spreading drops
           // the thinky prototype, and the email template calls methods on it.
-          Email.updatedRequest(currentRequest);
+          await Email.updatedRequest(currentRequest);
         } catch (emailError) {
           console.error("Failed to send updated request email:", emailError);
+          warnings.push(
+            "The changes were saved but the notification email could not be sent."
+          );
         }
       } else {
         console.log(
-          `Silent update enabled: skipped email notification for request ${currentRequest.id}`
+          `Silent update enabled: skipped update notification for request ${currentRequest.id}`
         );
       }
     }
@@ -673,6 +682,17 @@ requests.show = (req, res, _next) => {
         return res.redirect("/");
       }
 
+      // Only the submitter and the admins may read a request. Without this any
+      // signed-in account could open every submission in the system, and ids
+      // are discoverable from the per-user listing.
+      if (!Util.canAccessRequest(req.user, request)) {
+        console.error(
+          `Unauthorized view of request ${requestID} by ${req.user.username}`
+        );
+        req.flash("error", "You are not authorized to view this request.");
+        return res.redirect("/");
+      }
+
       request.supportingImages = request.supportingImages || [];
       request.constructs = request.constructs || [];
       request.linkedRequests = request.linkedRequests || [];
@@ -683,6 +703,9 @@ requests.show = (req, res, _next) => {
       return res.render("requests/show", {
         request,
         admins: config.admins,
+        // Rendered into the status dropdown, and the same list the socket
+        // handler validates an incoming status against.
+        statuses: Request.allStatuses,
       });
     })
     .catch((err) => {
@@ -761,6 +784,18 @@ requests.clone = (req, res) => {
       if (!request) {
         console.error(`Request not found for cloning: ${requestID}`);
         req.flash("error", "Request not found for cloning.");
+        return res.redirect("/");
+      }
+
+      // Cloning had no permission check at all, and the clone form embeds the
+      // whole record as JSON in the page - so this was a way for any signed-in
+      // user to read another scientist's submission in machine-readable form
+      // and then save it under their own name.
+      if (!Util.canAccessRequest(req.user, request)) {
+        console.error(
+          `Unauthorized clone of request ${requestID} by ${req.user.username}`
+        );
+        req.flash("error", "You are not authorized to clone this request.");
         return res.redirect("/");
       }
 

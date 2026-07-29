@@ -108,7 +108,18 @@ Auth.signInPost = (req, res, next) => {
       console.log("User logged in:", formattedUser);
 
       // Redirect to the page they wanted before signing in (use saved value from before session regeneration)
-      return res.redirect(returnTo || "/");
+      // Only ever a path on this site. `returnTo` is captured from
+      // req.originalUrl, and today every guarded route is a literal local
+      // path - but the moment the catch-all route gains the auth guard,
+      // "//evil.com" becomes a valid originalUrl and this redirect leaves the
+      // site. Cheaper to close now than to remember later.
+      const safeReturnTo =
+        typeof returnTo === "string" &&
+        returnTo.startsWith("/") &&
+        !returnTo.startsWith("//")
+          ? returnTo
+          : "/";
+      return res.redirect(safeReturnTo);
     });
   })(req, res, next);
 };

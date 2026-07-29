@@ -48,11 +48,17 @@ function isAuthenticatedApi(req, res, next) {
 }
 
 function isAdmin(req, res, next) {
-  if (Util.isAdmin(req.user.username)) {
+  // Guarded rather than dereferencing req.user directly: this only ever runs
+  // after isAuthenticated today, but a reordering would otherwise turn a denial
+  // into a 500.
+  if (req.user && Util.isAdmin(req.user.username)) {
     return next();
-  } else {
-    return res.send("your not an admin!");
   }
+  // Answered 200 previously, so every client - including the fetch in the
+  // admin UI - read a refusal as success.
+  return res
+    .status(403)
+    .send("You are not a proteomics administrator.");
 }
 
 router.route("/").get(index.index);
@@ -284,7 +290,7 @@ router.route("/admin").all(isAuthenticated).all(isAdmin).get(admin.index);
 
 router.route("/signin").get(Auth.signIn).post(Auth.signInPost);
 
-router.route("/signout").get(Auth.signOut);
+router.route("/signout").post(Auth.signOut);
 
 router.route("*").get((req, res) => {
   res.render("404");

@@ -41,9 +41,7 @@
           >
         </td>
         <td>
-          <a href="/user/<%= request.assignedTo %>"
-            ><%= request.assignedTo || 'unassigned' %>
-          </a>
+          <%- include('../partials/assignee', { request: request }) %>
         </td>
         <td><%= request.status %></td>
         <td class="displayNone"><%= request.projectDescription %></td>
@@ -87,9 +85,7 @@
           >
         </td>
         <td>
-          <a href="/user/<%= request.assignedTo %>"
-            ><%= request.getAssignedToName() || 'unassigned' %>
-          </a>
+          <%- include('../partials/assignee', { request: request }) %>
         </td>
         <td><%= request.status %></td>
         <td class="displayNone"><%= request.projectDescription %></td>
@@ -132,9 +128,7 @@
           >
         </td>
         <td>
-          <a href="/user/<%= request.assignedTo %>"
-            ><%= request.getAssignedToName() || 'unassigned' %>
-          </a>
+          <%- include('../partials/assignee', { request: request }) %>
         </td>
         <td><%= request.status %></td>
         <td class="displayNone"><%= request.projectDescription %></td>
@@ -176,9 +170,7 @@
           >
         </td>
         <td>
-          <a href="/user/<%= request.assignedTo %>"
-            ><%= request.getAssignedToName() || 'unassigned' %></a
-          >
+          <%- include('../partials/assignee', { request: request }) %>
         </td>
         <td><%= request.status %></td>
         <td class="displayNone"><%= request.projectDescription %></td>
