@@ -90,3 +90,14 @@ describe("Util", () => {
     });
   });
 });
+
+afterAll(async () => {
+  const thinky = require("../../lib/thinky");
+  if (thinky && thinky.r && thinky.r.getPoolMaster) {
+    try {
+      await thinky.r.getPoolMaster().drain();
+    } catch (_e) {
+      // Ignore errors
+    }
+  }
+});

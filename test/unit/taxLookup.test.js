@@ -11,6 +11,13 @@ function loadTaxLookup(overrides = {}) {
 
   const get = jest.fn();
   jest.doMock("axios", () => ({ get }));
+  jest.doMock("https-proxy-agent", () => ({
+    HttpsProxyAgent: class HttpsProxyAgent {
+      constructor() {
+        this.proxy = { href: "http://swproxy.nbi.ac.uk:8080/" };
+      }
+    },
+  }));
   jest.doMock("../../config.json", () => ({
     devMode: true,
     NCBIAPIKey: "",
@@ -24,6 +31,7 @@ afterEach(() => {
   jest.useRealTimers();
   jest.resetModules();
   jest.dontMock("axios");
+  jest.dontMock("https-proxy-agent");
   jest.dontMock("../../config.json");
 });
 
@@ -75,7 +83,9 @@ it("appends the API key and tunnels through the institute proxy in production", 
   expect(axiosConfig.timeout).toBe(2000);
   expect(axiosConfig.proxy).toBe(false);
   expect(axiosConfig.httpsAgent.constructor.name).toBe("HttpsProxyAgent");
-  expect(axiosConfig.httpsAgent.proxy.href).toBe("http://swproxy.nbi.ac.uk:8080/");
+  expect(axiosConfig.httpsAgent.proxy.href).toBe(
+    "http://swproxy.nbi.ac.uk:8080/"
+  );
 });
 
 it("honours Retry-After once when NCBI rate-limits a lookup", async () => {
