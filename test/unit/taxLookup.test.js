@@ -53,7 +53,7 @@ it("maps taxonomy search IDs to canonical scientific-name options", async () => 
   expect(get.mock.calls[1][0]).toContain("id=9606,10090");
 });
 
-it("appends the API key and uses the institute proxy in production", async () => {
+it("appends the API key and tunnels through the institute proxy in production", async () => {
   const { Tax, get } = loadTaxLookup({
     devMode: false,
     NCBIAPIKey: "key with/slash",
@@ -63,10 +63,19 @@ it("appends the API key and uses the institute proxy in production", async () =>
   await expect(Tax.search("human")).resolves.toEqual(["9606"]);
 
   expect(get.mock.calls[0][0]).toContain("api_key=key%20with%2Fslash");
-  expect(get.mock.calls[0][1]).toEqual({
-    timeout: 2000,
-    proxy: { host: "swproxy.nbi.ac.uk", port: 8080 },
-  });
+
+  // A plain `proxy` option can't tunnel HTTPS (see taxLookup.js), so
+  // production must go through an HttpsProxyAgent instead, with axios'
+  // own proxy handling disabled so it doesn't re-apply *_proxy env vars.
+  //
+  // Not `toBeInstanceOf(HttpsProxyAgent)`: jest.resetModules() means
+  // taxLookup.js loaded its own copy of the https-proxy-agent module, so its
+  // agent fails an instanceof check against the class required up top here.
+  const axiosConfig = get.mock.calls[0][1];
+  expect(axiosConfig.timeout).toBe(2000);
+  expect(axiosConfig.proxy).toBe(false);
+  expect(axiosConfig.httpsAgent.constructor.name).toBe("HttpsProxyAgent");
+  expect(axiosConfig.httpsAgent.proxy.href).toBe("http://swproxy.nbi.ac.uk:8080/");
 });
 
 it("honours Retry-After once when NCBI rate-limits a lookup", async () => {
