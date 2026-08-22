@@ -252,6 +252,13 @@ describe("validateConstructArrays", () => {
     const errors = validateConstructArrays(many("A"), many("S"), many("D"));
     expect(errors.join(" ")).toContain("at most");
   });
+
+  it("accepts exactly the maximum number of constructs", () => {
+    const many = (v) => Array.from({ length: MAX_CONSTRUCT_ROWS }, () => v);
+    expect(validateConstructArrays(many("A"), many("S"), many("D"))).toEqual(
+      []
+    );
+  });
 });
 
 describe("validateSampleArrays", () => {
@@ -274,5 +281,10 @@ describe("validateSampleArrays", () => {
     const many = (v) => Array.from({ length: MAX_SAMPLE_ROWS + 1 }, () => v);
     const errors = validateSampleArrays(many("1"), many("l"), many("d"));
     expect(errors.join(" ")).toContain("at most");
+  });
+
+  it("accepts exactly the maximum number of samples", () => {
+    const many = (v) => Array.from({ length: MAX_SAMPLE_ROWS }, () => v);
+    expect(validateSampleArrays(many("1"), many("l"), many("d"))).toEqual([]);
   });
 });

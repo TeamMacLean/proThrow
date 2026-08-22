@@ -7,6 +7,7 @@ const Request = require("../../models/request");
 const SampleDescription = require("../../models/sampleDescription");
 const SampleImage = require("../../models/sampleImage");
 const Construct = require("../../models/construct");
+const Tax = require("../../lib/taxLookup");
 const { checkDatabaseAvailable } = require("../helpers/database");
 
 /** Smallest valid PNG, so multer's image checks see a real file. */
@@ -752,6 +753,8 @@ describe("Requests Endpoints Integration Test", () => {
   });
 
   describe("GET /api/taxonomy", () => {
+    afterEach(() => jest.restoreAllMocks());
+
     // Regression: this sat behind the page auth guard, which stores the URL as
     // session.returnTo. A background type-ahead request firing after the
     // session expired sent the user to a JSON blob after signing back in,
@@ -777,6 +780,46 @@ describe("Requests Endpoints Integration Test", () => {
 
       expect(res.body.options).toEqual([]);
     });
+
+    it("should return canonical options for an authenticated non-empty term", async () => {
+      if (!rethinkAvailable) return;
+      const lookup = jest
+        .spyOn(Tax, "lookup")
+        .mockResolvedValueOnce([
+          { label: "Homo sapiens", value: "Homo sapiens", taxId: "9606" },
+        ]);
+
+      const res = await request(app)
+        .get("/api/taxonomy?term=human")
+        .set("Cookie", sessionCookie)
+        .expect(200);
+
+      expect(lookup).toHaveBeenCalledWith("human");
+      expect(res.body.options).toEqual([
+        { label: "Homo sapiens", value: "Homo sapiens", taxId: "9606" },
+      ]);
+      lookup.mockRestore();
+    });
+
+    it("should expose an upstream lookup failure as a 502 empty result", async () => {
+      if (!rethinkAvailable) return;
+      const lookup = jest
+        .spyOn(Tax, "lookup")
+        .mockRejectedValueOnce(new Error("NCBI rate limit exceeded"));
+      const log = jest.spyOn(console, "error").mockImplementation(() => {});
+
+      const res = await request(app)
+        .get("/api/taxonomy?term=human")
+        .set("Cookie", sessionCookie)
+        .expect(502);
+
+      expect(res.body).toEqual({
+        options: [],
+        error: "Species lookup failed.",
+      });
+      lookup.mockRestore();
+      log.mockRestore();
+    });
   });
 
   describe("GET /request/:id", () => {
@@ -797,7 +840,7 @@ describe("Requests Endpoints Integration Test", () => {
     it("should escape HTML in user-supplied fields", async () => {
       if (!rethinkAvailable) return;
 
-      const payload = '<script>window.__xss=1</script>';
+      const payload = "<script>window.__xss=1</script>";
       const created = await withFields(
         request(app).post("/new").set("Cookie", sessionCookie),
         validFields({
@@ -883,7 +926,7 @@ describe("Requests Endpoints Integration Test", () => {
       const created = await withFields(
         request(app).post("/new").set("Cookie", sessionCookie),
         validFields({
-          projectDescription: '</script><script>window.__xss=1</script>',
+          projectDescription: "</script><script>window.__xss=1</script>",
         })
       ).expect(200);
 

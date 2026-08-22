@@ -32,6 +32,7 @@ describe("checkConfig", () => {
       devMode: false,
       secret: "a genuinely random value",
       secureCookies: true,
+      NCBIAPIKey: "configured",
     });
     expect(checkConfig().errors).toEqual([]);
   });
@@ -63,7 +64,10 @@ describe("checkConfig", () => {
   });
 
   it("rejects a missing secret in production", () => {
-    const { checkConfig } = loadWithConfig({ devMode: false, secureCookies: true });
+    const { checkConfig } = loadWithConfig({
+      devMode: false,
+      secureCookies: true,
+    });
     expect(checkConfig().errors.join(" ")).toMatch(/secret/i);
   });
 
@@ -75,6 +79,17 @@ describe("checkConfig", () => {
     const { errors, warnings } = checkConfig();
     expect(errors).toEqual([]);
     expect(warnings.join(" ")).toMatch(/secureCookies/);
+  });
+
+  it("warns when production taxonomy lookup has no NCBI API key", () => {
+    const { checkConfig } = loadWithConfig({
+      devMode: false,
+      secret: "a genuinely random value",
+      secureCookies: true,
+    });
+    const { errors, warnings } = checkConfig();
+    expect(errors).toEqual([]);
+    expect(warnings.join(" ")).toMatch(/NCBIAPIKey/);
   });
 
   it("warns that vpnMode is not read by anything", () => {
@@ -106,6 +121,7 @@ describe("assertConfigSafe", () => {
       devMode: false,
       secret: "a genuinely random value",
       secureCookies: true,
+      NCBIAPIKey: "configured",
     });
 
     const exit = jest.fn();

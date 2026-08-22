@@ -4,10 +4,10 @@ import "dragula/dist/dragula.css";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import $ from "jquery";
-import AsyncSelect from "react-select/async";
+import AsyncCreatableSelect from "react-select/async-creatable";
 import axios from "axios";
 import config from "config";
-import { FORM_OPTIONS } from "../../../lib/formOptions";
+import { FORM_OPTIONS, FIELD_MAX_LENGTHS } from "../../../lib/formOptions";
 import Construct from "./Construct";
 import Sample from "./Sample";
 import OptionWithChildAsValue from "./OptionWithChildAsValue";
@@ -18,6 +18,24 @@ const supportedFileTypes = config.supportedFileTypes;
 
 /** Delay before a species keystroke triggers a lookup. */
 const SPECIES_SEARCH_DEBOUNCE_MS = 300;
+
+/**
+ * A creatable species must satisfy the same limit as the server and must not
+ * duplicate a canonical option that has just arrived from NCBI.
+ */
+const isValidNewSpeciesOption = (input, selectedOptions, availableOptions) => {
+  const candidate = input.trim().toLowerCase();
+  if (!candidate || candidate.length > FIELD_MAX_LENGTHS.species) return false;
+
+  return ![...selectedOptions, ...availableOptions].some((option) =>
+    [option?.label, option?.value].some(
+      (value) =>
+        String(value || "")
+          .trim()
+          .toLowerCase() === candidate
+    )
+  );
+};
 
 const s4 = () =>
   Math.floor((1 + Math.random()) * 0x10000)
@@ -361,6 +379,32 @@ const MyForm = () => {
   };
 
   /**
+   * Keep species entry usable when the taxonomy service is unavailable.
+   *
+   * NCBI suggestions improve consistency, but species is ultimately stored as
+   * free text and must not make the whole submission form depend on an external
+   * service. AsyncCreatableSelect calls this when the user chooses its
+   * "Use ..." option.
+   *
+   * @param {string} input
+   * @param {"species"|"secondSpecies"} stateKeyName
+   */
+  const createSpeciesOption = (input, stateKeyName) => {
+    const speciesName = input.trim();
+    if (!speciesName) return;
+
+    markDirty();
+    setState((prevState) => ({
+      ...prevState,
+      [stateKeyName]: {
+        label: speciesName,
+        value: speciesName,
+        taxId: "",
+      },
+    }));
+  };
+
+  /**
    * Look up species names through our own server.
    *
    * The browser used to call NCBI directly with an axios `proxy` option that
@@ -435,10 +479,12 @@ const MyForm = () => {
   // Cancel any outstanding lookup when the form unmounts.
   useEffect(
     () => () => {
-      Object.values(speciesSearchRef.current).forEach(({ timer, controller }) => {
-        clearTimeout(timer);
-        controller.abort();
-      });
+      Object.values(speciesSearchRef.current).forEach(
+        ({ timer, controller }) => {
+          clearTimeout(timer);
+          controller.abort();
+        }
+      );
     },
     []
   );
@@ -536,7 +582,9 @@ const MyForm = () => {
       const countMismatch = [
         ["sample", "sampleNumbers[]", state.samples.length],
         ["construct", "accessions[]", state.constructs.length],
-      ].find(([, field, expected]) => formData.getAll(field).length !== expected);
+      ].find(
+        ([, field, expected]) => formData.getAll(field).length !== expected
+      );
 
       if (countMismatch) {
         const [label, field, expected] = countMismatch;
@@ -774,23 +822,34 @@ const MyForm = () => {
                           title="Select the species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"
                         />
                       </label>
-                      <AsyncSelect
+                      <AsyncCreatableSelect
                         id="species"
                         required
+                        aria-label="Species"
                         onBlurResetsInput={false}
                         onSelectResetsInput={false}
                         loadOptions={(input) =>
                           getListOfSpecies(input, "species")
                         }
                         defaultOptions={true}
+                        formatCreateLabel={(input) => `Use "${input.trim()}"`}
+                        isValidNewOption={isValidNewSpeciesOption}
                         name="species"
                         isClearable
                         value={state.species}
+                        onCreateOption={(input) =>
+                          createSpeciesOption(input, "species")
+                        }
                         onChange={(value) => {
                           markDirty();
                           setState((prev) => ({ ...prev, species: value }));
                         }}
                       />
+                      <small className="form-text text-muted">
+                        Start typing and select a taxonomy match. If the species
+                        is not listed or lookup is unavailable, type its full
+                        name and choose Use.
+                      </small>
                     </div>
                     <div className="form-group">
                       <label>
@@ -802,20 +861,29 @@ const MyForm = () => {
                           title="Select the second species that are present in your samples, e.g. N.benthamina and Pseudomonas syringae if you have infected leave from N.bent"
                         />
                       </label>
-                      <AsyncSelect
+                      <AsyncCreatableSelect
                         id="secondSpecies"
+                        aria-label="Second species"
                         onBlurResetsInput={false}
                         onSelectResetsInput={false}
                         loadOptions={(input) =>
                           getListOfSpecies(input, "secondSpecies")
                         }
                         defaultOptions={true}
+                        formatCreateLabel={(input) => `Use "${input.trim()}"`}
+                        isValidNewOption={isValidNewSpeciesOption}
                         name="secondSpecies"
                         isClearable
                         value={state.secondSpecies}
+                        onCreateOption={(input) =>
+                          createSpeciesOption(input, "secondSpecies")
+                        }
                         onChange={(value) => {
                           markDirty();
-                          setState((prev) => ({ ...prev, secondSpecies: value }));
+                          setState((prev) => ({
+                            ...prev,
+                            secondSpecies: value,
+                          }));
                         }}
                       />
                     </div>
@@ -998,7 +1066,9 @@ const MyForm = () => {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="bufferComposition">Buffer composition</label>
+                    <label htmlFor="bufferComposition">
+                      Buffer composition
+                    </label>
                     <input
                       className="form-control"
                       type="text"
@@ -1118,7 +1188,11 @@ const MyForm = () => {
 
                   {/* Paired with this section for the same reason as
                       samplesSubmitted above. */}
-                  <input type="hidden" name="constructsSubmitted" value="true" />
+                  <input
+                    type="hidden"
+                    name="constructsSubmitted"
+                    value="true"
+                  />
 
                   <p className="text-muted small mb-2">
                     Constructs are optional, but every field of a construct you

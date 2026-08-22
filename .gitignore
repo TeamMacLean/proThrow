@@ -46,7 +46,7 @@ ecosystem.config.js
 public/components
 install_sharp_macOS.sh
 mnt_data_prothrow_test
-config.js
+/config.js
 
 # Misc
 *.local

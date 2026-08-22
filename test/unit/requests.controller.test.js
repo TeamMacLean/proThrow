@@ -75,6 +75,11 @@ describe("normalizeNotes", () => {
     const many = Array.from({ length: MAX_NOTES + 50 }, (_, i) => `note ${i}`);
     expect(normalizeNotes(many)).toHaveLength(MAX_NOTES);
   });
+
+  it("accepts exactly the maximum number of notes", () => {
+    const many = Array.from({ length: MAX_NOTES }, (_, i) => `note ${i}`);
+    expect(normalizeNotes(many)).toEqual(many);
+  });
 });
 
 describe("isTruthyFlag", () => {

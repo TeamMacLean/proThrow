@@ -109,6 +109,9 @@ layer that catches problems appearing once the React app actually executes: a
 broken hook, a dead handler, or a control that silently submits the form.
 
 `e2e/editForm.spec.js` covers the submission form in edit and clone mode.
+`e2e/newForm.spec.js` submits a brand-new request through the real UI, including
+every optional section, and verifies that a taxonomy-service outage cannot block
+the mandatory species field.
 
 ## Choosing a layer
 
