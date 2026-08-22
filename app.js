@@ -45,8 +45,10 @@ let sessionConfig = {
   },
 };
 
-if (config.devMode && !util.isVpnMode()) {
-  // Use memory store in local dev mode (no RethinkDB needed)
+if (util.isDevMode() && !util.isVpnMode()) {
+  // Use memory store in local dev mode (no RethinkDB needed). Also covers the
+  // test suite: it forces isDevMode() true so it never needs a RethinkDB
+  // session store either.
   console.log("🔧 DEV MODE: Using memory session store");
 } else {
   // Use RethinkDB session store in VPN/production mode
@@ -113,7 +115,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Make config and user info available to all views
 app.use((req, res, next) => {
   // Add config values to all views
-  res.locals.devMode = config.devMode;
+  res.locals.devMode = util.isDevMode();
   res.locals.vpnMode = util.isVpnMode();
   // Used by views that embed server state in an inline <script> tag.
   res.locals.toSafeJSON = util.toSafeJSON;
@@ -134,7 +136,7 @@ app.use((req, res, next) => {
 });
 
 // Request logging (only in development)
-if (config.devMode) {
+if (util.isDevMode()) {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
