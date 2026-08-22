@@ -50,6 +50,7 @@
     "express-session": "^1.18.2",
     "express-session-rethinkdb": "^0.4.0",
     "fs-extra": "^11.2.0",
+    "https-proxy-agent": "^7.0.6",
     "ldapjs": "^3.0.7",
     "less": "^4.2.2",
     "less-middleware": "^2.2.1",
