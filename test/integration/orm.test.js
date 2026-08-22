@@ -114,7 +114,9 @@ describe("save() and joined relations", () => {
     if (!rethinkAvailable) return;
 
     const request = await persist(newRequest());
-    const joined = await Request.get(request.id).getJoin({ samples: true }).run();
+    const joined = await Request.get(request.id)
+      .getJoin({ samples: true })
+      .run();
     expect(Array.isArray(joined.samples)).toBe(true);
   });
 });
@@ -201,9 +203,9 @@ describe("Util.generateJanCode", () => {
       ...alphabet.map((letter) => ({ janCode: base + letter })),
     ];
 
-    await expect(
-      Util.generateJanCode("Ada", "Bell", "abell")
-    ).rejects.toThrow(/already in use/i);
+    await expect(Util.generateJanCode("Ada", "Bell", "abell")).rejects.toThrow(
+      /already in use/i
+    );
   });
 
   it("never produces a code containing 'undefined'", async () => {

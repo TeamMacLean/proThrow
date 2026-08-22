@@ -115,17 +115,17 @@ the mandatory species field.
 
 ## Choosing a layer
 
-| Question | Layer |
-|---|---|
-| Does this function return the right value? | `unit/` |
-| Does this endpoint accept/reject/store the right thing? | `integration/` |
-| Does the rendered page actually work when parsed? | `integration/pageRendering.test.js` |
-| Does the UI behave when the bundle runs? | `e2e/` |
+| Question                                                | Layer                               |
+| ------------------------------------------------------- | ----------------------------------- |
+| Does this function return the right value?              | `unit/`                             |
+| Does this endpoint accept/reject/store the right thing? | `integration/`                      |
+| Does the rendered page actually work when parsed?       | `integration/pageRendering.test.js` |
+| Does the UI behave when the bundle runs?                | `e2e/`                              |
 
 When adding a regression test, confirm it fails against the bug before you fix it
 — several tests here were written, verified to fail, and only then made to pass.
 
 ## Configuration
 
-- `jest.config.js` - Jest configuration
-- `playwright.config.js` - Playwright configuration
+- `jest.config.json` - Jest configuration
+- `playwright.config.json` - Playwright configuration

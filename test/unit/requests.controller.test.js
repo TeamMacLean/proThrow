@@ -7,12 +7,8 @@
  */
 
 const thinky = require("../../lib/thinky");
-const {
-  normalizeNotes,
-  isTruthyFlag,
-  pairUploadedFiles,
-  MAX_NOTES,
-} = require("../../controllers/requests")._internal;
+const { normalizeNotes, isTruthyFlag, pairUploadedFiles, MAX_NOTES } =
+  require("../../controllers/requests")._internal;
 
 afterAll(async () => {
   // Requiring the controller pulls in the models, which open a connection pool.

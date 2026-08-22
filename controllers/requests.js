@@ -334,12 +334,19 @@ function pairUploadedFiles(files) {
  * @param {string} requestId - The request ID to associate images with
  * @returns {Promise<string[]>} Messages describing any rows that could not be written.
  */
-async function createNewImages(files, imageNames, imageDescriptions, requestId) {
+async function createNewImages(
+  files,
+  imageNames,
+  imageDescriptions,
+  requestId
+) {
   const errors = [];
   const pairs = pairUploadedFiles(files);
   if (!pairs.size) return errors;
 
-  for (const [index, pair] of [...pairs.entries()].sort((a, b) => a[0] - b[0])) {
+  for (const [index, pair] of [...pairs.entries()].sort(
+    (a, b) => a[0] - b[0]
+  )) {
     const imageFile = pair.image;
     if (!imageFile?.path) {
       console.warn(
@@ -444,7 +451,9 @@ requests.newPost = async (req, res) => {
         .run();
 
       if (!currentRequest) {
-        return res.status(404).json({ error: "Request not found for editing." });
+        return res
+          .status(404)
+          .json({ error: "Request not found for editing." });
       }
 
       // Only the creator or an admin may submit edits for this form.
@@ -462,7 +471,11 @@ requests.newPost = async (req, res) => {
       // enforced when the client actually sent the timestamp it loaded.
       const submittedUpdatedAt = firstScalar(body.updatedAt);
       const submittedTime = Date.parse(submittedUpdatedAt);
-      if (submittedUpdatedAt && currentRequest.updatedAt && !isNaN(submittedTime)) {
+      if (
+        submittedUpdatedAt &&
+        currentRequest.updatedAt &&
+        !isNaN(submittedTime)
+      ) {
         const storedTime = new Date(currentRequest.updatedAt).getTime();
         if (submittedTime !== storedTime) {
           return res.status(409).json({
@@ -621,7 +634,9 @@ requests.newPost = async (req, res) => {
         await Email.newRequest(currentRequest);
       } catch (emailError) {
         console.error("Failed to send new request email:", emailError);
-        warnings.push("The request was saved but the team could not be emailed.");
+        warnings.push(
+          "The request was saved but the team could not be emailed."
+        );
       }
     } else {
       // The silent-update checkbox is only rendered for admins, but the flag

@@ -42,9 +42,10 @@ function isAuthenticatedApi(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  return res
-    .status(401)
-    .json({ options: [], error: "Your session has expired. Please sign in again." });
+  return res.status(401).json({
+    options: [],
+    error: "Your session has expired. Please sign in again.",
+  });
 }
 
 function isAdmin(req, res, next) {
@@ -56,9 +57,7 @@ function isAdmin(req, res, next) {
   }
   // Answered 200 previously, so every client - including the fetch in the
   // admin UI - read a refusal as success.
-  return res
-    .status(403)
-    .send("You are not a proteomics administrator.");
+  return res.status(403).send("You are not a proteomics administrator.");
 }
 
 router.route("/").get(index.index);
@@ -173,20 +172,25 @@ router
  * option is Node-only and was being silently ignored in the browser), and
  * returns canonical scientific names rather than echoing back what was typed.
  */
-router.route("/api/taxonomy").all(isAuthenticatedApi).get(async (req, res) => {
-  const term = typeof req.query.term === "string" ? req.query.term : "";
-  if (!term.trim()) {
-    return res.json({ options: [] });
-  }
+router
+  .route("/api/taxonomy")
+  .all(isAuthenticatedApi)
+  .get(async (req, res) => {
+    const term = typeof req.query.term === "string" ? req.query.term : "";
+    if (!term.trim()) {
+      return res.json({ options: [] });
+    }
 
-  try {
-    const options = await Tax.lookup(term);
-    return res.json({ options });
-  } catch (err) {
-    console.error("Taxonomy lookup failed:", err.message);
-    return res.status(502).json({ options: [], error: "Species lookup failed." });
-  }
-});
+    try {
+      const options = await Tax.lookup(term);
+      return res.json({ options });
+    } catch (err) {
+      console.error("Taxonomy lookup failed:", err.message);
+      return res
+        .status(502)
+        .json({ options: [], error: "Species lookup failed." });
+    }
+  });
 
 router
   .route("/request/:id")

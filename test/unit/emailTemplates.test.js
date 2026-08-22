@@ -87,10 +87,16 @@ describe("updated-request specifics", () => {
   it("shows the VPN-mode banner when present", () => {
     const banner = "[VPN MODE] This email would have been sent to: a@b.test";
     expect(
-      render("updated-request", "html.ejs", { ...locals, vpnModeHeader: banner })
+      render("updated-request", "html.ejs", {
+        ...locals,
+        vpnModeHeader: banner,
+      })
     ).toContain(banner);
     expect(
-      render("updated-request", "text.ejs", { ...locals, vpnModeHeader: banner })
+      render("updated-request", "text.ejs", {
+        ...locals,
+        vpnModeHeader: banner,
+      })
     ).toContain(banner);
   });
 

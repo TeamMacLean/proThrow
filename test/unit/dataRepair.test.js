@@ -22,9 +22,9 @@ describe("embeddedRelationKeys", () => {
   });
 
   it("returns nothing for a clean row", () => {
-    expect(embeddedRelationKeys({ janCode: "x", species: "Homo sapiens" })).toEqual(
-      []
-    );
+    expect(
+      embeddedRelationKeys({ janCode: "x", species: "Homo sapiens" })
+    ).toEqual([]);
   });
 
   // An empty array is still a stored relation and still needs stripping.
@@ -88,7 +88,10 @@ describe("findOrphans", () => {
       { id: "dead-parent", requestID: "gone" },
     ];
     const { orphans } = findOrphans(rows, parents);
-    expect(orphans.map((r) => r.id).sort()).toEqual(["dead-parent", "no-parent"]);
+    expect(orphans.map((r) => r.id).sort()).toEqual([
+      "dead-parent",
+      "no-parent",
+    ]);
   });
 
   it("never reports a healthy row as an orphan", () => {

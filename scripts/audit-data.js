@@ -89,10 +89,14 @@ async function auditRequests() {
     const present = embeddedRelationKeys(request);
     if (!present.length) continue;
     const bytes = Buffer.byteLength(
-      JSON.stringify(present.reduce((acc, k) => ((acc[k] = request[k]), acc), {}))
+      JSON.stringify(
+        present.reduce((acc, k) => ((acc[k] = request[k]), acc), {})
+      )
     );
     largestBlob = Math.max(largestBlob, bytes);
-    bloated.push(`${request.janCode || request.id} (${present.join(", ")}, ${bytes} bytes)`);
+    bloated.push(
+      `${request.janCode || request.id} (${present.join(", ")}, ${bytes} bytes)`
+    );
   }
   if (bloated.length) {
     report(
@@ -111,7 +115,9 @@ async function auditRequests() {
       (field) => request[field] === undefined || request[field] === null
     );
     if (missing.length) {
-      missingFields.push(`${request.janCode || request.id}: ${missing.join(", ")}`);
+      missingFields.push(
+        `${request.janCode || request.id}: ${missing.join(", ")}`
+      );
     }
   }
   if (missingFields.length) {
@@ -145,7 +151,9 @@ async function auditRequests() {
 
   // 4. Statuses outside the known set, which no dashboard bucket will match.
   const badStatus = requests
-    .filter((request) => request.status && !REQUEST_STATUSES.includes(request.status))
+    .filter(
+      (request) => request.status && !REQUEST_STATUSES.includes(request.status)
+    )
     .map((request) => `${request.janCode || request.id}: "${request.status}"`);
   if (badStatus.length) {
     report(
@@ -217,7 +225,10 @@ async function auditChildren(requests) {
     if (parentless.length) {
       const byPath = new Map();
       parentless.forEach((row) =>
-        byPath.set(row.path || row.uid, (byPath.get(row.path || row.uid) || 0) + 1)
+        byPath.set(
+          row.path || row.uid,
+          (byPath.get(row.path || row.uid) || 0) + 1
+        )
       );
       const worst = [...byPath.entries()]
         .sort((a, b) => b[1] - a[1])
@@ -228,7 +239,7 @@ async function auditChildren(requests) {
         "problem",
         `${parentless.length} ${table} row(s) have no requestID at all (${byPath.size} distinct files)`,
         worst,
-        "Written by the removed socket uploader, which never set a parent. They are unreachable from the UI and are skipped by removeChildren, so they accumulate for ever. Safe to delete: run \"node scripts/repair-data.js --orphans\"."
+        'Written by the removed socket uploader, which never set a parent. They are unreachable from the UI and are skipped by removeChildren, so they accumulate for ever. Safe to delete: run "node scripts/repair-data.js --orphans".'
       );
     }
 
@@ -236,8 +247,10 @@ async function auditChildren(requests) {
       report(
         "problem",
         `${stranded.length} ${table} row(s) point at a request that no longer exists`,
-        sample(stranded.map((row) => `${row.id} (requestID: ${row.requestID})`)),
-        "Left behind by deletions. Safe to delete: run \"node scripts/repair-data.js --orphans\"."
+        sample(
+          stranded.map((row) => `${row.id} (requestID: ${row.requestID})`)
+        ),
+        'Left behind by deletions. Safe to delete: run "node scripts/repair-data.js --orphans".'
       );
     }
 
@@ -250,7 +263,11 @@ async function auditChildren(requests) {
         report(
           "problem",
           `${badPosition.length} ${table} row(s) have a non-numeric position`,
-          sample(badPosition.map((row) => `${row.id}: ${JSON.stringify(row.position)}`)),
+          sample(
+            badPosition.map(
+              (row) => `${row.id}: ${JSON.stringify(row.position)}`
+            )
+          ),
           "Ordering is computed with a subtraction, so these sort arbitrarily."
         );
       }
@@ -272,7 +289,9 @@ async function auditFiles() {
     ["previews", config.supportingImagePreviewRoot],
   ]) {
     if (!dir || !(await fs.pathExists(dir))) continue;
-    const onDisk = (await fs.readdir(dir)).filter((name) => !name.startsWith("."));
+    const onDisk = (await fs.readdir(dir)).filter(
+      (name) => !name.startsWith(".")
+    );
     const orphans = onDisk.filter((name) => !referenced.has(name));
     console.log(`${label} on disk: ${onDisk.length}`);
     if (orphans.length) {
@@ -291,10 +310,16 @@ async function auditFiles() {
   // single row as missing, because the paths refer to the production mount.
   const uploadRoot = path.resolve(config.supportingImageRoot || ".");
   const local = images.filter(
-    (image) => image.requestID && image.path && path.resolve(image.path).startsWith(uploadRoot)
+    (image) =>
+      image.requestID &&
+      image.path &&
+      path.resolve(image.path).startsWith(uploadRoot)
   );
   const elsewhere = images.filter(
-    (image) => image.requestID && image.path && !path.resolve(image.path).startsWith(uploadRoot)
+    (image) =>
+      image.requestID &&
+      image.path &&
+      !path.resolve(image.path).startsWith(uploadRoot)
   );
 
   if (elsewhere.length) {
@@ -334,7 +359,9 @@ async function main() {
 
   const problems = findings.filter((f) => f.level === "problem");
   for (const finding of findings) {
-    console.log(`${finding.level === "problem" ? "❌" : "ℹ️ "} ${finding.title}`);
+    console.log(
+      `${finding.level === "problem" ? "❌" : "ℹ️ "} ${finding.title}`
+    );
     finding.details.forEach((detail) => console.log(`     ${detail}`));
     if (finding.advice) console.log(`     → ${finding.advice}`);
     console.log("");

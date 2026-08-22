@@ -182,7 +182,7 @@ describe("Edit page, parsed and executed as a browser would", () => {
   it("survives a field containing a closing script tag, without executing it", async () => {
     if (!rethinkAvailable) return;
 
-    const hostile = '</script><script>window.__xss = true;</script>';
+    const hostile = "</script><script>window.__xss = true;</script>";
     const created = await createRequest({ projectDescription: hostile });
 
     const res = await request(app)
@@ -206,7 +206,7 @@ describe("Edit page, parsed and executed as a browser would", () => {
     if (!rethinkAvailable) return;
 
     const created = await createRequest({
-      "notes[0]": '</script><script>window.__xss = true;</script>',
+      "notes[0]": "</script><script>window.__xss = true;</script>",
     });
 
     const res = await request(app)
@@ -228,7 +228,7 @@ describe("Request detail page, parsed as a browser would", () => {
     if (!rethinkAvailable) return;
 
     const created = await createRequest({
-      projectDescription: '<script>window.__xss = true;</script>',
+      projectDescription: "<script>window.__xss = true;</script>",
       bufferComposition: '<img src=x onerror="window.__xss = true">',
     });
 

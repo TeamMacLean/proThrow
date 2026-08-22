@@ -46,7 +46,9 @@ async function main() {
       missingTotal += missing.length;
 
       console.log(`${table}`);
-      console.log(`  present: ${present.length ? present.join(", ") : "(none)"}`);
+      console.log(
+        `  present: ${present.length ? present.join(", ") : "(none)"}`
+      );
       console.log(
         missing.length ? `  MISSING: ${missing.join(", ")}` : "  all present"
       );

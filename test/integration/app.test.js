@@ -59,7 +59,7 @@ describe("Application Integration Tests", () => {
 
   describe("Dashboard routes", () => {
     let sessionCookie;
-    
+
     beforeAll(async () => {
       if (!rethinkAvailable) return;
       const loginRes = await request(app)
@@ -73,17 +73,15 @@ describe("Application Integration Tests", () => {
       const res = await request(app)
         .get("/user/deeks")
         .set("Cookie", sessionCookie);
-      
+
       expect(res.status).toBe(200);
       expect(res.text).toContain("Requests");
     });
 
     it("should load the admin dashboard for an admin user", async () => {
       if (!rethinkAvailable) return;
-      const res = await request(app)
-        .get("/admin")
-        .set("Cookie", sessionCookie);
-      
+      const res = await request(app).get("/admin").set("Cookie", sessionCookie);
+
       expect(res.status).toBe(200);
       expect(res.text).toContain("Requests");
     });

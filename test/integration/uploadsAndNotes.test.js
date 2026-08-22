@@ -172,9 +172,6 @@ describe("Admin dashboard", () => {
   it("renders for an admin", async () => {
     if (!rethinkAvailable) return;
 
-    await request(app)
-      .get("/admin")
-      .set("Cookie", sessionCookie)
-      .expect(200);
+    await request(app).get("/admin").set("Cookie", sessionCookie).expect(200);
   });
 });

@@ -52,7 +52,8 @@ describe("Flash Messages Integration Test", () => {
         .expect("Location", "/signin");
 
       // Extract the updated session cookie which now contains the flash message
-      const updatedSessionCookie = loginAttemptRes.headers["set-cookie"] || sessionCookie;
+      const updatedSessionCookie =
+        loginAttemptRes.headers["set-cookie"] || sessionCookie;
 
       // Step 2: Follow the redirect back to the signin page and verify the HTML
       const renderRes = await request(app)
@@ -61,11 +62,11 @@ describe("Flash Messages Integration Test", () => {
         .expect(200);
 
       // Verify the HTML contains the visual flash message container and text (Bootstrap alert)
-      expect(renderRes.text).toContain('alert-danger');
+      expect(renderRes.text).toContain("alert-danger");
       expect(renderRes.text).toContain("Authentication failed");
     });
   });
-  
+
   describe("Logout Flash Message", () => {
     it("should display 'You have successfully signed out.' flash message on homepage after signing out", async () => {
       if (!rethinkAvailable) return;
@@ -77,7 +78,8 @@ describe("Flash Messages Integration Test", () => {
         .expect(302)
         .expect("Location", "/");
 
-      const updatedSessionCookie = signoutRes.headers["set-cookie"] || sessionCookie;
+      const updatedSessionCookie =
+        signoutRes.headers["set-cookie"] || sessionCookie;
 
       // Step 2: Follow the redirect back to the home page and verify the HTML
       const renderRes = await request(app)
@@ -86,7 +88,7 @@ describe("Flash Messages Integration Test", () => {
         .expect(200);
 
       // Verify the HTML contains the success flash message container and text
-      expect(renderRes.text).toContain('alert-success');
+      expect(renderRes.text).toContain("alert-success");
       expect(renderRes.text).toContain("You have successfully signed out.");
     });
   });

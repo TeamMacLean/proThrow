@@ -94,7 +94,9 @@ describe("toObjectArray", () => {
   });
 
   it("discards entries that are not objects", () => {
-    expect(toObjectArray(["nope", 5, null, { id: "1" }])).toEqual([{ id: "1" }]);
+    expect(toObjectArray(["nope", 5, null, { id: "1" }])).toEqual([
+      { id: "1" },
+    ]);
   });
 
   it("returns an empty array when the field is missing", () => {
@@ -188,7 +190,9 @@ describe("validateRequestFields", () => {
   // Browsers serialise textarea newlines as CRLF, so text accepted at exactly
   // the client-side maxLength arrives longer than the server limit.
   it("does not reject text that only exceeds the limit because of CRLF", () => {
-    const lines = Array.from({ length: 500 }, () => "x".repeat(19)).join("\r\n");
+    const lines = Array.from({ length: 500 }, () => "x".repeat(19)).join(
+      "\r\n"
+    );
     expect(lines.length).toBeGreaterThan(10000);
     const { errors, values } = validateRequestFields(
       validBody({ projectDescription: lines })
@@ -237,7 +241,9 @@ describe("validateConstructArrays", () => {
   // Position-matched arrays of different lengths mean the server cannot know
   // which sequence belongs to which accession.
   it("rejects mismatched lengths", () => {
-    expect(validateConstructArrays(["A", "B"], ["SEQ"], ["DB"])).toHaveLength(1);
+    expect(validateConstructArrays(["A", "B"], ["SEQ"], ["DB"])).toHaveLength(
+      1
+    );
   });
 
   it("rejects an over-long sequence", () => {

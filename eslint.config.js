@@ -76,6 +76,7 @@ module.exports = [
       "coverage/**",
       "test-results/**",
       "playwright-report/**",
+      "public/components/**",
     ],
   },
 ];

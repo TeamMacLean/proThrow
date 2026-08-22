@@ -89,7 +89,9 @@ describe("SampleImage.removeFilesFor", () => {
 
   it("handles an empty or missing list", async () => {
     await expect(SampleImage.removeFilesFor([])).resolves.toBeUndefined();
-    await expect(SampleImage.removeFilesFor(undefined)).resolves.toBeUndefined();
+    await expect(
+      SampleImage.removeFilesFor(undefined)
+    ).resolves.toBeUndefined();
   });
 
   it("skips an image row that has no path", async () => {

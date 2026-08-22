@@ -48,7 +48,9 @@ async function repairEmbedded() {
     (request) => embeddedRelationKeys(request).length
   );
 
-  console.log(`\nEmbedded child copies: ${affected.length} request(s) affected`);
+  console.log(
+    `\nEmbedded child copies: ${affected.length} request(s) affected`
+  );
   if (!affected.length) return;
 
   const bytes = affected.reduce((total, request) => {
@@ -56,7 +58,9 @@ async function repairEmbedded() {
     return (
       total +
       Buffer.byteLength(
-        JSON.stringify(present.reduce((acc, k) => ((acc[k] = request[k]), acc), {}))
+        JSON.stringify(
+          present.reduce((acc, k) => ((acc[k] = request[k]), acc), {})
+        )
       )
     );
   }, 0);
@@ -77,7 +81,9 @@ async function repairEmbedded() {
     .table("Request")
     .replace((row) => row.without(RELATION_KEYS))
     .run();
-  console.log(`   replaced ${result.replaced} row(s), errors: ${result.errors}`);
+  console.log(
+    `   replaced ${result.replaced} row(s), errors: ${result.errors}`
+  );
   if (result.first_error) console.log(`   first error: ${result.first_error}`);
 }
 
@@ -98,7 +104,9 @@ async function repairOrphans() {
     const rows = await r.table(table).pluck("id", "requestID").run();
     const { parentless, orphans: doomed } = findOrphans(rows, parentIds);
 
-    console.log(`\n${table}: ${doomed.length} orphan(s) of ${rows.length} row(s)`);
+    console.log(
+      `\n${table}: ${doomed.length} orphan(s) of ${rows.length} row(s)`
+    );
     if (!doomed.length) continue;
 
     console.log(
@@ -116,7 +124,11 @@ async function repairOrphans() {
     let deleted = 0;
     for (let i = 0; i < ids.length; i += 500) {
       const batch = ids.slice(i, i + 500);
-      const result = await r.table(table).getAll(...batch).delete().run();
+      const result = await r
+        .table(table)
+        .getAll(...batch)
+        .delete()
+        .run();
       deleted += result.deleted;
       if (result.errors) {
         console.log(`   errors in batch: ${result.first_error}`);

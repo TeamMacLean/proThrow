@@ -132,7 +132,9 @@ const ImageEditCard = ({
           {image.deleteRequest ? "Undo Remove" : "Remove Image"}
         </button>
         {image.deleteRequest && (
-          <span className="text-danger ml-2 small">Will be deleted on save</span>
+          <span className="text-danger ml-2 small">
+            Will be deleted on save
+          </span>
         )}
       </div>
     </div>

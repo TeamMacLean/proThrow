@@ -59,7 +59,10 @@ const ImageUploadForm = ({
       return;
     }
 
-    if (images.length + (acceptedFiles ? acceptedFiles.length : 0) > MAX_FILES) {
+    if (
+      images.length + (acceptedFiles ? acceptedFiles.length : 0) >
+      MAX_FILES
+    ) {
       setError(`You can only upload up to ${MAX_FILES} files.`);
       return;
     }

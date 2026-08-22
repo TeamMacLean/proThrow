@@ -125,7 +125,9 @@ test.describe("Edit form", () => {
     await expect(page.locator("#samplePrep")).toHaveValue("IP");
     await expect(page.locator("#digestion")).toHaveValue("in gel");
     await expect(page.locator("#enzyme")).toHaveValue("Trypsin");
-    await expect(page.locator("#projectDescription")).toHaveValue("E2E fixture");
+    await expect(page.locator("#projectDescription")).toHaveValue(
+      "E2E fixture"
+    );
 
     // The species widget is react-select, not a native input; it renders the
     // stored value only because defaultOptions is enabled.
@@ -172,9 +174,9 @@ test.describe("Edit form", () => {
     await expect(rows).toHaveCount(2);
 
     // Each row must own exactly one set of inputs.
-    await expect(page.locator('#samples input[name="sampleNumbers[]"]')).toHaveCount(
-      2
-    );
+    await expect(
+      page.locator('#samples input[name="sampleNumbers[]"]')
+    ).toHaveCount(2);
 
     await page.locator("#samples button.removeSample").first().click();
     await expect(rows).toHaveCount(1);
@@ -197,9 +199,9 @@ test.describe("Edit form", () => {
 
     // And they survive a second edit that does not touch them.
     await openEditForm(page, requestID);
-    await expect(page.locator('#samples input[name="sampleNumbers[]"]')).toHaveValue(
-      "1"
-    );
+    await expect(
+      page.locator('#samples input[name="sampleNumbers[]"]')
+    ).toHaveValue("1");
   });
 
   test("adds and removes notes", async ({ page }) => {
@@ -254,7 +256,9 @@ test.describe("Edit form", () => {
     await expect(page).toHaveURL(new RegExp(`/request/${requestID}/edit$`));
   });
 
-  test("cancel edit returns to the request without saving", async ({ page }) => {
+  test("cancel edit returns to the request without saving", async ({
+    page,
+  }) => {
     await openEditForm(page, requestID);
 
     await page.click('button:has-text("Cancel Edit")');

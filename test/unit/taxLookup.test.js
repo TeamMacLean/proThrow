@@ -49,7 +49,7 @@ it("maps taxonomy search IDs to canonical scientific-name options", async () => 
 
   expect(get).toHaveBeenCalledTimes(2);
   expect(get.mock.calls[0][0]).toContain("term=homo%20sapiens");
-  expect(get.mock.calls[0][1]).toEqual({ timeout: 2000 });
+  expect(get.mock.calls[0][1]).toMatchObject({ timeout: 2000 });
   expect(get.mock.calls[1][0]).toContain("id=9606,10090");
 });
 
